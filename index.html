@@ -19,6 +19,23 @@
       background-size: 40px 40px;
     }
 
+
+
+    .flag {
+  position: fixed;
+  top: 0;
+  left: 5;
+  width: 96px;
+  z-index: 9999;
+  }
+  
+    .emoji {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: -0.15em;
+    }
+
     .green { background: #b2f167; }
 
     .card {
@@ -43,178 +60,103 @@
   </style>
 </head>
 
-<body class="flex justify-center px-4 py-10">
+<body>
 
+<!-- FIXED FLAG -->
 <a href="https://hackclub.com">
-  <img src="https://assets.hackclub.com/flag-orpheus-top.svg"
-       class="fixed top-0 left-0 w-24 md:w-32">
+  <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag" >
 </a>
 
-<div class="w-full max-w-2xl space-y-12">
 
-  <!-- HERO -->
-  <div class="text-center space-y-4">
+<!-- MAIN CONTENT -->
+<div class="flex justify-center px-4 py-10 pt-20">
+  <div class="w-full max-w-2xl space-y-12">
+  
+     
+    <!-- HERO -->
+    <div class="text-center space-y-4">
+       
 
-    <div class="w-full h-28 green rounded-xl"></div>
+      <p class="text-sm text-gray-500">We presents...</p>
 
-    <p class="text-sm text-gray-500">Hack Club presents...</p>
+      <h1 class="text-4xl md:text-5xl font-bold">
+        Hardware Playground
+      </h1>
 
-    <h1 class="text-4xl md:text-5xl font-bold">
-      Hardware Playground
-    </h1>
-
-    <p class="text-gray-700 font-medium">
-      Break it, Learn it
-    </p>
-
-    <p class="text-sm">
-      Build circuits, mess with electronics, and open up real devices to see what’s actually going on inside.
-    </p>
-
-    <button class="btn mt-2">RSVP</button>
-
-    <p class="text-sm text-gray-500">Ages 13–18 · Ends [your date]</p>
-  </div>
-
-  <!-- WHAT -->
-  <div class="space-y-4">
-    <h2 class="text-xl font-semibold">What is this?</h2>
-
-    <p>
-      Most people use electronics every day — phones, remotes, keyboards — but never really understand what’s inside.
-    </p>
-
-    <p>
-      Hardware Playground is a hands-on program where you:
-    </p>
-
-    <ul class="list-disc ml-6">
-      <li>open real devices and explore their PCBs</li>
-      <li>build circuits from scratch</li>
-      <li>experiment and see what happens</li>
-      <li>rebuild parts of real electronics</li>
-    </ul>
-
-    <p>
-      This is about understanding hardware for real, not just using it.
-    </p>
-  </div>
-
-  <!-- 🔥 COMBINED CARD 1 -->
-  <div class="card space-y-5">
-
-    <div>
-      <h2 class="text-xl font-semibold">What you’ll do</h2>
-
-      <ul class="list-disc ml-6 mt-2">
-        <li>Open devices and study circuit boards</li>
-        <li>Build simple circuits on breadboard</li>
-        <li>Figure out how components work</li>
-        <li>Rebuild and modify circuits</li>
-        <li>Document what you learn</li>
-      </ul>
-    </div>
-
-    <div>
-      <h2 class="text-xl font-semibold">How it works</h2>
-
-      <p class="mt-2 font-medium">
-        find → understand → rebuild → experiment → explain
+      <p class="text-gray-700 font-medium">
+        Break it, Learn it
       </p>
 
-      <p class="mt-1">
-        There are no levels. Start simple or go deep it’s up to you.
+      <p class="text-sm">
+        Build circuits by messing with old electronics devices, open up real devices to see what’s actually going on inside.
       </p>
+
+      <button class="btn mt-2">RSVP</button>
+
+      <p class="text-sm text-gray-500">Opening Soon...</p>
     </div>
 
-    <div>
-      <h2 class="text-xl font-semibold">Build your way</h2>
+    <!-- WHAT -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-semibold">What is this?</h2>
 
-      <ul class="list-disc ml-6 mt-2">
-        <li>Breadboard → best for learning (extra bonus)</li>
-        <li>PCB design → apply for grants to manufacture your board</li>
-      </ul>
-    </div>
+      <p>
+        We use all types of electronics everyday but never really understand what’s inside.
+      </p>
 
-  </div>
-
-  <!-- 🔥 COMBINED CARD 2 -->
-  <div class="card space-y-5">
-
-    <div>
-      <h2 class="text-xl font-semibold">💠 Earn Diodes</h2>
-
-      <p class="mt-2">You earn diodes based on:</p>
+      <p>
+        Hardware Playground is a ysws program where you:
+      </p>
 
       <ul class="list-disc ml-6">
-        <li>Understanding (Through Journals)</li>
-        <li>Time spent</li>
+        <li>Open real devices and explore their PCBs</li>
+        <li>Build circuits from scratch</li>
+        <li>Experiment and see what happens</li>
+        <li>Rebuild parts of real electronics</li>
       </ul>
 
-      <p class="mt-2">Track time:</p>
-
-      <p class="text-blue-600 text-sm">
-        👉 https://lapse.hackclub.com
+      <p>
+        This is about understanding hardware for real.
       </p>
-
-      <p class="mt-1">Better explanation = more rewards.</p>
     </div>
 
-    <div>
-      <h2 class="text-xl font-semibold">🎁 Rewards</h2>
 
-      <p class="mt-2">Use 💠 to get:</p>
 
-      <ul class="list-disc ml-6">
-        <li>Single Board Computer</li>
-        <li>DevBoards</li>
-        <li>3d Printer</li>
-      </ul>
 
-      <p class="mt-2">Or go further:</p>
 
-      <p>💰 Apply for PCB grants</p>
-      <p>Build and ship your own hardware</p>
-    </div>
+    <!-- CARD 1 -->
+    <div class="card space-y-2">
 
-  </div>
+<div class="relative pt-1">
 
-  <!-- WHY -->
-  <div class="card space-y-3">
-    <h2 class="text-xl font-semibold">Why join?</h2>
+  <!-- ORPHY -->
+  <img 
+    src="https://raw.githubusercontent.com/thagreatjoel/Playground/refs/heads/main/src/orpfy.png"
+    class="
+      absolute 
+      right-4 
+      -top-[115px]
+      h-32 
+      object-contain
+    "
+  >
 
-    <ul class="list-disc ml-6">
-      <li>learn real electronics</li>
-      <li>build confidence</li>
-      <li>understand devices</li>
-      <li>create circuits</li>
-    </ul>
-  </div>
+  <!-- CONTENT -->
+  <h2 class="text-xl font-semibold">What you’ll do</h2>
 
-  <!-- RULES -->
-  <div class="card space-y-3">
-    <h2 class="text-xl font-semibold">Simple rules</h2>
-
-    <ul class="list-disc ml-6">
-      <li>build real circuits</li>
-      <li>explain your work</li>
-      <li>don’t copy or fake</li>
-      <li>stay safe</li>
-    </ul>
-  </div>
-
-  <!-- CTA -->
-  <div class="text-center space-y-3">
-    <h2 class="text-xl font-semibold">Ready?</h2>
-
-    <button class="btn">Go to faq</button>
-  </div>
-
-  <p class="text-center text-sm text-gray-500">
-    A Hack Club program. Made by teens, for teens.
-  </p>
+  <ul class="list-disc ml-6 mt-2">
+    <li>Open devices and study circuit boards</li>
+    <li>Build simple circuits on breadboard</li>
+    <li>Figure out how components work</li>
+    <li>Rebuild and modify circuits</li>
+    <li>Document what you learn</li>
+  </ul>
 
 </div>
 
-</body>
-</html>
+
+      <div>
+        <h2 class="text-xl font-semibold">How it works</h2>
+
+        <p class="mt-2 font-medium">
+          
