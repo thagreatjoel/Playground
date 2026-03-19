@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #f3eef2;
+
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+
+      background-size: 40px 40px;
+    }
+
+    .green { background: #b2f167; }
+
+    .card {
+      border: 1px solid #cfcfcf;
+      border-bottom: 3px solid #000;
+      border-radius: 16px;
+      background: white;
+      padding: 20px;
+    }
+
+    .btn {
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      padding: 8px 20px;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: black;
+      color: white;
+    }
+  </style>
+</head>
+
+<body class="flex justify-center px-4 py-10">
+
+<a href="https://hackclub.com">
+  <img src="https://assets.hackclub.com/flag-orpheus-top.svg"
+       class="fixed top-0 left-0 w-24 md:w-32">
+</a>
+
+<div class="w-full max-w-2xl space-y-12">
+
+  <!-- HERO -->
+  <div class="text-center space-y-4">
+
+    <div class="w-full h-28 green rounded-xl"></div>
+
+    <p class="text-sm text-gray-500">Hack Club presents...</p>
+
+    <h1 class="text-4xl md:text-5xl font-bold">
+      Hardware Playground
+    </h1>
+
+    <p class="text-gray-700 font-medium">
+      Break it, Learn it
+    </p>
+
+    <p class="text-sm">
+      Build circuits, mess with electronics, and open up real devices to see what’s actually going on inside.
+    </p>
+
+    <button class="btn mt-2">RSVP</button>
+
+    <p class="text-sm text-gray-500">Ages 13–18 · Ends [your date]</p>
+  </div>
+
+  <!-- WHAT -->
+  <div class="space-y-4">
+    <h2 class="text-xl font-semibold">What is this?</h2>
+
+    <p>
+      Most people use electronics every day — phones, remotes, keyboards — but never really understand what’s inside.
+    </p>
+
+    <p>
+      Hardware Playground is a hands-on program where you:
+    </p>
+
+    <ul class="list-disc ml-6">
+      <li>open real devices and explore their PCBs</li>
+      <li>build circuits from scratch</li>
+      <li>experiment and see what happens</li>
+      <li>rebuild parts of real electronics</li>
+    </ul>
+
+    <p>
+      This is about understanding hardware for real, not just using it.
+    </p>
+  </div>
+
+  <!-- 🔥 COMBINED CARD 1 -->
+  <div class="card space-y-5">
+
+    <div>
+      <h2 class="text-xl font-semibold">What you’ll do</h2>
+
+      <ul class="list-disc ml-6 mt-2">
+        <li>Open devices and study circuit boards</li>
+        <li>Build simple circuits on breadboard</li>
+        <li>Figure out how components work</li>
+        <li>Rebuild and modify circuits</li>
+        <li>Document what you learn</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-semibold">How it works</h2>
+
+      <p class="mt-2 font-medium">
+        find → understand → rebuild → experiment → explain
+      </p>
+
+      <p class="mt-1">
+        There are no levels. Start simple or go deep it’s up to you.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-semibold">Build your way</h2>
+
+      <ul class="list-disc ml-6 mt-2">
+        <li>Breadboard → best for learning (extra bonus)</li>
+        <li>PCB design → apply for grants to manufacture your board</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- 🔥 COMBINED CARD 2 -->
+  <div class="card space-y-5">
+
+    <div>
+      <h2 class="text-xl font-semibold">💠 Earn Diodes</h2>
+
+      <p class="mt-2">You earn diodes based on:</p>
+
+      <ul class="list-disc ml-6">
+        <li>Understanding (Through Journals)</li>
+        <li>Time spent</li>
+      </ul>
+
+      <p class="mt-2">Track time:</p>
+
+      <p class="text-blue-600 text-sm">
+        👉 https://lapse.hackclub.com
+      </p>
+
+      <p class="mt-1">Better explanation = more rewards.</p>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-semibold">🎁 Rewards</h2>
+
+      <p class="mt-2">Use 💠 to get:</p>
+
+      <ul class="list-disc ml-6">
+        <li>Single Board Computer</li>
+        <li>DevBoards</li>
+        <li>3d Printer</li>
+      </ul>
+
+      <p class="mt-2">Or go further:</p>
+
+      <p>💰 Apply for PCB grants</p>
+      <p>Build and ship your own hardware</p>
+    </div>
+
+  </div>
+
+  <!-- WHY -->
+  <div class="card space-y-3">
+    <h2 class="text-xl font-semibold">Why join?</h2>
+
+    <ul class="list-disc ml-6">
+      <li>learn real electronics</li>
+      <li>build confidence</li>
+      <li>understand devices</li>
+      <li>create circuits</li>
+    </ul>
+  </div>
+
+  <!-- RULES -->
+  <div class="card space-y-3">
+    <h2 class="text-xl font-semibold">Simple rules</h2>
+
+    <ul class="list-disc ml-6">
+      <li>build real circuits</li>
+      <li>explain your work</li>
+      <li>don’t copy or fake</li>
+      <li>stay safe</li>
+    </ul>
+  </div>
+
+  <!-- CTA -->
+  <div class="text-center space-y-3">
+    <h2 class="text-xl font-semibold">Ready?</h2>
+
+    <button class="btn">Go to faq</button>
+  </div>
+
+  <p class="text-center text-sm text-gray-500">
+    A Hack Club program. Made by teens, for teens.
+  </p>
+
+</div>
+
+</body>
+</html>
