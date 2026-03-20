@@ -17,7 +17,7 @@ function goWithFlash(url) {
   // STEP 3: navigate after full effect
   setTimeout(() => {
     window.location.href = url;
-  }, 700);
+  }, 140);
 }
 
 // RESET (fix white screen on back)
