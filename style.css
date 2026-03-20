@@ -211,13 +211,12 @@ details.green[open] {
 }
 
 #flash.active {
-  animation: flashAnim 0.4s ease forwards;
+  animation: flashIn 0.3s ease forwards;
 }
 
-@keyframes flashAnim {
+@keyframes flashIn {
   0%   { opacity: 0; }
-  40%  { opacity: 1; }
-  100% { opacity: 0; } /* FIXED */
+  100% { opacity: 1; } /* stays white */
 }
 
 /* GTA ZOOM EFFECT */
