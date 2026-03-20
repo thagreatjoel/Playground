@@ -154,12 +154,44 @@ body.gta {
 }
 </style>
   <script>
-window.addEventListener("load", () => {
-  document.body.classList.remove("gta");
+let navigating = false;
+
+// GTA flash navigation
+function goWithFlash(url) {
+  if (navigating) return;
+
+  navigating = true;
+
   const flash = document.getElementById("flash");
+
+  document.body.classList.add("gta");
+  flash.classList.add("active");
+
+  setTimeout(() => {
+    window.location.href = url;
+  }, 350);
+}
+
+// FIX: when user comes back (browser cache issue)
+window.addEventListener("pageshow", () => {
+  const flash = document.getElementById("flash");
+
   if (flash) flash.classList.remove("active");
+  document.body.classList.remove("gta");
+
+  navigating = false;
 });
-</script>
+
+// EXTRA safety (normal reload)
+window.addEventListener("load", () => {
+  const flash = document.getElementById("flash");
+
+  if (flash) flash.classList.remove("active");
+  document.body.classList.remove("gta");
+
+  navigating = false;
+});
+  </script>
 </head>
 
 <body>
