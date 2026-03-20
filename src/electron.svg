@@ -26,21 +26,4 @@
   <!-- Core -->
   <rect x="58" y="58" width="12" height="12" fill="#1f2937"/>
 
-</svg>          fill="#e5e7eb"
-          class="pulse"/>
-
-  </g>
-
-  <!-- Core -->
-  <rect x="58" y="58" width="12" height="12" fill="#1f2937"/>
-
-  <!-- Charge aura (subtle blink) -->
-  <rect x="54" y="54" width="20" height="20"
-        fill="#b2f167" opacity="0.15">
-    <animate attributeName="opacity"
-             values="0.1;0.25;0.1"
-             dur="1.2s"
-             repeatCount="indefinite"/>
-  </rect>
-
 </svg>
