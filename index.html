@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+ <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,6 +36,330 @@ body {
 
   background-image:
   linear-gradient(to right, rgba(0,0,0,0.08) 1px, transparent 1px),
+  linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px);
+
+  background-size: 40px 40px;
+
+  animation: moveGrid 6s linear infinite;
+}
+
+.btn {
+  background: #b2f167;
+  border: 1px solid #000;
+  border-bottom: 3px solid #000;
+  border-radius: 10px;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0px);
+  border-bottom: 1px solid #000;
+}
+
+.card > div + div {
+  border-top: 1px dashed #ddd;
+  padding-top: 12px;
+}
+details.green[open] {
+  background: #e1fcc1;
+}
+details.green {
+  color: #000;
+}
+
+html {
+  font-size: 14px;
+}
+    .flag {
+  position: fixed;
+  top: 0;
+  left: 5;
+  width: 96px;
+  z-index: 9999;
+  }
+  
+    .emoji {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: -0.15em;
+    }
+
+    .green { background: #b2f167; }
+
+    .card {
+      border: 1px solid #cfcfcf;
+      border-bottom: 3px solid #000;
+      border-radius: 16px;
+      background: white;
+      padding: 20px;
+    }
+
+    .btn {
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      padding: 8px 20px;
+      transition: 0.2s;
+    }
+.btn:hover {
+  background: #a3e65a;
+}
+    .btn:hover {
+      background: #e1fcc1;
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- FIXED FLAG -->
+<a href="https://hackclub.com">
+  <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag" >
+</a>
+
+
+<!-- MAIN CONTENT -->
+<div class="flex justify-center px-4 py-10 pt-20">
+  <div class="w-full max-w-2xl space-y-12">
+  
+     
+    <!-- HERO -->
+    <div class="text-center space-y-4">
+       
+
+      <p class="text-sm text-gray-500">We presents...</p>
+
+      <h1 class="text-4xl md:text-5xl font-bold">
+        Hardware Playground
+      </h1>
+
+      <p class="text-gray-700 font-medium">
+        Break it, Learn it
+      </p>
+
+      <p class="text-sm">
+        Build circuits by messing with old electronics devices, open up real devices to see what抯 actually going on inside.
+      </p>
+
+      <button class="btn mt-2">RSVP</button>
+
+      <p class="text-sm text-gray-500">Opening Soon...</p>
+    </div>
+
+    <!-- WHAT -->
+ <div class="space-y-4">
+  <h2 class="text-xl font-semibold">What is this?</h2>
+
+  <p>
+    We use electronics every day, but rarely understand what抯 inside.
+  </p>
+
+  <p>
+    Hardware Playground is a hands-on program where you:
+  </p>
+
+  <ul class="list-disc ml-6">
+    <li>open real devices and explore their PCBs</li>
+    <li>build circuits from scratch</li>
+    <li>experiment and see what happens</li>
+    <li>rebuild small parts of real electronics</li>
+  </ul>
+
+  <p>
+    This program is clearly not just about making projects.
+  </p>
+
+  
+</div>
+
+
+
+
+<div class="card space-y-5">
+
+  <div>
+    <h2 class="text-xl font-semibold">What this program is really about</h2>
+
+    <p class="mt-2">
+      This program is not just only about building projects.
+    </p>
+
+    <p class="mt-2">It抯 about:</p>
+
+    <ul class="list-disc ml-6 mt-2">
+      <li>how honestly you work</li>
+      <li>how well you document your process</li>
+      <li>how clearly you explain what you learned</li>
+      <li>how deeply you understand your circuit</li>
+    </ul>
+
+    <p class="mt-3">We care more about:</p>
+
+    <ul class="list-disc ml-6 mt-2">
+      <li>your thinking</li>
+      <li>your learning</li>
+      <li>your effort</li>
+    </ul>
+
+    <p class="mt-3 font-medium">
+      than just the final result.
+    </p>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-semibold">What we look for</h2>
+
+    <p class="mt-2">
+      A simple project with a clear explanation is better than a complex project you don抰 understand.
+    </p>
+
+    <p class="mt-2">We reward:</p>
+
+    <ul class="list-disc ml-6 mt-2">
+      <li>honest work</li>
+      <li>clear journals</li>
+      <li>real understanding</li>
+      <li>consistent effort</li>
+    </ul>
+  </div>
+
+</div>
+
+
+<!-- RULES + REQUIREMENTS CARD -->
+<div class="card space-y-5">
+
+  <div>
+    <h2 class="text-xl font-semibold">Eligibility</h2>
+
+    <ul class="list-disc ml-6 mt-2">
+      <li>You must be 13�18 years old</li>
+      <li>You must be part of the Hack Club Slack community</li>
+      <li>You must not be banned from Hack Club</li>
+      <li>You must verify your identity</li>
+    </ul>
+  </div>
+
+  <div>
+    <h2 class="text-xl font-semibold">Project Requirements</h2>
+
+    <ul class="list-disc ml-6 mt-2">
+      <li>Spend at least 1�2 hours per project</li>
+      <li>Build using real hardware (no simulation-only projects)</li>
+      <li>Show proof of work:
+        <ul class="list-disc ml-6">
+          <li>photos (including build process)</li>
+          <li>demo video</li>
+        </ul>
+      </li>
+      <li>Write a short explanation of:
+        <ul class="list-disc ml-6">
+          <li>what you built</li>
+          <li>how it works</li>
+        </ul>
+      </li>
+      <li>Avoid fully prebuilt modules unless you understand them</li>
+      <li>Projects must be new work (not reused old projects)</li>
+    </ul>
+  </div>
+
+</div>
+
+
+<!-- RULES -->
+<div class="card space-y-3">
+  <h2 class="text-xl font-semibold">Rules</h2>
+
+  <ul class="list-disc ml-6">
+    <li>build real circuits (no simulation-only projects)</li>
+    <li>explain your work in your own words</li>
+    <li>show proof (photos + demo video)</li>
+    <li>spend at least 1�2 hours per project</li>
+    <li>use safe devices and low voltage (12V)</li>
+  </ul>
+</div>
+
+
+<!-- FAQ -->
+<div class="card space-y-3">
+  <h2 class="text-xl font-semibold">Frequently Asked Questions</h2>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">Is this free?</summary>
+    <p class="text-sm mt-2">
+      Yes. If you do real work, you抣l earn rewards.
+    </p>
+  </details>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">Do I need experience?</summary>
+    <p class="text-sm mt-2">
+      No. You can start with simple circuits.
+    </p>
+  </details>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">What if I don抰 have a device to open?</summary>
+    <p class="text-sm mt-2">
+      You can still build circuits and start with beginner projects.
+    </p>
+  </details>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">What if my project doesn抰 work?</summary>
+    <p class="text-sm mt-2">
+      That抯 fine. Show what you tried and what you learned.
+    </p>
+  </details>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">Can I use AI?</summary>
+    <p class="text-sm mt-2">
+      Yes, for learning. But you must understand your work.
+    </p>
+  </details>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">Do I need expensive tools?</summary>
+    <p class="text-sm mt-2">
+      No. Basic components are enough.
+    </p>
+  </details>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">Can I work with friends?</summary>
+    <p class="text-sm mt-2">
+      You can discuss ideas, but your work must be your own.
+    </p>
+  </details>
+
+  <details class="green border rounded-lg p-3">
+    <summary class="cursor-pointer font-medium">What happens if I copy or fake work?</summary>
+    <p class="text-sm mt-2">
+      Your submission will be rejected.
+    </p>
+  </details>
+
+</div>
+
+  <div class="rounded-lg p-4 text-center">
+    <p class="font-semibold">
+      Don抰 just build something.<br>
+      Understand it. Explain it clearly.<br>
+      Show how you got there.
+    </p>
+  </div>
+
+
+</body>
+</html>  linear-gradient(to right, rgba(0,0,0,0.08) 1px, transparent 1px),
   linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px);
 
   background-size: 40px 40px;
