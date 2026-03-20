@@ -114,11 +114,68 @@ html {
       background: #e1fcc1;
       color: black;
     }
-  </style>
+    
+    
+    /* FLASH LAYER */
+#flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 99999;
+}
+
+/* FLASH ANIMATION */
+#flash.active {
+  animation: gtaFlash 0.4s ease forwards;
+}
+
+@keyframes gtaFlash {
+  0%   { opacity: 0; }
+  40%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* GTA ZOOM + BLUR */
+body.gta {
+  transform: scale(1.08);
+  filter: blur(4px);
+  transition: 0.35s ease;
+}
+
+/* DISABLED BUTTON */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>
+  <script>
+let navigating = false;
+
+function goWithFlash(url) {
+  if (navigating) return;
+
+  navigating = true;
+
+  const flash = document.getElementById("flash");
+
+  document.body.classList.add("gta");
+  flash.classList.add("active");
+
+  setTimeout(() => {
+    window.location.href = url;
+  }, 350);
+}
+</script>
 </head>
 
 <body>
-
+<!-- FLASH LAYER (IMPORTANT) -->
+<div id="flash"></div>
 <!-- FIXED FLAG -->
 <a href="https://hackclub.com">
   <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag" >
@@ -148,7 +205,10 @@ html {
         Build circuits by messing with old electronics devices, open up real devices to see what's actually going on inside.
       </p>
 
-      <button class="btn mt-2">RSVP</button>
+ <button class="btn" onclick="goWithFlash('rsvp.html')">
+        RSVP
+      </button>
+
 
       <p class="text-sm text-gray-500">Opening Soon...</p>
     </div>
@@ -240,9 +300,10 @@ html {
     Not sure how to start or what to build?
   </p>
 
-  <button class="btn">
-    Open Guide
-  </button>
+  <button class="btn" onclick="goWithFlash('guide.html')">
+        Open Guide
+      </button>
+
 </div>
 
 
@@ -306,7 +367,7 @@ html {
   <details class="green border rounded-lg p-3">
     <summary class="cursor-pointer font-medium">Is this free?</summary>
     <p class="text-sm mt-2">
-      Yes. If you do real work, you抣l earn rewards.
+      Yes. If you do real work, you’ll earn rewards.
     </p>
   </details>
 
