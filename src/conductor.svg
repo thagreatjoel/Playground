@@ -1,7 +1,8 @@
 <svg width="128" height="128" viewBox="0 0 128 128"
      xmlns="http://www.w3.org/2000/svg">
 
-  <g transform="rotate(45 64 64)">
+  <g transform="translate(64,64) scale(1.9) rotate(45) translate(-64,-64)">
+
 
     <!-- Platinum bar -->
     <rect x="36" y="52" width="56" height="24" fill="#9ca3af"/>
