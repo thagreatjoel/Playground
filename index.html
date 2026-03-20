@@ -154,22 +154,11 @@ body.gta {
 }
 </style>
   <script>
-let navigating = false;
-
-function goWithFlash(url) {
-  if (navigating) return;
-
-  navigating = true;
-
+window.addEventListener("load", () => {
+  document.body.classList.remove("gta");
   const flash = document.getElementById("flash");
-
-  document.body.classList.add("gta");
-  flash.classList.add("active");
-
-  setTimeout(() => {
-    window.location.href = url;
-  }, 350);
-}
+  if (flash) flash.classList.remove("active");
+});
 </script>
 </head>
 
