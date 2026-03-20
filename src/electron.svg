@@ -1,40 +1,32 @@
 <svg width="128" height="128" viewBox="0 0 128 128"
      xmlns="http://www.w3.org/2000/svg">
 
-  <style>
-    .spin {
-      transform-origin: 64px 64px;
-      animation: spin 2s linear infinite;
-    }
-
-    .pulse {
-      animation: pulse 1.2s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(45deg); }
-      to   { transform: rotate(405deg); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.25); }
-    }
-  </style>
-
-  <!-- Orbit -->
-  <ellipse cx="64" cy="64" rx="40" ry="20"
+  <!-- Orbit path -->
+  <ellipse id="orbit"
+           cx="64" cy="64" rx="40" ry="20"
            fill="none"
            stroke="#9ca3af"
            stroke-width="4"
-           stroke-dasharray="6 6"/>
+           stroke-dasharray="6 6"
+           transform="rotate(45 64 64)"/>
 
-  <!-- Rotating system -->
-  <g class="spin">
+  <!-- Electron moving along the orbit -->
+  <rect width="12" height="12" fill="#e5e7eb">
+    <animateMotion dur="2s" repeatCount="indefinite" rotate="auto">
+      <mpath href="#orbit"/>
+    </animateMotion>
 
-    <!-- Electron (with charge pulse) -->
-    <rect x="96" y="60" width="12" height="12"
-          fill="#e5e7eb"
+    <!-- charge pulse -->
+    <animate attributeName="opacity"
+             values="0.6;1;0.6"
+             dur="1.2s"
+             repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Core -->
+  <rect x="58" y="58" width="12" height="12" fill="#1f2937"/>
+
+</svg>          fill="#e5e7eb"
           class="pulse"/>
 
   </g>
