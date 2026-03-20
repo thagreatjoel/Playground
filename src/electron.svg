@@ -1,21 +1,32 @@
-<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  
-  <circle cx="64" cy="64" r="56" fill="#0f172a"/>
+<svg width="128" height="128" viewBox="0 0 128 128"
+     xmlns="http://www.w3.org/2000/svg">
 
-  <text x="50%" y="58%" text-anchor="middle" 
-        font-size="64" 
-        font-family="Arial, sans-serif" 
-        fill="#22d3ee" 
-        font-weight="bold">
-    e
-  </text>
+  <style>
+    .spin {
+      transform-origin: 64px 64px;
+      animation: spin 2s linear infinite;
+    }
 
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+  </style>
 
-  <text x="78" y="40" 
-        font-size="28" 
-        font-family="Arial, sans-serif" 
-        fill="#22d3ee" 
-        font-weight="bold">
-    −
-  </text>
+  <!-- Orbit -->
+  <ellipse cx="64" cy="64" rx="40" ry="20"
+           fill="none"
+           stroke="#9ca3af"
+           stroke-width="3"
+           stroke-dasharray="6 6"/>
+
+  <!-- Rotating group -->
+  <g class="spin">
+    <!-- Electron -->
+    <rect x="104" y="60" width="10" height="10" fill="#e5e7eb"/>
+  </g>
+
+  <!-- Core -->
+  <rect x="58" y="58" width="12" height="12" fill="#1f2937"/>
+
 </svg>
