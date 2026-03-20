@@ -1,4 +1,3 @@
-
 let navigating = false;
 
 function goWithFlash(url) {
@@ -7,21 +6,21 @@ function goWithFlash(url) {
 
   const flash = document.getElementById("flash");
 
-  
-  document.body.classList.add("gta");
+  // STEP 1: blur first
+  document.body.classList.add("blur");
 
-  
+  // STEP 2: slight delay, then flash
   setTimeout(() => {
     flash.classList.add("active");
   }, 120);
 
-
+  // STEP 3: navigate after full effect
   setTimeout(() => {
     window.location.href = url;
-  }, 400);
+  }, 700);
 }
 
-
+// RESET (fix white screen on back)
 function resetFlash() {
   const flash = document.getElementById("flash");
 
@@ -32,7 +31,7 @@ function resetFlash() {
     flash.style.animation = "";
   }
 
-  document.body.classList.remove("gta");
+  document.body.classList.remove("blur");
   navigating = false;
 }
 
