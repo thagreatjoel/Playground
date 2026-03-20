@@ -30,26 +30,26 @@ xmlns="http://www.w3.org/2000/svg">
         class="pulse"/>  
 
 <!-- Orb -->  
-<circle cx="64" cy="64" r="30"  
+<circle cx="64" cy="78" r="50"  
         fill="#1f3b1f"/>  
 
 <!-- Center group -->  
 <g transform="translate(64,64)">  
 
   <!-- e -->  
-  <text x="-1" y="8"  
+  <text x="-1" y="28"  
         text-anchor="middle"  
-        font-size="28"  
-        font-family="monospace"  
+        font-size="50"  
+        font-family="Space Grotesk"  
         fill="#e5e7eb"  
         font-weight="bold">  
     e  
   </text>  
 
   <!-- minus (positioned relative to e) -->  
-  <text x="10" y="-10"  
-        font-size="16"  
-        font-family="monospace"  
+  <text x="10" y="10"  
+        font-size="32"  
+        font-family="Space Grotesk"  
         fill="#e5e7eb"  
         font-weight="bold">  
     −  
