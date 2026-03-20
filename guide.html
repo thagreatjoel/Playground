@@ -6,13 +6,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script defer src="script.js"></script>
+
+  <!-- FIXED -->
   <link rel="stylesheet" href="style.css">
-  
+  <script defer src="script.js"></script>
 </head>
 
 <body class="flex justify-center px-4 py-10">
 <div id="flash"></div>
+
 <!-- FLAG -->
 <a href="https://hackclub.com">
   <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
@@ -26,42 +28,37 @@
     <p class="text-gray-600">Guide</p>
   </div>
 
+  <!-- GUIDE -->
+  <div>
+    <h2 class="text-xl font-semibold">Guide</h2>
+
+    <p class="mt-2">
+      This guide will help you get started with Hardware Playground step by step. You don’t need any experience.
+    </p>
+
+    <p class="mt-2">
+      Start with simple circuits or basic devices, understand how they work, rebuild small parts, and experiment.
+    </p>
+
+    <p class="mt-3">
+      We care more about your thinking, learning, and effort than just the final result.
+      Take your time, make mistakes, and improve as you go! That’s how real understanding happens.
+    </p>
+  </div>
+
   <!-- START -->
-  
-    <div>
-  <h2 class="text-xl font-semibold">Guide</h2>
-
-  <p class="mt-2">
-    This guide will help you get started with Hardware Playground step by step. You don’t need any experience.
-  </p>
-
-  <p class="mt-2">
-    Start with simple circuits or basic devices, understand how they work, rebuild small parts, and experiment.
-  </p>
-
- 
-
-  <p class="mt-3">
-    We care more about your thinking, learning, and effort than just the final result.
-
- 
-    Take your time, make mistakes, and improve as you go!  That’s how real understanding happens.
-  </p>
-</div>
-  <!-- TIMELINE -->
   <div class="text-center space-y-2">
-  <h2 class="text-3xl font-bold">Start Here</h2> </div>
+    <h2 class="text-3xl font-bold">Start Here</h2>
+  </div>
+
+  <!-- TIMELINE -->
   <div class="overlay space-y-12">
 
-    <!-- STEP -->
-    
+    <!-- STEP 1 -->
     <div class="relative pl-12">
       <div class="connector"></div>
 
-
-         
       <div class="card">
-      
         <div class="flex items-center gap-3">
           <div class="node">1</div>
           <h3 class="font-semibold text-lg">Choose a Device</h3>
@@ -73,31 +70,31 @@
       </div>
     </div>
 
+    <!-- STEP 2 -->
     <div class="relative pl-12">
       <div class="connector"></div>
 
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">2</div>
-          <h3 class="font-semibold text-lg">Schematics  <img src="src/Silicon.svg" class="emoji"></h3>
+          <h3 class="font-semibold text-lg">Schematics <img src="/src/Silicon.svg" class="emoji"></h3>
         </div>
 
         <ul class="mt-3 list-disc ml-6 text-sm">
           <li>Understand the trace and identify the components, create a PCB with your desired pcb desiging tool</li>
           <li>You must show the schematic before submission, make changes to components or add new components or parts to make it cool</li>
-          
-   
         </ul>
       </div>
     </div>
 
+    <!-- STEP 3 -->
     <div class="relative pl-12">
       <div class="connector"></div>
 
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">3</div>
-          <h3 class="font-semibold text-lg">Design  <img src="src/Silicon.svg" class="emoji"></h3>
+          <h3 class="font-semibold text-lg">Design <img src="/src/Silicon.svg" class="emoji"></h3>
         </div>
 
         <ul class="mt-3 list-disc ml-6 text-sm">
@@ -108,52 +105,62 @@
       </div>
     </div>
 
+    <!-- STEP 4 -->
     <div class="relative pl-12">
       <div class="connector"></div>
 
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">4</div>
-          <h3 class="font-semibold text-lg">Journal ~ <img src="src/conductor.svg" class="emoji"></h3>
+          <h3 class="font-semibold text-lg">Journal ~ <img src="/src/conductor.svg" class="emoji"></h3>
         </div>
 
-        <p class="mt-3 text-sm">
-          Journal about what you did, what you learned, and what happened.
-This is the most important part of your submission. You can also include your mistakes, Ai usage for journals are not applicable. 
-<ul class="mt-3 list-disc ml-6 text-sm"> <li>Conductor<img src="src/conductor.svg" class="emoji"> depends on the Quality of journal.</li></ul>
-        </p>
+        <div class="mt-3 text-sm">
+          <p>
+            Journal about what you did, what you learned, and what happened.
+            This is the most important part of your submission. You can also include your mistakes, Ai usage for journals are not applicable.
+          </p>
+
+          <ul class="mt-3 list-disc ml-6">
+            <li>Conductor <img src="/src/conductor.svg" class="emoji"> depends on the Quality of journal.</li>
+          </ul>
+        </div>
       </div>
     </div>
 
+    <!-- STEP 5 -->
     <div class="relative pl-12">
       <div class="connector"></div>
 
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">5</div>
-          <h3 class="font-semibold text-lg">Submit ~ <img src="src/conductor.svg" class="emoji"></h3>
+          <h3 class="font-semibold text-lg">Submit ~ <img src="/src/conductor.svg" class="emoji"></h3>
         </div>
 
         <ul class="mt-3 list-disc ml-6 text-sm">
-          Submit your GitHub repo and your work progress, images, demo to the Workshop. And get it reviewed
+          <li>Submit your GitHub repo and your work progress, images, demo to the Workshop. And get it reviewed</li>
         </ul>
       </div>
     </div>
 
+    <!-- STEP 6 -->
     <div class="relative pl-12">
       <div class="connector"></div>
 
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">6</div>
-          <h3 class="font-semibold text-lg">Rewards <img src="src/diode.svg" class="emoji"></h3>
+          <h3 class="font-semibold text-lg">Rewards <img src="/src/diode.svg" class="emoji"></h3>
         </div>
 
-         <div class="mt-3 text-sm space-y-2">
-         <p> Convert your <img src="src/Silicon.svg" class="emoji"> <b>Silicons</b> and <img src="src/conductor.svg" class="emoji"> <b>Conductor</b>to craft a <img src="src/diode.svg" class="emoji"> <b>Diode</b>. Exchange those diodes with cool rewards 
-         </p>
-         </div>
-      </div>
+        <div class="mt-3 text-sm space-y-2">
+          <p>
+            Convert your <img src="/src/Silicon.svg" class="emoji"> <b>Silicons</b> and 
+            <img src="/src/conductor.svg" class="emoji"> <b>Conductor</b> to craft a 
+            <img src="/src/diode.svg" class="emoji"> <b>Diode</b>. Exchange those diodes with cool rewards
+          </p>
+        </div>
       </div>
     </div>
 
@@ -168,10 +175,9 @@ This is the most important part of your submission. You can also include your mi
 
   <!-- BACK -->
   <div class="text-center">
-     <button class="btn" onclick="goWithFlash('./')">
-        Back
-      </button>
-
+    <button class="btn" onclick="goWithFlash('/')">
+      Back
+    </button>
   </div>
 
 </div>
