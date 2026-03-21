@@ -18,7 +18,7 @@ function goWithFlash(url) {
   // Step 3: navigate
   setTimeout(() => {
     window.location.href = url;
-  }, 400);
+  }, 500);
 }
 
 
