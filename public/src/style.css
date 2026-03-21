@@ -357,7 +357,8 @@ body.gta {
   transform-origin: center center;
   filter: blur(4px);
   transition: 0.35s ease;
-}
-#page {
-  will-change: transform;
+
+  /* 🔥 this stabilizes rendering */
+  position: fixed;
+  width: 100%;
 }
