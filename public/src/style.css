@@ -79,17 +79,18 @@ padding-top: 12px;
   border-bottom: 1px solid #000;
 }
 
-/* ================= FLASH ================= */
+/* ================= FLASH (CLEAN) ================= */
 #flash {
   position: fixed;
   inset: 0;
-  background: #f3eef2;
+  background: #f3eef2; /* match your bg */
   opacity: 0;
   pointer-events: none;
   z-index: 999999;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
+/* when active */
 #flash.active {
   opacity: 1;
 }
