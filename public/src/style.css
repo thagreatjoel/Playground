@@ -365,23 +365,23 @@ body.gta {
 }
 
 /* CARD HUD POSITIONING */
+/* 🔥 CENTER HUD ON MOBILE */
 .hud-card {
   position: fixed;
   bottom: 12px;
-  left: 50%;
 
-  width: calc(100% - 20px);
-  max-width: 700px;
+  left: 50%;
+  transform: translateX(-50%); /* center */
+
+  width: calc(100% - 20px);   /* small margin */
+  max-width: 500px;           /* nice width on mobile */
 
   display: flex;
-  align-items: center;
   justify-content: space-between;
-
-  padding: 10px 14px;
+  align-items: center;
 
   z-index: 9999;
 }
-
 /* LEFT */
 .hud-left {
   display: flex;
