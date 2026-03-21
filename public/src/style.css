@@ -86,35 +86,26 @@ padding-top: 12px;
 
 
 /* ================= FLASH================= */
-/* FLASH EFFECT */
 #flash {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: white;
   opacity: 0;
+  z-index: 999999;
   pointer-events: none;
-  z-index: 99999;
 }
 
-#flash.active {
-  animation: flashIn 0.3s ease forwards;
+/* fade IN */
+#flash.fade-in {
+  opacity: 1;
+  transition: opacity 0.25s ease;
 }
 
-@keyframes flashIn {
-  0%   { opacity: 0; }
-  100% { opacity: 1; } /* stays white */
+/* fade OUT */
+#flash.fade-out {
+  opacity: 0;
+  transition: opacity 0.35s ease;
 }
-
-/* GTA ZOOM EFFECT */
-body.gta {
-  transform: scale(1.08);
-  filter: blur(4px);
-  transition: 0.35s ease;
-}
-
 
 
 /* ================= TIME LINE================= */
