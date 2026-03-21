@@ -5,23 +5,27 @@ function goWithFlash(url) {
   if (navigating) return;
   navigating = true;
 
+  function goWithFlash(url) {
+  if (navigating) return;
+  navigating = true;
+
   const flash = document.getElementById("flash");
 
-  // Step 1: blur background
   document.body.classList.add("gta");
 
-  // Step 2: trigger white flash
-  setTimeout(() => {
-    if (flash) flash.classList.add("active");
-  }, 120);
+  if (flash) {
+    flash.classList.add("active");
 
-  // Step 3: navigate
-  setTimeout(() => {
-    window.location.href = url;
-  }, 500);
-}
-
-
+    // FORCE render before navigation
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.location.href = url;
+        }, 150); // small delay so flash is visible
+      });
+    });
+  }
+  }
 // 🔄 RESET + FADE OUT ON LOAD
 function resetFlash() {
   const flash = document.getElementById("flash");
