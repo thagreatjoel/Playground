@@ -54,7 +54,7 @@ window.addEventListener("DOMContentLoaded", resetFlash);
 // 🔁 Handle back/forward cache (VERY IMPORTANT)
 window.addEventListener("pageshow", resetFlash);
 
-Blur -> flash in -> navigate -> flash out ->blur out
+
 
 
 
