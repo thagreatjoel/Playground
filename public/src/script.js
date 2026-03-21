@@ -29,17 +29,15 @@ function goWithFlash(url) {
 
 // 🔄 fade OUT on new page
 function resetFlash() {
+function resetFlash() {
   const flash = document.getElementById("flash");
   if (!flash) return;
 
-  // start white
   flash.style.opacity = "1";
 
-  // next frame → fade out
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      flash.style.opacity = "0";
-    });
+    flash.style.transition = "opacity 0.3s ease";
+    flash.style.opacity = "0";
   });
 
   setTimeout(() => {
@@ -50,6 +48,11 @@ function resetFlash() {
 window.addEventListener("DOMContentLoaded", resetFlash);
 window.addEventListener("pageshow", resetFlash);
 
+
+
+
+
+  
 
 function getUser() {
   const match = document.cookie.match(/user=([^;]+)/);
