@@ -165,10 +165,10 @@ details.green[open] {
 /* GTA ZOOM EFFECT */
 body.gta {
   transform: scale(1.08);
+  transform-origin: center center; /* 🔥 important */
   filter: blur(4px);
   transition: 0.35s ease;
 }
-
 
 
 
