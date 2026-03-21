@@ -371,16 +371,17 @@ body.gta {
   bottom: 12px;
 
   left: 50%;
-  transform: translateX(-50%); /* center */
+  transform: translateX(-50%);
 
-  width: calc(100% - 20px);   /* small margin */
-  max-width: 500px;           /* nice width on mobile */
+  width: calc(100% - 20px);
+  max-width: 500px;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   z-index: 9999;
-}
-/* LEFT */
 
+  /* 🔥 KEY FIX */
+  will-change: transform;
+}
