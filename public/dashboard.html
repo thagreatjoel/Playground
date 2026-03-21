@@ -89,12 +89,37 @@
 
   <!-- NAV -->
   <div class="hud-right">
-    <button class="nav-btn active" onclick="goWithFlash('/dashboard')">🏠</button>
-    <button class="nav-btn" onclick="goWithFlash('/submit')">📤</button>
-    <button class="nav-btn" onclick="goWithFlash('/guide')">📖</button>
-    <button class="nav-btn" onclick="goWithFlash('/shop')">🛒</button>
-  </div>
 
+    <button class="nav-btn active" onclick="goWithFlash('/dashboard')">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 10L12 3L21 10V21H3Z"/>
+      </svg>
+    </button>
+
+    <button class="nav-btn" onclick="goWithFlash('/submit')">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 16V4"/>
+        <path d="M8 8L12 4L16 8"/>
+        <path d="M4 20H20"/>
+      </svg>
+    </button>
+
+    <button class="nav-btn" onclick="goWithFlash('/guide')">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 5H14A2 2 0 0 1 16 7V19H6A2 2 0 0 1 4 17Z"/>
+        <path d="M16 5H20V19H16"/>
+      </svg>
+    </button>
+
+    <button class="nav-btn" onclick="goWithFlash('/shop')">
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="20" r="1"/>
+        <circle cx="17" cy="20" r="1"/>
+        <path d="M2 2H5L7 14H19L21 6H6"/>
+      </svg>
+    </button>
+
+  </div>
 </div>
 
 
