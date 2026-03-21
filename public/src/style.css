@@ -378,14 +378,9 @@ body.gta {
 
 
 #page.gta {
-  transform: scale(1.08);
-  transform-origin: center center;
+  transform: scale(1.05);
   filter: blur(4px);
-  transition: 0.35s ease;
-
-  /* 🔥 this stabilizes rendering */
-  position: fixed;
-  width: 100%;
+  transition: 0.3s ease;
 }
 
 /* CARD HUD POSITIONING */
