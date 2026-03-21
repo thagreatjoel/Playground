@@ -82,18 +82,28 @@ padding-top: 12px;
 /* ================= FLASH (CLEAN) ================= */
 #flash {
   position: fixed;
-  inset: 0;
-  background: #f3eef2; /* match your bg */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
   opacity: 0;
   pointer-events: none;
-  z-index: 999999;
-  transition: opacity 0.25s ease;
+  z-index: 9999;
 }
 
-/* when active */
+/* When flash triggers */
 #flash.active {
   opacity: 1;
 }
+
+/* Blur effect (GTA style) */
+body.gta {
+  filter: blur(8px);
+  transition: filter 0.3s ease;
+}
+
+
 
 /* ================= PAGE ANIMATION ================= */
 #page.gta {
