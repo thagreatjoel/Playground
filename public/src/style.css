@@ -231,6 +231,12 @@ body.gta {
   color: #555;
 }
 
+.stats span {
+  display: inline-flex;   /* 🔥 key fix */
+  align-items: center;
+  gap: 4px;
+}
+
 /* CENTER */
 .bar-center {
   text-align: center;
@@ -296,10 +302,8 @@ body.gta {
 .stat-icon {
   width: 16px;
   height: 16px;
-  vertical-align: -3px;
-  margin-right: 2px;
+  display: inline-block;
 }
-
 /* RIGHT NAV */
 .hud-right {
   display: flex;
