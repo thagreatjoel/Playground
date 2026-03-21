@@ -64,36 +64,33 @@ window.addEventListener("pageshow", resetFlash);
 
 function getUser() {
   const match = document.cookie.match(/user=([^;]+)/);
-  if (!match) return null;
+  if (!match) {
+    console.log("❌ No cookie");
+    return null;
+  }
+
   return JSON.parse(decodeURIComponent(match[1]));
 }
 
 const user = getUser();
+console.log("USER:", user);
 
 if (user) {
-  // profile
-  document.getElementById("avatar").src = user.picture;
-  document.getElementById("name").innerText = user.name;
-  document.getElementById("email").innerText = user.email;
-  document.getElementById("slack").innerText = "Slack: " + user.slack_id;
+  // 🔥 try ALL possible keys
+  const name = user.name || user.display_name || "User";
+  const avatar = user.picture || user.avatar_url || "";
+  const email = user.email || "";
+  const slack = user.slack_id || "";
 
-  // HUD
-  document.getElementById("pfpHud").src = user.picture;
-  document.getElementById("nameHud").innerText = user.name;
+  // set UI
+  document.getElementById("name").innerText = name;
+  document.getElementById("email").innerText = email;
+  document.getElementById("slack").innerText = "Slack: " + slack;
 
-  // currency (default safe)
-  const silicon = user.silicon || 0;
-  const conductor = user.conductor || 0;
-  const diode = user.diode || 0;
+  if (avatar) {
+    document.getElementById("avatar").src = avatar;
+    document.getElementById("pfpHud").src = avatar;
+  }
 
-  // main card
-  document.getElementById("silicon").innerText = silicon;
-  document.getElementById("conductor").innerText = conductor;
-  document.getElementById("diode").innerText = diode;
-
-  // HUD
-  document.getElementById("siliconHud").innerText = silicon;
-  document.getElementById("conductorHud").innerText = conductor;
-  document.getElementById("diodeHud").innerText = diode;
+  document.getElementById("nameHud").innerText = name;
 }
-
