@@ -44,7 +44,6 @@ window.addEventListener("DOMContentLoaded", resetFlash);
 
 
 
-
   
 
 function getUser() {
