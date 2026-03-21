@@ -1,60 +1,47 @@
 let navigating = false;
 
+// GTA navigation
 function goWithFlash(url) {
-  try {
-    if (navigating) return;
-    navigating = true;
+  if (navigating) return;
 
-    const flash = document.getElementById("flash");
-    if (!flash) {
-      window.location.href = url;
-      return;
-    }
+  navigating = true;
 
-    // reset state
-    flash.style.transition = "none";
-    flash.style.opacity = "0";
-
-    // force apply
-    flash.offsetHeight;
-
-    // next frame → fade in
-    requestAnimationFrame(() => {
-      flash.style.transition = "opacity 0.25s ease";
-      flash.style.opacity = "1";
-
-      setTimeout(() => {
-        window.location.href = url;
-      }, 250);
-    });
-
-  } catch (e) {
-    console.error(e);
-    window.location.href = url; // fallback
-  }
-}
-
-
-// fade out on load
-function resetFlash() {
   const flash = document.getElementById("flash");
-  if (!flash) return;
 
-  flash.style.transition = "none";
-  flash.style.opacity = "1";
-
-  requestAnimationFrame(() => {
-    flash.style.transition = "opacity 0.3s ease";
-    flash.style.opacity = "0";
-  });
+  document.body.classList.add("gta");
+  flash.classList.add("active");
 
   setTimeout(() => {
-    navigating = false;
-  }, 400);
+    window.location.href = url;
+  }, 350);
 }
 
-window.addEventListener("DOMContentLoaded", resetFlash);
+// 🔥 HARD RESET (fix white screen on back)
+function resetFlash() {
+  const flash = document.getElementById("flash");
+
+  if (flash) {
+    flash.classList.remove("active");
+    flash.style.animation = "none"; // force reset animation
+    void flash.offsetHeight;        // reflow (important)
+    flash.style.animation = "";
+  }
+
+  document.body.classList.remove("gta");
+  navigating = false;
+}
+
+// When page is shown (back/forward cache)
 window.addEventListener("pageshow", resetFlash);
+
+// Normal load
+window.addEventListener("DOMContentLoaded", resetFlash);
+
+
+
+
+
+
 
 
 
