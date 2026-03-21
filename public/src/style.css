@@ -253,3 +253,100 @@ body.gta {
   background: #b2f167;
 }
 
+
+/* ===== NEW HUD (ONE CARD) ===== */
+.hud {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: calc(100% - 20px);
+  max-width: 700px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 14px;
+
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  border-bottom: 3px solid black;
+
+  box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
+  z-index: 9999;
+}
+
+/* LEFT PROFILE */
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.hud-left:hover {
+  transform: translateY(-2px);
+}
+
+.name {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ICONS */
+.stat-icon {
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+}
+
+/* RIGHT NAV */
+.hud-right {
+  display: flex;
+  gap: 6px;
+}
+
+/* NAV BUTTON */
+.nav-btn {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  transition: 0.2s;
+
+  border-bottom: 3px solid transparent;
+}
+
+.nav-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: black;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  background: #f2f2f2;
+}
+
+.nav-btn:active {
+  transform: translateY(0);
+  border-bottom: 1px solid black;
+}
+
+.nav-btn.active {
+  background: #b2f167;
+  border-bottom: 3px solid black;
+}
