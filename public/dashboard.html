@@ -125,42 +125,7 @@
 </div>
 
 <!-- 🔥 USER SCRIPT -->
-<script>
-function getUser() {
-  const match = document.cookie.match(/user=([^;]+)/);
-  if (!match) return null;
-  return JSON.parse(decodeURIComponent(match[1]));
-}
 
-const user = getUser();
-
-if (user) {
-  // profile
-  document.getElementById("avatar").src = user.picture;
-  document.getElementById("name").innerText = user.name;
-  document.getElementById("email").innerText = user.email;
-  document.getElementById("slack").innerText = "Slack: " + user.slack_id;
-
-  // HUD
-  document.getElementById("pfpHud").src = user.picture;
-  document.getElementById("nameHud").innerText = user.name;
-
-  // currency (default safe)
-  const silicon = user.silicon || 0;
-  const conductor = user.conductor || 0;
-  const diode = user.diode || 0;
-
-  // main card
-  document.getElementById("silicon").innerText = silicon;
-  document.getElementById("conductor").innerText = conductor;
-  document.getElementById("diode").innerText = diode;
-
-  // HUD
-  document.getElementById("siliconHud").innerText = silicon;
-  document.getElementById("conductorHud").innerText = conductor;
-  document.getElementById("diodeHud").innerText = diode;
-}
-</script>
 
 </body>
 </html>
