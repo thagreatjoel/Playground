@@ -96,8 +96,11 @@ padding-top: 12px;
   background: white;
   opacity: 0;
   pointer-events: none;
-  z-index: 99999;
+  z-index: 2147483647;
+  display: block !important;
+
 }
+
 #flash.active {
   animation: gtaFlash 0.4s ease forwards;
 }
