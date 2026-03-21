@@ -1,4 +1,4 @@
-let navigating = false;
+
 let navigating = false;
 
 function goWithFlash(url) {
@@ -7,43 +7,43 @@ function goWithFlash(url) {
 
   const flash = document.getElementById("flash");
 
-  // start fade IN
-  flash.classList.add("fade-in");
+  // Step 1: ensure starting state
+  flash.style.opacity = "0";
 
-  // 🔥 force paint so animation actually starts
-  flash.getBoundingClientRect();
+  // Step 2: next frame → trigger fade IN
+  requestAnimationFrame(() => {
+    flash.style.opacity = "1";
 
-  // wait until visible, then navigate
-  setTimeout(() => {
-    window.location.href = url;
-  }, 250);
+    // Step 3: wait for visible, then navigate
+    setTimeout(() => {
+      window.location.href = url;
+    }, 300);
+  });
 }
 
 
-// on new page → fade OUT
+// 🔄 fade OUT on new page
 function resetFlash() {
   const flash = document.getElementById("flash");
   if (!flash) return;
 
-  // start fully white
-  flash.classList.add("fade-in");
+  // start white
+  flash.style.opacity = "1";
 
-  // small delay then fade OUT
-  setTimeout(() => {
-    flash.classList.remove("fade-in");
-    flash.classList.add("fade-out");
-  }, 50);
+  // next frame → fade out
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      flash.style.opacity = "0";
+    });
+  });
 
-  // cleanup
   setTimeout(() => {
-    flash.classList.remove("fade-out");
     navigating = false;
   }, 400);
 }
 
 window.addEventListener("DOMContentLoaded", resetFlash);
 window.addEventListener("pageshow", resetFlash);
-
 
 
 function getUser() {
