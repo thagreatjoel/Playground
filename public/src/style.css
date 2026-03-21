@@ -7,6 +7,10 @@ html {
 background: #b2f167;
 }
 
+details.green[open] {
+  background: #e1fcc1;
+}
+
 .emoji {
 width: 1em;
 height: 1em;
