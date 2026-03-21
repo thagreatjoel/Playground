@@ -207,11 +207,12 @@ body.gta {
 }
 
 .pfp {
-  width: 42px;        /* was 32px */
+  width: 42px;
   height: 42px;
   border-radius: 50%;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  
+  border: 2px solid black;
+  object-fit: cover;
 }
 
   border: 2px solid black;   /* clean border */
@@ -257,29 +258,6 @@ body.gta {
 
 
 /* ===== NEW HUD (ONE CARD) ===== */
-.hud {
-  position: fixed;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-
-  width: calc(100% - 20px);
-  max-width: 700px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 10px 14px;
-
-  background: white;
-  border-radius: 16px;
-  border: 1px solid #ddd;
-  border-bottom: 3px solid black;
-
-  box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
-  z-index: 9999;
-}
 
 
 
@@ -301,32 +279,12 @@ body.gta {
 }
 
 
-.hud-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
-/* right side (name + stats stacked) */
-.hud-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
 
-/* name styling */
-#nameHud {
-  font-weight: 600;
-  font-size: 14px;
-}
 
-/* stats inline */
-.stats {
-  display: flex;
-  gap: 8px;
-  font-size: 11px;
-  color: #555;
-}
+
+
+
 
 /* keep icon + number aligned */
 .stats span {
@@ -383,21 +341,60 @@ body.gta {
   transition: 0.3s ease;
 }
 
-/* CARD HUD POSITIONING */
-/* 🔥 CENTER HUD ON MOBILE */
-.hud-card {
-  position: fixed;
-  bottom: 12px;
-
-  left: 10px;
-  right: 10px;   /* stretch instead of center */
-
-  max-width: 500px;
-  margin: 0 auto;
-
+/* BASE (mobile first) */
+.hud-left {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
+}
 
-  z-index: 9999;
+/* stack name + stats vertically (mobile) */
+.hud-info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* make stats nice */
+.stats {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+}
+
+/* 🔥 MOBILE layout (default) */
+#nameHud {
+  display: block;        /* name BELOW */
+  font-size: 12px;
+}
+
+/* ========================= */
+/* 💻 DESKTOP MODE */
+/* ========================= */
+@media (min-width: 768px) {
+
+  /* attach left side tighter */
+  .hud-card {
+    left: 20px;
+    right: 20px;
+    max-width: 900px;
+  }
+
+  /* 🔥 inline layout */
+  .hud-info {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* name inline with icon */
+  #nameHud {
+    display: inline;   /* name NEXT TO pfp */
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* stats inline after name */
+  .stats {
+    margin-left: 6px;
+  }
 }
