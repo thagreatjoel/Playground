@@ -26,23 +26,22 @@ function goWithFlash(url) {
 // 🔄 RESET + FADE OUT ON LOAD
 function resetFlash() {
   const flash = document.getElementById("flash");
-  const page = document.getElementById("page"); // 🔥 new
+  const page = document.getElementById("page");
 
   if (!flash) return;
 
-  // Keep white visible initially
   flash.style.opacity = "1";
 
-  // Fade out
   setTimeout(() => {
     flash.style.transition = "opacity 0.4s ease";
     flash.style.opacity = "0";
 
-    // remove zoom effect
     if (page) page.classList.remove("gta");
+
+    // 🔥 restore scroll
+    document.body.style.overflow = "";
   }, 100);
 
-  // Cleanup
   setTimeout(() => {
     flash.classList.remove("active");
     flash.style.transition = "";
