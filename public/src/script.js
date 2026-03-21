@@ -6,42 +6,48 @@ function goWithFlash(url) {
 
   const flash = document.getElementById("flash");
 
-  // blur
+  // 0ms → start blur (fade in)
   document.body.classList.add("gta");
 
-  // instant flash ON
-  flash.classList.add("active");
+  // FORCE paint so blur actually starts animating
+  document.body.offsetHeight;
 
-  // 🔥 FORCE PAINT (this is the key)
-  flash.offsetHeight;
+  // 100ms → start flash fade in
+  setTimeout(() => {
+    flash.classList.add("active");
+  }, 100);
 
-  // delay so user sees it
+  // 350ms → WAIT until flash is VISIBLE, then navigate
   setTimeout(() => {
     window.location.href = url;
-  }, 300);
+  }, 350);
 }
+
 
 
 function resetFlash() {
   const flash = document.getElementById("flash");
   if (!flash) return;
 
-  // start white
+  // start fully white
   flash.style.opacity = "1";
 
+  // fade OUT flash first
   setTimeout(() => {
-    // fade OUT only
-    flash.style.transition = "opacity 0.4s ease";
+    flash.style.transition = "opacity 0.3s ease";
     flash.style.opacity = "0";
-
-    document.body.classList.remove("gta");
   }, 50);
+
+  // then remove blur AFTER
+  setTimeout(() => {
+    document.body.classList.remove("gta");
+  }, 300);
 
   setTimeout(() => {
     flash.classList.remove("active");
     flash.style.transition = "";
     navigating = false;
-  }, 500);
+  }, 600);
 }
 
 window.addEventListener("DOMContentLoaded", resetFlash);
