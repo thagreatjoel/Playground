@@ -87,31 +87,17 @@ padding-top: 12px;
   opacity: 0;
   z-index: 999999;
   pointer-events: none;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.2s ease;
 }
 
 #flash.active {
   opacity: 1;
 }
 
-/* BLUR */
-body.gta > *:not(#flash) {
-  filter: blur(0px);
-  transform: scale(1);
-  transition: all 0.4s ease;
-}
-
-body.gta.active > *:not(#flash) {
+/* blur whole page */
+body.gta {
   filter: blur(8px);
-  transform: scale(1.05);
-}
-
-
-
-body.gta #page {
-  filter: blur(8px);
-  transform: scale(1.05);
-  transition: 0.3s;
+  transition: filter 0.3s ease;
 }
 
 
