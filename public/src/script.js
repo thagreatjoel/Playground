@@ -1,31 +1,65 @@
+
 let navigating = false;
 
-// 🚀 NAVIGATION WITH GTA EFFECT
 function goWithFlash(url) {
-  if (navigating) return;
-  navigating = true;
-
-  function goWithFlash(url) {
   if (navigating) return;
   navigating = true;
 
   const flash = document.getElementById("flash");
 
+  // 0ms → blur
   document.body.classList.add("gta");
 
-  if (flash) {
-    flash.classList.add("active");
+  // 100ms → flash IN
+  setTimeout(() => {
+    if (flash) {
+      flash.classList.add("active");
+    }
+  }, 100);
 
-    // FORCE render before navigation
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          window.location.href = url;
-        }, 150); // small delay so flash is visible
-      });
-    });
-  }
-  }
+  // 400ms → navigate
+  setTimeout(() => {
+    window.location.href = url;
+  }, 400);
+}
+
+
+// 🔄 ON NEW PAGE LOAD
+function resetFlash() {
+  const flash = document.getElementById("flash");
+  if (!flash) return;
+
+  // keep white visible initially
+  flash.style.opacity = "1";
+
+  // 450ms → flash OUT
+  setTimeout(() => {
+    flash.style.transition = "opacity 0.2s ease";
+    flash.style.opacity = "0";
+  }, 50);
+
+  // 500ms → remove blur
+  setTimeout(() => {
+    document.body.classList.remove("gta");
+  }, 100);
+
+  // cleanup
+  setTimeout(() => {
+    flash.classList.remove("active");
+    flash.style.transition = "";
+    navigating = false;
+  }, 300);
+}
+
+
+// load handlers
+window.addEventListener("DOMContentLoaded", resetFlash);
+window.addEventListener("pageshow", resetFlash);
+
+
+
+
+
 // 🔄 RESET + FADE OUT ON LOAD
 function resetFlash() {
   const flash = document.getElementById("flash");
