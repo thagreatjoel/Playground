@@ -1,5 +1,4 @@
-
-/* BASE */
+/* ================= BASE ================= */
 html {
   font-size: 14px;
 }
@@ -16,13 +15,12 @@ body {
   animation: moveGrid 6s linear infinite;
 }
 
-/* GRID ANIMATION */
 @keyframes moveGrid {
   from { background-position: 0 0, 0 0; }
   to { background-position: 40px -40px, 40px -40px; }
 }
 
-/* FLAG */
+/* ================= FLAG ================= */
 .flag {
   position: fixed;
   top: 0;
@@ -31,12 +29,7 @@ body {
   z-index: 9999;
 }
 
-/* COLORS */
-.green {
-  background: #b2f167;
-}
-
-/* CARD */
+/* ================= CARD ================= */
 .card {
   border: 1px solid #cfcfcf;
   border-bottom: 3px solid #000;
@@ -50,12 +43,7 @@ body {
   transform: translateY(-2px);
 }
 
-.card > div + div {
-  border-top: 1px dashed #ddd;
-  padding-top: 12px;
-}
-
-/* BUTTON */
+/* ================= BUTTON ================= */
 .btn {
   background: #b2f167;
   border: 1px solid #000;
@@ -71,226 +59,104 @@ body {
   transform: translateY(-2px);
 }
 
-.btn:active {
-  transform: translateY(0px);
-  border-bottom: 1px solid #000;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* TIMELINE */
-.overlay {
-  position: relative;
-}
-
-.overlay::before {
-  content: "";
-  position: absolute;
-  left: 26px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: rgba(0,0,0,0.2);
-}
-
-.connector {
-  position: absolute;
-  left: 27px;
-  top: 30px;
-  transform: translateX(-55%);
-  width: 16px;
-  height: 16px;
-  background: #b2f167;
-  border-radius: 50%;
-  z-index: 2;
-  box-shadow: 0 0 0 4px #f3eef2;
-}
-
-.node {
-  width: 40px;
-  height: 40px;
-  background: #b2f167;
-  border: 2px solid black;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-/* EMOJI */
-.emoji {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.15em;
-  display: inline-block;
-}
-
-/* DETAILS */
-details.green {
-  color: #000;
-}
-
-details.green[open] {
-  background: #e1fcc1;
-}
-
-/* FLASH EFFECT */
+/* ================= FLASH ================= */
 #flash {
   position: fixed;
-  inset: 0;              /* 🔥 better than width/height */
-  width: 100vw;         /* full viewport width */
-  height: 100vh;        /* full viewport height */
-
+  inset: 0;
   background: #f3eef2;
   opacity: 0;
-
   pointer-events: none;
   z-index: 999999;
-
   transition: opacity 0.3s ease;
 }
 
 #flash.active {
-  animation: flashIn 0.3s ease forwards;
+  opacity: 1;
 }
 
-@keyframes flashIn {
-  0%   { opacity: 0; }
-  100% { opacity: 1; } /* stays white */
+/* ================= PAGE EFFECT ================= */
+#page.gta {
+  transform: scale(1.05);
+  filter: blur(4px);
+  transition: 0.3s ease;
 }
 
-/* GTA ZOOM EFFECT */
-body.gta {
-  filter: blur(6px);
-  opacity: 0.7;
-  transition: 0.25s ease;
+/* ================= PROFILE ================= */
+.pfp {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid black;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-
-
-
-
-/* BOTTOM BAR */
-.bottom-bar {
+/* ================= HUD (MOBILE DEFAULT) ================= */
+.hud-card {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  bottom: 12px;
+  left: 10px;
+  right: 10px;
+
+  max-width: 500px;
+  margin: 0 auto;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   padding: 10px 14px;
+
   background: white;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  border-bottom: 3px solid black;
 
-  border-top: 1px solid #ddd;
-  box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
-
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-
+  box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
   z-index: 9999;
 }
 
-/* LEFT */
-.bar-left {
+/* LEFT SIDE */
+.hud-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.pfp {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  border: 2px solid black;
-  object-fit: cover;
-}
-
-  border: 2px solid black;   /* clean border */
-  object-fit: cover;
-}
-
-.user-info {
-  font-size: 11px;
-}
-
-.username {
-  font-weight: 600;
-}
-
-
-/* CENTER */
-.bar-center {
-  text-align: center;
-}
-
-/* RIGHT */
-.bar-right {
+.hud-info {
   display: flex;
-  gap: 6px;
+  flex-direction: column;
 }
 
-/* ICON BUTTON */
-.icon-btn {
-  font-size: 18px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  transition: 0.2s;
-}
-
-.icon-btn:hover {
-  background: #f2f2f2;
-  transform: translateY(-2px);
-}
-
-.icon-btn.active {
-  background: #b2f167;
-}
-
-
-/* ===== NEW HUD (ONE CARD) ===== */
-
-
-
-.name {
+#nameHud {
   font-size: 12px;
   font-weight: 600;
 }
 
-/* ICONS */
+/* STATS */
+.stats {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+  color: #555;
+}
+
+.stats span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* ICON */
 .stat-icon {
   width: 16px;
   height: 16px;
-  display: inline-block;
 }
+
 /* RIGHT NAV */
 .hud-right {
   display: flex;
   gap: 6px;
-}
-
-
-
-
-
-
-
-
-
-/* keep icon + number aligned */
-.stats span {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
 }
 
 /* NAV BUTTON */
@@ -304,8 +170,6 @@ body.gta {
 
   border-radius: 10px;
   transition: 0.2s;
-
-  border-bottom: 3px solid transparent;
 }
 
 .nav-btn svg {
@@ -314,9 +178,6 @@ body.gta {
   stroke: black;
   fill: none;
   stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  pointer-events: none;
 }
 
 .nav-btn:hover {
@@ -324,77 +185,47 @@ body.gta {
   background: #f2f2f2;
 }
 
-.nav-btn:active {
-  transform: translateY(0);
-  border-bottom: 1px solid black;
-}
-
 .nav-btn.active {
   background: #b2f167;
-  border-bottom: 3px solid black;
 }
 
-
-#page.gta {
-  transform: scale(1.05);
-  filter: blur(4px);
-  transition: 0.3s ease;
-}
-
-/* BASE (mobile first) */
-.hud-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* stack name + stats vertically (mobile) */
-.hud-info {
-  display: flex;
-  flex-direction: column;
-}
-
-/* make stats nice */
-.stats {
-  display: flex;
-  gap: 6px;
-  font-size: 11px;
-}
-
-/* 🔥 MOBILE layout (default) */
-#nameHud {
-  display: block;        /* name BELOW */
-  font-size: 12px;
-}
-
-/* ========================= */
-/* 💻 DESKTOP MODE */
-/* ========================= */
+/* ================= DESKTOP SIDEBAR ================= */
 @media (min-width: 768px) {
 
-  /* attach left side tighter */
   .hud-card {
-    left: 20px;
-    right: 20px;
-    max-width: 900px;
-  }
+    top: 100px;
+    bottom: auto;
 
-  /* 🔥 inline layout */
-  .hud-info {
-    flex-direction: row;
+    left: 20px;
+    right: auto;
+
+    width: 70px;
+
+    flex-direction: column;
     align-items: center;
     gap: 12px;
+
+    padding: 12px 8px;
   }
 
-  /* name inline with icon */
-  #nameHud {
-    display: inline;   /* name NEXT TO pfp */
-    font-size: 14px;
-    font-weight: 600;
+  /* hide text → only icons */
+  .hud-info {
+    display: none;
   }
 
-  /* stats inline after name */
-  .stats {
-    margin-left: 6px;
+  /* pfp center */
+  .hud-left {
+    flex-direction: column;
+  }
+
+  /* vertical nav */
+  .hud-right {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-btn {
+    width: 40px;
+    height: 40px;
   }
 }
