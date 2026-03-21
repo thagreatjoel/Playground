@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Dashboard</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,7 +34,7 @@
 
     <!-- PROFILE CARD -->
     <div class="card text-center space-y-4">
-      <img id="avatar" class="pfp mx-auto">
+      <img id="pfp" class="pfp mx-auto">
 
       <div>
         <h2 id="name" class="text-xl font-semibold">Loading...</h2>
@@ -51,7 +50,7 @@
       <div class="flex justify-center gap-6 text-sm">
 
         <div>
-          <img src="//Silicon.svg" class="stat-icon mx-auto">
+          <img src="/src/Silicon.svg" class="stat-icon mx-auto">
           <p id="silicon">0</p>
         </div>
 
@@ -71,60 +70,33 @@
   </div>
 </div>
 
-<!-- 🔥 BOTTOM CARD HUD -->
+<!-- 🔥 HUD -->
 <div class="card hud-card">
 
   <!-- PROFILE -->
-  <div>
-    <img id="pfpHud" src="https://via.placeholder.com/32" class="pfp hud-left" onclick="goWithFlash('/profile')">
+  <div class="hud-left" onclick="goWithFlash('/profile')">
+    <img id="pfpHud" class="pfp">
 
     <div>
-      <p class="name" id="nameHud">User</p>
+      <p id="nameHud">User</p>
       <div class="stats">
-        <span><img src="/assets/Silicon.svg" class="stat-icon"> <span id="siliconHud">0</span></span>
-        <span><img src="/assets/conductor.svg" class="stat-icon"> <span id="conductorHud">0</span></span>
-        <span><img src="/assets/diode.svg" class="stat-icon"> <span id="diodeHud">0</span></span>
+        <span><img src="/src/Silicon.svg" class="stat-icon"> <span id="siliconHud">0</span></span>
+        <span><img src="/src/conductor.svg" class="stat-icon"> <span id="conductorHud">0</span></span>
+        <span><img src="/src/diode.svg" class="stat-icon"> <span id="diodeHud">0</span></span>
       </div>
     </div>
   </div>
 
   <!-- NAV -->
   <div class="hud-right">
-
-    <button class="nav-btn active" onclick="goWithFlash('/dashboard')">
-      <svg viewBox="0 0 24 24">
-        <path d="M3 10L12 3L21 10V21H3Z"/>
-      </svg>
-    </button>
-
-    <button class="nav-btn" onclick="goWithFlash('/submit')">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 16V4"/>
-        <path d="M8 8L12 4L16 8"/>
-        <path d="M4 20H20"/>
-      </svg>
-    </button>
-
-    <button class="nav-btn" onclick="goWithFlash('/guide')">
-      <svg viewBox="0 0 24 24">
-        <path d="M4 5H14A2 2 0 0 1 16 7V19H6A2 2 0 0 1 4 17Z"/>
-        <path d="M16 5H20V19H16"/>
-      </svg>
-    </button>
-
-    <button class="nav-btn" onclick="goWithFlash('/shop')">
-      <svg viewBox="0 0 24 24">
-        <circle cx="9" cy="20" r="1"/>
-        <circle cx="17" cy="20" r="1"/>
-        <path d="M2 2H5L7 14H19L21 6H6"/>
-      </svg>
-    </button>
-
+    <button class="nav-btn active" onclick="goWithFlash('/dashboard')">🏠</button>
+    <button class="nav-btn" onclick="goWithFlash('/submit')">📤</button>
+    <button class="nav-btn" onclick="goWithFlash('/guide')">📖</button>
+    <button class="nav-btn" onclick="goWithFlash('/shop')">🛒</button>
   </div>
 
 </div>
 
-<!-- 🔥 USER SCRIPT -->
 
 
 </body>
