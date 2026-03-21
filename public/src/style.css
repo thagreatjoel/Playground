@@ -3,6 +3,14 @@ html {
 font-size: 14px;
 }
 
+.emoji {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.15em;
+}
+
+
 body {
 font-family: 'Space Grotesk', sans-serif;
 background-color: #f3eef2;
@@ -250,46 +258,20 @@ background: #b2f167;
 }
 
 /* ===== NEW HUD (ONE CARD) ===== */
-.hud {
-position: fixed;
-bottom: 12px;
-left: 50%;
-transform: translateX(-50%);
 
-width: calc(100% - 20px);
-max-width: 700px;
-
-display: flex;
-align-items: center;
-justify-content: space-between;
-
-padding: 10px 14px;
-
-background: white;
-border-radius: 16px;
-border: 1px solid #ddd;
-border-bottom: 3px solid black;
-
-box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
-z-index: 9999;
-}
 
 .name {
 font-size: 12px;
 font-weight: 600;
 }
 
-/* ICONS /
+
 .stat-icon {
 width: 16px;
 height: 16px;
 display: inline-block;
 }
-/ RIGHT NAV */
-.hud-right {
-display: flex;
-gap: 6px;
-}
+
 
 .hud-left {
 display: flex;
@@ -297,12 +279,7 @@ align-items: center;
 gap: 10px;
 }
 
-/* right side (name + stats stacked) */
-.hud-info {
-display: flex;
-flex-direction: column;
-justify-content: center;
-}
+
 
 /* name styling */
 #nameHud {
@@ -326,19 +303,6 @@ gap: 3px;
 }
 
 /* NAV BUTTON */
-.nav-btn {
-width: 36px;
-height: 36px;
-
-display: flex;
-align-items: center;
-justify-content: center;
-
-border-radius: 10px;
-transition: 0.2s;
-
-border-bottom: 3px solid transparent;
-}
 
 .nav-btn svg {
 width: 18px;
@@ -391,4 +355,50 @@ align-items: center;
 z-index: 9999;
 }
 
-This is the css.. I had want like this like all buttons on left
+/* ========================= */
+/* 💻 DESKTOP SIDEBAR MODE */
+/* ========================= */
+@media (min-width: 768px) {
+
+  .hud-card {
+    top: 100px;
+    bottom: auto;
+
+    left: 20px;
+    right: auto;
+
+    width: 70px;
+    height: auto;
+
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 8px;
+  }
+
+  /* hide profile text (only icon look) */
+  .hud-info {
+    display: none;
+  }
+
+  /* center pfp */
+  .hud-left {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* nav vertical */
+  .hud-right {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  /* buttons slightly bigger */
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+}
