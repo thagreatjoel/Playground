@@ -1,55 +1,60 @@
 let navigating = false;
 
+// 🚀 NAVIGATION WITH GTA EFFECT
 function goWithFlash(url) {
-  if (navigating) return;
-  navigating = true;
+if (navigating) return;
+navigating = true;
 
-  const flash = document.getElementById("flash");
+const flash = document.getElementById("flash");
 
-  // blur first
-  document.body.classList.add("gta");
+// Step 1: blur background
+document.body.classList.add("gta");
 
-  // wait 100ms → then flash
-  setTimeout(() => {
-    flash.classList.add("active");
+// Step 2: trigger white flash
+setTimeout(() => {
+if (flash) flash.classList.add("active");
+}, 120);
 
-    // FORCE paint (important)
-    flash.offsetHeight;
-
-    // then navigate
-    setTimeout(() => {
-      window.location.href = url;
-    }, 250);
-
-  }, 100);
+// Step 3: navigate
+setTimeout(() => {
+window.location.href = url;
+}, 400);
 }
 
-
-// reset on next page
+// 🔄 RESET + FADE OUT ON LOAD
 function resetFlash() {
-  const flash = document.getElementById("flash");
-  if (!flash) return;
+const flash = document.getElementById("flash");
 
-  flash.style.opacity = "1";
+if (!flash) return;
 
-  setTimeout(() => {
-    flash.style.transition = "opacity 0.3s ease";
-    flash.style.opacity = "0";
+// Keep white visible initially
+flash.style.opacity = "1";
 
-    document.body.classList.remove("gta");
-  }, 50);
+// Fade out after slight delay
+setTimeout(() => {
+flash.style.transition = "opacity 0.4s ease";
+flash.style.opacity = "0";
 
-  setTimeout(() => {
-    flash.classList.remove("active");
-    flash.style.transition = "";
-    navigating = false;
-  }, 400);
+// remove blur  
+document.body.classList.remove("gta");
+
+}, 100);
+
+// Cleanup after animation
+setTimeout(() => {
+flash.classList.remove("active");
+flash.style.transition = "";
+navigating = false;
+}, 600);
 }
 
+// 🧠 Handle normal load
 window.addEventListener("DOMContentLoaded", resetFlash);
+
+// 🔁 Handle back/forward cache (VERY IMPORTANT)
 window.addEventListener("pageshow", resetFlash);
 
-
+Blur -> flash in -> navigate -> flash out ->blur out
 
 
 
