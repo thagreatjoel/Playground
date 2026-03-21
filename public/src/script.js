@@ -1,61 +1,48 @@
 let navigating = false;
+let navigating = false;
 
-// 🚀 NAVIGATION WITH GTA EFFECT
 function goWithFlash(url) {
   if (navigating) return;
   navigating = true;
 
   const flash = document.getElementById("flash");
 
-  // Step 1: blur background
-  document.body.classList.add("gta");
+  // start fade IN
+  flash.classList.add("fade-in");
 
-  // Step 2: trigger white flash
-  setTimeout(() => {
-    if (flash) flash.classList.add("active");
-  }, 120);
+  // 🔥 force paint so animation actually starts
+  flash.getBoundingClientRect();
 
-  // Step 3: navigate
+  // wait until visible, then navigate
   setTimeout(() => {
     window.location.href = url;
+  }, 250);
+}
+
+
+// on new page → fade OUT
+function resetFlash() {
+  const flash = document.getElementById("flash");
+  if (!flash) return;
+
+  // start fully white
+  flash.classList.add("fade-in");
+
+  // small delay then fade OUT
+  setTimeout(() => {
+    flash.classList.remove("fade-in");
+    flash.classList.add("fade-out");
+  }, 50);
+
+  // cleanup
+  setTimeout(() => {
+    flash.classList.remove("fade-out");
+    navigating = false;
   }, 400);
 }
 
-
-// 🔄 RESET + FADE OUT ON LOAD
-function resetFlash() {
-  const flash = document.getElementById("flash");
-
-  if (!flash) return;
-
-  // Keep white visible initially
-  flash.style.opacity = "1";
-
-  // Fade out after slight delay
-  setTimeout(() => {
-    flash.style.transition = "opacity 0.4s ease";
-    flash.style.opacity = "0";
-
-    // remove blur
-    document.body.classList.remove("gta");
-  }, 100);
-
-  // Cleanup after animation
-  setTimeout(() => {
-    flash.classList.remove("active");
-    flash.style.transition = "";
-    navigating = false;
-  }, 600);
-}
-
-
-// 🧠 Handle normal load
 window.addEventListener("DOMContentLoaded", resetFlash);
-
-// 🔁 Handle back/forward cache (VERY IMPORTANT)
 window.addEventListener("pageshow", resetFlash);
-
-
 
 
 
