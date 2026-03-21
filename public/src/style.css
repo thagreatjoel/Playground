@@ -108,7 +108,11 @@ body.gta.active > *:not(#flash) {
 
 
 
-
+body.gta #page {
+  filter: blur(8px);
+  transform: scale(1.05);
+  transition: 0.3s;
+}
 
 
 
