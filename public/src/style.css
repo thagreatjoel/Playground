@@ -226,17 +226,6 @@ body.gta {
   font-weight: 600;
 }
 
-.stats {
-  display: flex;
-  gap: 6px;
-  color: #555;
-}
-
-.stats span {
-  display: inline-flex;   /* 🔥 key fix */
-  align-items: center;
-  gap: 4px;
-}
 
 /* CENTER */
 .bar-center {
@@ -309,6 +298,41 @@ body.gta {
 .hud-right {
   display: flex;
   gap: 6px;
+}
+
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* right side (name + stats stacked) */
+.hud-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* name styling */
+#nameHud {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* stats inline */
+.stats {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: #555;
+}
+
+/* keep icon + number aligned */
+.stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 /* NAV BUTTON */
