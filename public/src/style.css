@@ -350,3 +350,11 @@ body.gta {
   background: #b2f167;
   border-bottom: 3px solid black;
 }
+
+
+#page.gta {
+  transform: scale(1.08);
+  transform-origin: center center;
+  filter: blur(4px);
+  transition: 0.35s ease;
+}
