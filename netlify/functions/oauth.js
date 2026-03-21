@@ -88,9 +88,9 @@ exports.handler = async (event) => {
       return {
         statusCode: 302,
         headers: {
-          "Set-Cookie": `user=${encodeURIComponent(
-            JSON.stringify(user)
-          )}; Path=/; HttpOnly`,
+
+          "Set-Cookie": `user=${encodeURIComponent(JSON.stringify(user))}; Path=/; SameSite=Lax`,   
+        
           Location: "/dashboard",
         },
       };
