@@ -3,6 +3,13 @@ html {
   font-size: 14px;
 }
 
+.emoji {
+width: 1em;
+height: 1em;
+vertical-align: -0.15em;
+display: inline-block;
+}
+
 body {
   font-family: 'Space Grotesk', sans-serif;
   background-color: #f3eef2;
