@@ -98,3 +98,15 @@ if (user) {
   document.getElementById("email").innerText = email;
   document.getElementById("slack").innerText = "Slack: " + slack;
 }
+
+
+
+
+
+function logout() {
+  // 🔥 delete cookie
+  document.cookie = "user=; Path=/; Max-Age=0";
+
+  // redirect to home
+  window.location.href = "/";
+}
