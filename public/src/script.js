@@ -1,38 +1,46 @@
 let navigating = false;
 
 function goWithFlash(url) {
-  if (navigating) return;
-  navigating = true;
+  try {
+    if (navigating) return;
+    navigating = true;
 
-  const flash = document.getElementById("flash");
-
-  // start from 0
-  flash.style.opacity = "0";
-
-  // force style apply
-  flash.getBoundingClientRect();
-
-  // next frame → start fade IN
-  requestAnimationFrame(() => {
-    flash.style.transition = "opacity 0.25s ease";
-    flash.style.opacity = "1";
-
-    // wait until it's ACTUALLY visible
-    setTimeout(() => {
+    const flash = document.getElementById("flash");
+    if (!flash) {
       window.location.href = url;
-    }, 300);
-  });
+      return;
+    }
+
+    // reset state
+    flash.style.transition = "none";
+    flash.style.opacity = "0";
+
+    // force apply
+    flash.offsetHeight;
+
+    // next frame → fade in
+    requestAnimationFrame(() => {
+      flash.style.transition = "opacity 0.25s ease";
+      flash.style.opacity = "1";
+
+      setTimeout(() => {
+        window.location.href = url;
+      }, 250);
+    });
+
+  } catch (e) {
+    console.error(e);
+    window.location.href = url; // fallback
+  }
 }
 
 
-
-
-// 🔄 fade OUT on new page
-function resetFlash() {
+// fade out on load
 function resetFlash() {
   const flash = document.getElementById("flash");
   if (!flash) return;
 
+  flash.style.transition = "none";
   flash.style.opacity = "1";
 
   requestAnimationFrame(() => {
@@ -47,8 +55,6 @@ function resetFlash() {
 
 window.addEventListener("DOMContentLoaded", resetFlash);
 window.addEventListener("pageshow", resetFlash);
-
-
 
 
 
