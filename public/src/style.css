@@ -3,6 +3,10 @@ html {
   font-size: 14px;
 }
 
+.green {
+background: #b2f167;
+}
+
 .emoji {
 width: 1em;
 height: 1em;
@@ -50,6 +54,10 @@ body {
   transform: translateY(-2px);
 }
 
+.card > div + div {
+border-top: 1px dashed #ddd;
+padding-top: 12px;
+}
 /* ================= BUTTON ================= */
 .btn {
   background: #b2f167;
