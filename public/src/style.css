@@ -143,14 +143,17 @@ details.green[open] {
 /* FLASH EFFECT */
 #flash {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;              /* 🔥 better than width/height */
+  width: 100vw;         /* full viewport width */
+  height: 100vh;        /* full viewport height */
+
   background: white;
   opacity: 0;
+
   pointer-events: none;
-  z-index: 99999;
+  z-index: 999999;
+
+  transition: opacity 0.3s ease;
 }
 
 #flash.active {
