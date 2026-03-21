@@ -1,4 +1,3 @@
-
 let navigating = false;
 
 function goWithFlash(url) {
@@ -7,19 +6,25 @@ function goWithFlash(url) {
 
   const flash = document.getElementById("flash");
 
-  // Step 1: ensure starting state
+  // start from 0
   flash.style.opacity = "0";
 
-  // Step 2: next frame → trigger fade IN
+  // force style apply
+  flash.getBoundingClientRect();
+
+  // next frame → start fade IN
   requestAnimationFrame(() => {
+    flash.style.transition = "opacity 0.25s ease";
     flash.style.opacity = "1";
 
-    // Step 3: wait for visible, then navigate
+    // wait until it's ACTUALLY visible
     setTimeout(() => {
       window.location.href = url;
     }, 300);
   });
 }
+
+
 
 
 // 🔄 fade OUT on new page
