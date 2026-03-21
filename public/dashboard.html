@@ -3,17 +3,14 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Dashboard</title>
+  <title>Dashboard • Hardware Playground</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- YOUR EXISTING CSS -->
-  <link rel="stylesheet" href="src/style.css">
-
-  <!-- YOUR EXISTING JS -->
-  <script defer src="src/script.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
 </head>
 
 <body class="pb-28">
@@ -26,52 +23,80 @@
   <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
 </a>
 
-<!-- MAIN CONTENT -->
-<div class="flex justify-center px-4 py-10">
-  <div class="w-full max-w-4xl space-y-10">
+<!-- MAIN -->
+<div id="page" class="flex justify-center px-4 py-10">
+  <div class="w-full max-w-3xl space-y-8">
 
     <!-- TITLE -->
-    <div class="text-center space-y-3">
+    <div class="text-center space-y-2">
       <h1 class="text-4xl font-bold">Dashboard</h1>
-      <p class="text-gray-600">Your progress</p>
+      <p class="text-gray-600">Your profile & stats</p>
     </div>
 
-    <!-- CARD -->
-    <div class="card text-center">
-      Projects and activity will appear here.
+    <!-- PROFILE CARD -->
+    <div class="card text-center space-y-4">
+      <img id="avatar" class="pfp mx-auto">
+
+      <div>
+        <h2 id="name" class="text-xl font-semibold">Loading...</h2>
+        <p id="email" class="text-gray-500 text-sm"></p>
+        <p id="slack" class="text-gray-500 text-sm"></p>
+      </div>
+    </div>
+
+    <!-- CURRENCY CARD -->
+    <div class="card text-center space-y-4">
+      <h2 class="text-lg font-semibold">Your Resources</h2>
+
+      <div class="flex justify-center gap-6 text-sm">
+
+        <div>
+          <img src="/src/Silicon.svg" class="stat-icon mx-auto">
+          <p id="silicon">0</p>
+        </div>
+
+        <div>
+          <img src="/src/conductor.svg" class="stat-icon mx-auto">
+          <p id="conductor">0</p>
+        </div>
+
+        <div>
+          <img src="/src/diode.svg" class="stat-icon mx-auto">
+          <p id="diode">0</p>
+        </div>
+
+      </div>
     </div>
 
   </div>
 </div>
 
-<!-- 🔥 HUD (ONE BAR) -->
-<div class="hud">
+<!-- 🔥 BOTTOM CARD HUD -->
+<div class="card hud-card">
 
   <!-- PROFILE -->
   <div class="hud-left" onclick="goWithFlash('/profile')">
-    <img src="https://cataas.com/cat" class="pfp">
+    <img id="pfpHud" src="https://via.placeholder.com/32" class="pfp">
 
     <div>
-      <p class="name">Joel</p>
+      <p class="name" id="nameHud">User</p>
       <div class="stats">
-  <span><img src="/assets/Silicon.svg" class="stat-icon"> 120</span>,
-  <span><img src="/assets/conductor.svg" class="stat-icon"> 45</span>,
-  <span><img src="/assets/diode.svg" class="stat-icon"> 80</span>
-</div>
-    </div> 
+        <span><img src="/src/Silicon.svg" class="stat-icon"> <span id="siliconHud">0</span></span>
+        <span><img src="/src/conductor.svg" class="stat-icon"> <span id="conductorHud">0</span></span>
+        <span><img src="/src/diode.svg" class="stat-icon"> <span id="diodeHud">0</span></span>
+      </div>
+    </div>
   </div>
 
   <!-- NAV -->
   <div class="hud-right">
 
-    <!-- DASHBOARD -->
     <button class="nav-btn active" onclick="goWithFlash('/dashboard')">
       <svg viewBox="0 0 24 24">
         <path d="M3 10L12 3L21 10V21H3Z"/>
       </svg>
     </button>
 
-    <!-- SUBMIT -->
     <button class="nav-btn" onclick="goWithFlash('/submit')">
       <svg viewBox="0 0 24 24">
         <path d="M12 16V4"/>
@@ -80,7 +105,6 @@
       </svg>
     </button>
 
-    <!-- GUIDE -->
     <button class="nav-btn" onclick="goWithFlash('/guide')">
       <svg viewBox="0 0 24 24">
         <path d="M4 5H14A2 2 0 0 1 16 7V19H6A2 2 0 0 1 4 17Z"/>
@@ -88,7 +112,6 @@
       </svg>
     </button>
 
-    <!-- SHOP -->
     <button class="nav-btn" onclick="goWithFlash('/shop')">
       <svg viewBox="0 0 24 24">
         <circle cx="9" cy="20" r="1"/>
@@ -100,6 +123,44 @@
   </div>
 
 </div>
+
+<!-- 🔥 USER SCRIPT -->
+<script>
+function getUser() {
+  const match = document.cookie.match(/user=([^;]+)/);
+  if (!match) return null;
+  return JSON.parse(decodeURIComponent(match[1]));
+}
+
+const user = getUser();
+
+if (user) {
+  // profile
+  document.getElementById("avatar").src = user.picture;
+  document.getElementById("name").innerText = user.name;
+  document.getElementById("email").innerText = user.email;
+  document.getElementById("slack").innerText = "Slack: " + user.slack_id;
+
+  // HUD
+  document.getElementById("pfpHud").src = user.picture;
+  document.getElementById("nameHud").innerText = user.name;
+
+  // currency (default safe)
+  const silicon = user.silicon || 0;
+  const conductor = user.conductor || 0;
+  const diode = user.diode || 0;
+
+  // main card
+  document.getElementById("silicon").innerText = silicon;
+  document.getElementById("conductor").innerText = conductor;
+  document.getElementById("diode").innerText = diode;
+
+  // HUD
+  document.getElementById("siliconHud").innerText = silicon;
+  document.getElementById("conductorHud").innerText = conductor;
+  document.getElementById("diodeHud").innerText = diode;
+}
+</script>
 
 </body>
 </html>
