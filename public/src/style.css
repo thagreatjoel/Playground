@@ -79,7 +79,7 @@ padding-top: 12px;
   border-bottom: 1px solid #000;
 }
 
-/* ================= FLASH (CLEAN) ================= */
+/* FLASH */
 #flash {
   position: fixed;
   inset: 0;
@@ -87,23 +87,27 @@ padding-top: 12px;
   opacity: 0;
   z-index: 999999;
   pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
-/* 🚫 NO transition here */
 #flash.active {
   opacity: 1;
 }
 
+/* BLUR */
+body.gta > *:not(#flash) {
+  filter: blur(0px);
+  transform: scale(1);
+  transition: all 0.4s ease;
+}
 
-/* Blur effect (GTA style) */
-body.gta {
+body.gta.active > *:not(#flash) {
   filter: blur(8px);
-  
+  transform: scale(1.05);
 }
 
 
 
-/* ================= PAGE ANIMATION ================= */
 
 
 
