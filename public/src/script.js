@@ -1,14 +1,15 @@
 let navigating = false;
 
-// 🚀 NAVIGATION WITH GTA EFFECT
+// 🚀 NAVIGATION WITH GTA EFFECT (FIXED)
 function goWithFlash(url) {
   if (navigating) return;
   navigating = true;
 
   const flash = document.getElementById("flash");
+  const page = document.getElementById("page"); // 🔥 new
 
-  // Step 1: blur background
-  document.body.classList.add("gta");
+  // Step 1: blur + zoom (on wrapper, not body)
+  if (page) page.classList.add("gta");
 
   // Step 2: trigger white flash
   setTimeout(() => {
@@ -25,22 +26,23 @@ function goWithFlash(url) {
 // 🔄 RESET + FADE OUT ON LOAD
 function resetFlash() {
   const flash = document.getElementById("flash");
+  const page = document.getElementById("page"); // 🔥 new
 
   if (!flash) return;
 
   // Keep white visible initially
   flash.style.opacity = "1";
 
-  // Fade out after slight delay
+  // Fade out
   setTimeout(() => {
     flash.style.transition = "opacity 0.4s ease";
     flash.style.opacity = "0";
 
-    // remove blur
-    document.body.classList.remove("gta");
+    // remove zoom effect
+    if (page) page.classList.remove("gta");
   }, 100);
 
-  // Cleanup after animation
+  // Cleanup
   setTimeout(() => {
     flash.classList.remove("active");
     flash.style.transition = "";
