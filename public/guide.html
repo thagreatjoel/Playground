@@ -2,21 +2,25 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="src/style.css">
+  <link rel="stylesheet" href="src/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script defer src="src/script.js"></script>
+  <script defer src="src/script.js"></script>
   <title>Guide - Hardware Playground</title>
 </head>
 
-<body class="flex justify-center px-4 py-10">
+<body>
+
+<!-- FLASH — must be direct child of body, outside all layout -->
 <div id="flash"></div>
+
 <!-- FLAG -->
 <a href="https://hackclub.com">
   <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
 </a>
 
+<!-- MAIN CONTENT -->
+<div class="flex justify-center px-4 py-10 pt-20">
 <div class="w-full max-w-4xl mx-auto px-6 md:px-10 space-y-16">
 
   <!-- TITLE -->
@@ -26,141 +30,95 @@
   </div>
 
   <!-- START -->
-  
-    <div>
-  <h2 class="text-xl font-semibold">Guide</h2>
-
-  <p class="mt-2">
-    This guide will help you get started with Hardware Playground step by step. You don’t need any experience.
-  </p>
-
-  <p class="mt-2">
-    Start with simple circuits or basic devices, understand how they work, rebuild small parts, and experiment.
-  </p>
-
- 
-
-  <p class="mt-3">
-    We care more about your thinking, learning, and effort than just the final result.
-
- 
-    Take your time, make mistakes, and improve as you go!  That’s how real understanding happens.
-  </p>
-</div>
-
-
-
-
-
-<div class="card space-y-5">
-
-  <h2 class="text-xl font-semibold"> No Device? No Problem</h2>
-
-  <p class="text-sm text-gray-600">
-    If you don’t have a physical device, you will work from behavior instead of a real board.
-  </p>
-
-  <!-- WHAT YOU DO -->
   <div>
-    <p class="font-medium text-sm"> What you do</p>
-
-    <ul class="list-disc ml-6 text-sm text-gray-600 mt-2 space-y-1">
-      <li>Pick a real hardware which should be available in IRL.</li>
-      <li>Understand the references of that hardware.</li>
-      <li>Figure out how it might work.</li>
-      <li>Rebuild it, and make some of your own changes.</li>
-      <li>Make it behave the same.</li>
-    </ul>
-  </div>
-
-  <!-- IMPORTANT -->
-  <div>
-    <p class="font-medium text-sm">Same Device, Your Design!</p>
-
-    <p class="text-sm text-gray-600 mt-2">
-      Your job is to figure out how it works, rebuild it yourself, and make it behave the same.
+    <h2 class="text-xl font-semibold">Guide</h2>
+    <p class="mt-2">
+      This guide will help you get started with Hardware Playground step by step. You don't need any experience.
     </p>
-
-    
+    <p class="mt-2">
+      Start with simple circuits or basic devices, understand how they work, rebuild small parts, and experiment.
+    </p>
+    <p class="mt-3">
+      We care more about your thinking, learning, and effort than just the final result.
+      Take your time, make mistakes, and improve as you go! That's how real understanding happens.
+    </p>
   </div>
 
-  <!-- PROOF -->
-  <div>
-    <p class="font-medium text-sm">What proves your work</p>
-
-    <ul class="list-disc ml-6 text-sm text-gray-600 mt-2 space-y-1">
-      <li>Your Journal and explaintion about the work.</li>
-      <li>Your demo video or image.</li>
-      <li>Your reasoning towards the hardware.</li>
-    </ul>
+  <div class="card space-y-5">
+    <h2 class="text-xl font-semibold">No Device? No Problem</h2>
+    <p class="text-sm text-gray-600">
+      If you don't have a physical device, you will work from behavior instead of a real board.
+    </p>
+    <div>
+      <p class="font-medium text-sm">What you do</p>
+      <ul class="list-disc ml-6 text-sm text-gray-600 mt-2 space-y-1">
+        <li>Pick a real hardware which should be available in IRL.</li>
+        <li>Understand the references of that hardware.</li>
+        <li>Figure out how it might work.</li>
+        <li>Rebuild it, and make some of your own changes.</li>
+        <li>Make it behave the same.</li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-medium text-sm">Same Device, Your Design!</p>
+      <p class="text-sm text-gray-600 mt-2">
+        Your job is to figure out how it works, rebuild it yourself, and make it behave the same.
+      </p>
+    </div>
+    <div>
+      <p class="font-medium text-sm">What proves your work</p>
+      <ul class="list-disc ml-6 text-sm text-gray-600 mt-2 space-y-1">
+        <li>Your Journal and explanation about the work.</li>
+        <li>Your demo video or image.</li>
+        <li>Your reasoning towards the hardware.</li>
+      </ul>
+    </div>
   </div>
 
-
-
-</div>
-
-
-
-
-
-
-  
   <!-- TIMELINE -->
   <div class="text-center space-y-2">
-  <h2 class="text-3xl font-bold">Steps To Be Taken</h2> </div>
+    <h2 class="text-3xl font-bold">Steps To Be Taken</h2>
+  </div>
+
   <div class="overlay space-y-8">
 
-    <!-- STEP -->
-    
     <div class="relative pl-12">
       <div class="connector"></div>
-
-
-         
       <div class="card">
-      
         <div class="flex items-center gap-3">
           <div class="node">1</div>
           <h3 class="font-semibold text-lg">Choose a Device</h3>
         </div>
-
         <div class="mt-3 text-sm space-y-2">
-<p>Find a device which has a PCB. Understand mechanism of the board. If you struggle to find good one, you can use <b>Starter projects</b>!</p>
+          <p>Find a device which has a PCB. Understand mechanism of the board. If you struggle to find a good one, you can use <b>Starter projects</b>!</p>
         </div>
       </div>
     </div>
 
     <div class="relative pl-12">
       <div class="connector"></div>
-
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">2</div>
           <h3 class="font-semibold text-lg">Design Schematics</h3>
         </div>
-
         <p class="mt-3 text-sm">
-          Understand the trace and identify the components, Create PCB with your favourite desiging tool.
+          Understand the trace and identify the components. Create a PCB with your favourite designing tool.
           You must upload schematic before submission.
-          
-   
         </p>
       </div>
     </div>
 
     <div class="relative pl-12">
       <div class="connector"></div>
-
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">3</div>
-          <h3 class="font-semibold text-lg">Design a PCB </h3>
+          <h3 class="font-semibold text-lg">Design a PCB</h3>
         </div>
-
         <ul class="mt-3 list-disc ml-3 text-sm">
-        
-          <li>Design the pcb with you ideas make changes to components or add new components or parts to make it cool</li>
-          <li>Route the trace desired pad and components.</li>
+          <li>Design the PCB with your ideas, make changes to components or add new parts to make it cool.</li>
+          <li>Route the trace, desired pad and components.</li>
           <li>Complete the design.</li>
         </ul>
       </div>
@@ -168,51 +126,44 @@
 
     <div class="relative pl-12">
       <div class="connector"></div>
-
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">4</div>
           <h3 class="font-semibold text-lg">Journal it!</h3>
         </div>
-
         <p class="mt-3 text-sm">
           Journal about what you did, what you learned, and what happened.
-            This is the most important part of your submission. You can also include your mistakes in the journal, Ai usage for journals are not applicable.
-          <li class="mt-3 list-disc ml-3 text-sm"> Conductors mostly depends on the Quality of journal.</li>
+          This is the most important part of your submission. You can also include your mistakes in the journal. AI usage for journals is not applicable.
         </p>
+        <li class="mt-3 list-disc ml-3 text-sm">Conductors mostly depend on the quality of journal.</li>
       </div>
     </div>
-    
 
     <div class="relative pl-12">
       <div class="connector"></div>
-
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">5</div>
           <h3 class="font-semibold text-lg">Submit Project</h3>
         </div>
-
         <p class="mt-3 text-sm">
-            Submit your GitHub repo and your work progress, images, demo to the Workshop and get it reviewed. In exchange you will get sillions and conductors depending quality of your project.</p>
-        
+          Submit your GitHub repo and your work progress, images, demo to the Workshop and get it reviewed. In exchange you will get Silicons and Conductors depending on the quality of your project.
+        </p>
       </div>
     </div>
 
     <div class="relative pl-12">
       <div class="connector"></div>
-
       <div class="card">
         <div class="flex items-center gap-3">
           <div class="node">6</div>
           <h3 class="font-semibold text-lg">Get Rewarded</h3>
         </div>
-
         <p class="mt-3 text-sm">
-            Convert your <img src="/assets/Silicon.svg" class="emoji"> <b>Silicons</b> and 
-            <img src="/assets/conductor.svg" class="emoji"> <b>Conductor</b> to craft a 
-            <img src="/assets/diode.svg" class="emoji"> <b>Diode</b>. Exchange those diodes for cool rewards.
-          </p>
+          Convert your <img src="/assets/Silicon.svg" class="emoji"> <b>Silicons</b> and
+          <img src="/assets/conductor.svg" class="emoji"> <b>Conductor</b> to craft a
+          <img src="/assets/diode.svg" class="emoji"> <b>Diode</b>. Exchange those diodes for cool rewards.
+        </p>
       </div>
     </div>
 
@@ -221,18 +172,18 @@
   <!-- GOAL -->
   <div class="green rounded-xl p-5 text-center">
     <p class="font-semibold">
-     KEEP OUT! CODING ON PROCESS..
+      KEEP OUT! CODING ON PROCESS..
     </p>
   </div>
 
   <!-- BACK -->
   <div class="text-center">
-     <button class="btn" onclick="goWithFlash('./')">
-        Back
-      </button>
-
+    <button class="btn" onclick="goWithFlash('./')">
+      Back
+    </button>
   </div>
 
+</div>
 </div>
 
 </body>
