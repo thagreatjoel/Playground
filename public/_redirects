@@ -1,4 +1,6 @@
-/rsvp    /rsvp.html    200
-/guide   /guide.html   200
-/home    /dashboard.html  200
-/debug   /debug.html    200
+/rsvp         /rsvp.html       200
+/guide        /guide.html      200
+/home         /dashboard.html  200
+/debug        /debug.html      200
+/dashboard    /dashboard.html  200
+/dashboard/*  /dashboard.html  200
