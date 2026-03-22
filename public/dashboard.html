@@ -75,7 +75,7 @@
 </a>
 
 <!-- MAIN -->
-<div class="flex justify-center px-4 py-10 pt-16">
+<div class="flex justify-center px-4 py-10 pt-20">
   <div class="w-full max-w-3xl space-y-8">
 
     <div class="text-center space-y-1">
@@ -84,16 +84,18 @@
     </div>
 
     <!-- PROFILE + RESOURCES -->
-    <div class="card flex items-center gap-4">
-      <img id="pfp" class="pfp" src="" alt="">
-      <div class="flex-1">
-        <h2 id="name" class="font-semibold text-lg">Loading...</h2>
-        <p id="email" class="text-gray-500 text-xs"></p>
+    <div class="card">
+      <div class="flex items-center gap-3 mb-4">
+        <img id="pfp" class="pfp" src="" alt="">
+        <div>
+          <h2 id="name" class="font-semibold text-lg leading-tight">Loading...</h2>
+          <p id="email" class="text-gray-500 text-xs"></p>
+        </div>
       </div>
-      <div class="flex gap-4 text-center text-xs">
-        <div><p class="font-bold text-base" id="silicon">–</p><p class="text-gray-500">Silicon</p></div>
-        <div><p class="font-bold text-base" id="conductor">–</p><p class="text-gray-500">Conductor</p></div>
-        <div><p class="font-bold text-base" id="diode">–</p><p class="text-gray-500">Diode</p></div>
+      <div class="flex justify-around text-center text-xs border-t border-dashed border-gray-200 pt-3">
+        <div><p class="font-bold text-xl" id="silicon">–</p><p class="text-gray-500">Silicon</p></div>
+        <div><p class="font-bold text-xl" id="conductor">–</p><p class="text-gray-500">Conductor</p></div>
+        <div><p class="font-bold text-xl" id="diode">–</p><p class="text-gray-500">Diode</p></div>
       </div>
     </div>
 
@@ -264,9 +266,9 @@
     const name     = user.name || user.display_name || 'User';
     const avatar   = user.picture || user.avatar_url || '';
 
-    // Redirect /dashboard → /dashboard/xxxx
+    // Redirect /dashboard → /dashboard/xxxx only if user_id exists
     const path = window.location.pathname;
-    if (user_id && path === '/dashboard') {
+    if (user_id && user_id !== 'null' && path === '/dashboard') {
       window.location.replace('/dashboard/' + user_id);
       return;
     }
