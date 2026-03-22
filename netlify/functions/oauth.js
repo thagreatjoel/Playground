@@ -1,4 +1,3 @@
-const fetch  = require("node-fetch");
 const { neon } = require("@netlify/neon");
 
 exports.handler = async (event) => {
