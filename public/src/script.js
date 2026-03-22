@@ -8,20 +8,8 @@ function fadeTo(el, opacity, durationMs) {
   });
 }
 
-// ── ON LOAD: start white, fade out ──
+// ── ON LOAD: auth only, no flash on refresh ──
 window.addEventListener('DOMContentLoaded', () => {
-  const flash = document.getElementById('flash');
-
-  // Start fully white instantly
-  flash.style.transition    = 'none';
-  flash.style.opacity       = '1';
-  flash.style.pointerEvents = 'all';
-
-  // Then smooth fade out
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    fadeTo(flash, 0, 700);
-  }));
-
   // ── Auth ──
   const user = getUser();
   console.log("USER:", user);
@@ -51,12 +39,12 @@ async function goWithFlash(url) {
 
   // 1. Blur the page
   document.body.style.transition = 'filter 0.35s ease';
-  document.body.style.filter     = 'blur(6px)';
+  document.body.style.filter     = 'blur(10px)';
 
   await delay(300);
 
   // 2. Smooth fade in to full white
-  await fadeTo(flash, 1, 350);
+  await fadeTo(flash, 1, 400);
 
   // 3. Navigate while fully white
   window.location.href = url;
