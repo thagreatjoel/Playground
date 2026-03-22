@@ -3,5 +3,8 @@
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.8",
     "tailwindcss": "^3.4.19"
+  },
+  "dependencies": {
+    "@netlify/neon": "^0.1.2"
   }
 }
