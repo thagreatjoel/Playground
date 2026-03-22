@@ -6,11 +6,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/style.css">
-  <script defer src="src/script.js"></script>
+  <script async src="src/script.js"></script>
   <style>
     body { filter: none; opacity: 1; }
-    #page-content { opacity: 0; transition: opacity 0.3s ease; }
-    #page-content.ready { opacity: 1; }
 
     .quest-card {
       border: 1px solid #cfcfcf;
@@ -114,9 +112,9 @@
         <p id="email" class="text-gray-500 text-xs"></p>
       </div>
       <div class="flex gap-4 text-center text-xs">
-        <div><p class="font-bold text-base" id="silicon">...</p><p class="text-gray-500">Silicon</p></div>
-        <div><p class="font-bold text-base" id="conductor">...</p><p class="text-gray-500">Conductor</p></div>
-        <div><p class="font-bold text-base" id="diode">...</p><p class="text-gray-500">Diode</p></div>
+        <div><p class="font-bold text-base" id="silicon">–</p><p class="text-gray-500">Silicon</p></div>
+        <div><p class="font-bold text-base" id="conductor">–</p><p class="text-gray-500">Conductor</p></div>
+        <div><p class="font-bold text-base" id="diode">–</p><p class="text-gray-500">Diode</p></div>
       </div>
     </div>
 
@@ -137,15 +135,15 @@
 </div>
 
 <!-- HUD -->
-<div class="card hud-card" id="hud-card" style="opacity:0;transition:opacity 0.3s ease;">
+<div class="card hud-card" id="hud-card">
   <div class="hud-left" onclick="goWithFlash('/profile')" style="cursor:pointer;">
     <img id="pfpHud" class="pfp">
     <div class="hud-info">
       <p id="nameHud">User</p>
       <div class="stats">
-        <span><span id="siliconHud">...</span> Si</span>
-        <span><span id="conductorHud">...</span> Co</span>
-        <span><span id="diodeHud">...</span> Di</span>
+        <span><span id="siliconHud">–</span> Si</span>
+        <span><span id="conductorHud">–</span> Co</span>
+        <span><span id="diodeHud">–</span> Di</span>
       </div>
     </div>
   </div>
@@ -175,7 +173,8 @@
     try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
+  // Run immediately — don't wait for DOMContentLoaded race
+  async function initDashboard() {
     const user = getUser();
     if (!user) { window.location.href = '/'; return; }
 
@@ -183,16 +182,20 @@
     const name     = user.name || user.display_name || 'User';
     const avatar   = user.picture || user.avatar_url || '';
 
-    document.getElementById('pfp').src          = avatar;
-    document.getElementById('pfpHud').src       = avatar;
-    document.getElementById('name').innerText   = name;
+    document.getElementById('pfp').src           = avatar;
+    document.getElementById('pfpHud').src        = avatar;
+    document.getElementById('name').innerText    = name;
     document.getElementById('nameHud').innerText = name;
-    document.getElementById('email').innerText  = user.email || '';
+    document.getElementById('email').innerText   = user.email || '';
 
-    await Promise.all([loadResources(slack_id), loadQuests(slack_id)]);
-    document.getElementById('page-content').classList.add('ready');
-    document.getElementById('hud-card').style.opacity = '1';
-  });
+    // Load resources first, immediately
+    await loadResources(slack_id);
+    loadQuests(slack_id); // quests can load async
+
+  }
+
+  // Call immediately when script runs
+  initDashboard();
 
   async function loadResources(slack_id) {
     try {
