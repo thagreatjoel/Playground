@@ -1,15 +1,13 @@
-const fetch = require("node-fetch");
+const fetch  = require("node-fetch");
+const { neon } = require("@netlify/neon");
 
 exports.handler = async (event) => {
-  const path = event.path;
+  const path   = event.path;
   const params = event.queryStringParameters || {};
 
   const CLIENT_ID     = process.env.CLIENT_ID;
   const CLIENT_SECRET = process.env.CLIENT_SECRET;
-  const SUPABASE_URL  = process.env.SUPABASE_URL;
-  const SUPABASE_KEY  = process.env.SUPABASE_SERVICE_KEY;
-
-  const REDIRECT_URI = "https://playground.dino.icu/.netlify/functions/oauth/callback";
+  const REDIRECT_URI  = "https://playground.dino.icu/.netlify/functions/oauth/callback";
 
   // ── STEP 1: Redirect to Hack Club OAuth ──
   if (path.endsWith("/oauth/login")) {
@@ -17,15 +15,15 @@ exports.handler = async (event) => {
     return { statusCode: 302, headers: { Location: url } };
   }
 
-  // ── STEP 2: OAuth Callback ──
+  // ── STEP 2: Callback ──
   if (path.endsWith("/oauth/callback")) {
     try {
       const code = params.code;
       if (!code) return { statusCode: 400, body: "Missing code" };
 
       // Exchange code for token
-      const tokenRes = await fetch("https://auth.hackclub.com/oauth/token", {
-        method: "POST",
+      const tokenRes  = await fetch("https://auth.hackclub.com/oauth/token", {
+        method:  "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
           client_id:     CLIENT_ID,
@@ -40,7 +38,7 @@ exports.handler = async (event) => {
       if (!tokenData.access_token) return { statusCode: 500, body: "No access token" };
 
       // Get user info
-      const userRes  = await fetch("https://auth.hackclub.com/oauth/userinfo", {
+      const userRes = await fetch("https://auth.hackclub.com/oauth/userinfo", {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       });
       const user = JSON.parse(await userRes.text());
@@ -50,39 +48,24 @@ exports.handler = async (event) => {
       const email    = user.email || "";
       const avatar   = user.picture || user.avatar_url || "";
 
-      // ── Upsert user into Supabase ──
-      // If user already exists, do nothing (preserves existing resources)
-      const upsertRes = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type":  "application/json",
-          "apikey":        SUPABASE_KEY,
-          "Authorization": `Bearer ${SUPABASE_KEY}`,
-          "Prefer":        "resolution=ignore-duplicates", // don't overwrite existing row
-        },
-        body: JSON.stringify({
-          slack_id,
-          name,
-          email,
-          avatar,
-          silicon:   50,  // starting resources for Quest 1
-          conductor: 60,
-          diode:     0,
-        }),
-      });
+      // ── Upsert into Neon — preserve existing resources on re-login ──
+      const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
-      console.log("UPSERT STATUS:", upsertRes.status);
+      await sql`
+        INSERT INTO users (slack_id, name, email, avatar, silicon, conductor, diode)
+        VALUES (${slack_id}, ${name}, ${email}, ${avatar}, 50, 60, 0)
+        ON CONFLICT (slack_id) DO UPDATE
+          SET name   = EXCLUDED.name,
+              email  = EXCLUDED.email,
+              avatar = EXCLUDED.avatar
+        -- silicon/conductor/diode are NOT updated on conflict so existing balances are preserved
+      `;
 
-      // Save user in cookie and redirect to dashboard
       return {
         statusCode: 302,
         headers: {
           "Set-Cookie": `user=${encodeURIComponent(JSON.stringify({
-            ...user,
-            slack_id,
-            name,
-            email,
-            avatar,
+            ...user, slack_id, name, email, avatar,
           }))}; Path=/; SameSite=Lax`,
           Location: "/dashboard",
         },
