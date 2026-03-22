@@ -87,9 +87,10 @@ exports.handler = async (event) => {
         INSERT INTO users (slack_id, user_id, name, email, avatar, silicon, conductor, diode)
         VALUES (${slack_id}, ${user_id}, ${name}, ${email}, ${avatar}, 50, 60, 0)
         ON CONFLICT (slack_id) DO UPDATE
-          SET name   = EXCLUDED.name,
-              email  = EXCLUDED.email,
-              avatar = EXCLUDED.avatar
+          SET name    = EXCLUDED.name,
+              email   = EXCLUDED.email,
+              avatar  = EXCLUDED.avatar,
+              user_id = COALESCE(users.user_id, EXCLUDED.user_id)
         RETURNING user_id
       `;
 
