@@ -1,43 +1,43 @@
-let navigating = false;
+window.addEventListener('DOMContentLoaded', () => {
+    const flash   = document.getElementById('flash');
+    const content = document.getElementById('page-content');
 
-// GTA navigation
-function goWithFlash(url) {
-  if (navigating) return;
+    // Start fully white
+    flash.style.opacity    = '1';
+    flash.style.transition = 'none';
+    content.style.transition = 'none';
 
-  navigating = true;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(async () => {
+        // Fade out the white flash
+        flash.style.transition = 'opacity 0.55s ease';
+        flash.style.opacity    = '0';
 
-  const flash = document.getElementById("flash");
+        // Simultaneously un-blur the content
+        content.style.transition = 'filter 0.65s ease, opacity 0.65s ease';
+        content.classList.remove('arrive-blurred');
+      });
+    });
+  });
 
-  document.body.classList.add("gta");
-  flash.classList.add("active");
+  async function navigateTo(url) {
+    const content = document.getElementById('page-content');
+    const flash   = document.getElementById('flash');
+    const btn     = document.getElementById('goBtn');
 
-  setTimeout(() => {
+    btn.disabled = true;
+
+    content.classList.add('blurring');
+    await delay(400);
+    flash.style.transition = 'opacity 0.25s ease';
+    flash.style.opacity    = '1';
+    flash.style.pointerEvents = 'all';
+
+    await delay(220);
     window.location.href = url;
-  }, 350);
-}
-
-// 🔥 HARD RESET (fix white screen on back)
-function resetFlash() {
-  const flash = document.getElementById("flash");
-
-  if (flash) {
-    flash.classList.remove("active");
-    flash.style.animation = "none"; // force reset animation
-    void flash.offsetHeight;        // reflow (important)
-    flash.style.animation = "";
   }
 
-  document.body.classList.remove("gta");
-  navigating = false;
-}
-
-// When page is shown (back/forward cache)
-window.addEventListener("pageshow", resetFlash);
-
-// Normal load
-window.addEventListener("DOMContentLoaded", resetFlash);
-
-
+  const delay = ms => new Promise(r => setTimeout(r, ms));
 
 
 
