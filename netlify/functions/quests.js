@@ -152,6 +152,18 @@ exports.handler = async (event) => {
       };
     }
 
+    // ── GET balance only ──
+    if (event.httpMethod === "GET" && action === "balance") {
+      if (!slack_id) return { statusCode: 400, body: "Missing slack_id" };
+      const [user] = await sql`SELECT silicon, conductor, diode FROM users WHERE slack_id = ${slack_id}`;
+      if (!user) return { statusCode: 404, body: "User not found" };
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      };
+    }
+
     return { statusCode: 404, body: "Not found" };
 
   } catch (err) {
