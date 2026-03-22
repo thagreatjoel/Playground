@@ -168,11 +168,9 @@
   // ── Load resources from DB ──
   async function loadResources(slack_id) {
     try {
-      const url  = '/.netlify/functions/user?slack_id=' + encodeURIComponent(slack_id);
-      console.log('=== Fetching:', url);
+      const url  = '/.netlify/functions/quests?action=balance&slack_id=' + encodeURIComponent(slack_id);
       const res  = await fetch(url);
       const text = await res.text();
-      console.log('=== Raw response:', text);
       const data = JSON.parse(text);
       if (data.error) { console.error('Resource error:', data.error); return; }
       console.log('=== Updating UI with:', data);
@@ -262,8 +260,16 @@
     if (!user) { window.location.href = '/'; return; }
 
     const slack_id = user.sub || user.slack_id;
+    const user_id  = user.user_id;
     const name     = user.name || user.display_name || 'User';
     const avatar   = user.picture || user.avatar_url || '';
+
+    // Redirect /dashboard → /dashboard/xxxx
+    const path = window.location.pathname;
+    if (user_id && path === '/dashboard') {
+      window.location.replace('/dashboard/' + user_id);
+      return;
+    }
 
     // Set profile from cookie immediately
     document.getElementById('pfp').src           = avatar;
@@ -273,9 +279,7 @@
     document.getElementById('email').innerText   = user.email || '';
 
     // Load resources + quests from DB
-    console.log('=== INIT: slack_id is:', slack_id);
-    const resResult = await loadResources(slack_id);
-    console.log('=== loadResources done');
+    await loadResources(slack_id);
     loadQuests(slack_id);
   });
 </script>
