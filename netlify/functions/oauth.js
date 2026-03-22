@@ -103,7 +103,7 @@ exports.handler = async (event) => {
           "Set-Cookie": `user=${encodeURIComponent(JSON.stringify({
             ...user, slack_id, name, email, avatar, user_id: finalUserId,
           }))}; Path=/; SameSite=Lax`,
-          Location: `/dashboard/${finalUserId}`,
+          Location: `/home`,
         },
       };
 
