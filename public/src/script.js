@@ -14,12 +14,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
 
   if (isRefresh) {
-    // Refresh: snap flash away immediately, no animation
+    // Refresh: snap flash away instantly, no animation
     flash.style.transition    = 'none';
     flash.style.opacity       = '0';
     flash.style.pointerEvents = 'none';
   } else {
-    // Navigation arrival: CSS already has opacity 1, smooth fade out
+    // Navigation arrival: CSS starts white, smooth fade out
     requestAnimationFrame(() => requestAnimationFrame(() => {
       fadeTo(flash, 0, 700);
     }));
@@ -46,18 +46,22 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── NAVIGATE: blur out → navigate (destination handles fade-in) ──
+// ── NAVIGATE: blur → flash white → navigate ──
 async function goWithFlash(url) {
+  const flash = document.getElementById('flash');
   document.querySelectorAll('.btn').forEach(b => b.disabled = true);
 
-  // Blur + dim the current page
+  // 1. Blur + dim the page
   document.body.style.transition = 'filter 0.35s ease, opacity 0.35s ease';
   document.body.style.filter     = 'blur(10px)';
   document.body.style.opacity    = '0.3';
 
   await delay(350);
 
-  // Navigate — destination page CSS starts white, JS fades it out
+  // 2. Fade to full white
+  await fadeTo(flash, 1, 350);
+
+  // 3. Navigate — destination CSS is already white so no double flash
   window.location.href = url;
 }
 
