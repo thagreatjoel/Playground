@@ -14,7 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
 
   if (isRefresh) {
-    // Refresh: snap flash away instantly, no animation
+    // Refresh: snap flash away instantly
     flash.style.transition    = 'none';
     flash.style.opacity       = '0';
     flash.style.pointerEvents = 'none';
@@ -46,26 +46,19 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── NAVIGATE: blur → flash white → navigate ──
+// ── NAVIGATE: flash white over everything → navigate ──
 async function goWithFlash(url) {
   const flash = document.getElementById('flash');
   document.querySelectorAll('.btn').forEach(b => b.disabled = true);
 
-  // 1. Blur + dim the page
-  document.body.style.transition = 'filter 0.35s ease, opacity 0.35s ease';
-  document.body.style.filter     = 'blur(10px)';
-  document.body.style.opacity    = '0.3';
+  // Fade to full white — covers everything, no body bleed-through
+  await fadeTo(flash, 1, 400);
 
-  await delay(350);
-
-  // 2. Fade to full white
-  await fadeTo(flash, 1, 350);
-
-  // 3. Navigate — destination CSS is already white so no double flash
+  // Navigate while fully white
   window.location.href = url;
 }
 
-// Alias — keeps any old navigateTo() calls working
+// Alias
 const navigateTo = goWithFlash;
 
 // ── Auth helpers ──
