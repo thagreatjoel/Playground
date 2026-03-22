@@ -87,10 +87,10 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 200vw;
-  height: 200vh;
-  background: #f3eef2;
-  opacity: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff;
+  opacity: 1;
   pointer-events: none;
   z-index: 2147483647;
 }
