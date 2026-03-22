@@ -12,10 +12,11 @@ function fadeTo(el, opacity, durationMs) {
 window.addEventListener('DOMContentLoaded', () => {
   const flash = document.getElementById('flash');
 
-  // Only do the fade-in arrival if we navigated here (not a refresh)
+  // Only show arrival flash when navigated here, not on refresh
   const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
 
   if (!isRefresh) {
+    // Start fully white, then fade out — single fade, no blur
     flash.style.transition    = 'none';
     flash.style.opacity       = '1';
     flash.style.pointerEvents = 'all';
@@ -37,31 +38,27 @@ window.addEventListener('DOMContentLoaded', () => {
     let avatar = user.picture || user.avatar_url || user.image || "";
     if (!avatar) avatar = "https://api.dicebear.com/7.x/initials/svg?seed=" + name;
 
-    document.getElementById("pfp").src          = avatar;
-    document.getElementById("pfpHud").src       = avatar;
-    document.getElementById("name").innerText   = name;
+    document.getElementById("pfp").src           = avatar;
+    document.getElementById("pfpHud").src        = avatar;
+    document.getElementById("name").innerText    = name;
     document.getElementById("nameHud").innerText = name;
-    document.getElementById("email").innerText  = email;
-    document.getElementById("slack").innerText  = "Slack: " + slack;
+    document.getElementById("email").innerText   = email;
+    document.getElementById("slack").innerText   = "Slack: " + slack;
   }
 });
 
-// ── NAVIGATE: blur → fade to white → navigate ──
+// ── NAVIGATE: blur out → navigate (destination handles fade-in) ──
 async function goWithFlash(url) {
-  const flash = document.getElementById('flash');
-
   document.querySelectorAll('.btn').forEach(b => b.disabled = true);
 
-  // 1. Blur the page
-  document.body.style.transition = 'filter 0.35s ease';
+  // Blur + dim the current page
+  document.body.style.transition = 'filter 0.35s ease, opacity 0.35s ease';
   document.body.style.filter     = 'blur(10px)';
+  document.body.style.opacity    = '0.3';
 
-  await delay(300);
+  await delay(350);
 
-  // 2. Smooth fade in to full white
-  await fadeTo(flash, 1, 400);
-
-  // 3. Navigate while fully white
+  // Navigate — destination page starts white and fades in
   window.location.href = url;
 }
 
