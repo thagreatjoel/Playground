@@ -281,16 +281,25 @@ flex-shrink: 0;
   border-color: black;
 }
 
+/* ── ADD THESE TO YOUR style.css ── */
 
+/* Page arrives blurred (JS removes this class on load) */
+body.arrive-blurred {
+  filter: blur(14px);
+  opacity: 0.4;
+}
+
+/* Flash overlay — already in your CSS, keep only this one definition */
 #flash {
-    position: fixed;
-    inset: 0;
-    background: #ffffff;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 999;
-    transition: opacity 0.25s ease;
-  }
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.25s ease;
+}
+
 
   #flash.flash-in  { opacity: 1; pointer-events: all; transition: opacity 0.25s ease; }
 
