@@ -196,16 +196,23 @@
 
   async function loadResources(slack_id) {
     try {
-      const res  = await fetch(`/.netlify/functions/user?slack_id=${slack_id}`);
-      const data = await res.json();
-      if (!data) return;
-      document.getElementById('silicon').innerText      = data.silicon   ?? 0;
-      document.getElementById('conductor').innerText    = data.conductor ?? 0;
-      document.getElementById('diode').innerText        = data.diode     ?? 0;
-      document.getElementById('siliconHud').innerText   = data.silicon   ?? 0;
-      document.getElementById('conductorHud').innerText = data.conductor ?? 0;
-      document.getElementById('diodeHud').innerText     = data.diode     ?? 0;
-    } catch (e) { console.error('loadResources:', e); }
+      console.log('Fetching resources for:', slack_id);
+      const res  = await fetch(`/.netlify/functions/user?slack_id=${encodeURIComponent(slack_id)}`);
+      const text = await res.text();
+      console.log('Resource response:', text);
+      const data = JSON.parse(text);
+      if (data.error) { console.error('DB error:', data.error); return; }
+      updateResourceUI(data.silicon ?? 0, data.conductor ?? 0, data.diode ?? 0);
+    } catch (e) { console.error('loadResources failed:', e); }
+  }
+
+  function updateResourceUI(silicon, conductor, diode) {
+    document.getElementById('silicon').innerText      = silicon;
+    document.getElementById('conductor').innerText    = conductor;
+    document.getElementById('diode').innerText        = diode;
+    document.getElementById('siliconHud').innerText   = silicon;
+    document.getElementById('conductorHud').innerText = conductor;
+    document.getElementById('diodeHud').innerText     = diode;
   }
 
   async function loadQuests(slack_id) {
@@ -298,12 +305,7 @@
       body:    JSON.stringify({ slack_id }),
     });
     const data = await res.json();
-    document.getElementById('silicon').innerText      = data.silicon;
-    document.getElementById('conductor').innerText    = data.conductor;
-    document.getElementById('diode').innerText        = data.diode;
-    document.getElementById('siliconHud').innerText   = data.silicon;
-    document.getElementById('conductorHud').innerText = data.conductor;
-    document.getElementById('diodeHud').innerText     = data.diode;
+    updateResourceUI(data.silicon, data.conductor, data.diode);
   }
 </script>
 </body>
