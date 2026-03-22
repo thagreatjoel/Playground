@@ -3,69 +3,128 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
-
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="src/style.css">
   <script defer src="src/script.js"></script>
-
   <style>
-    /* Reset body blur after navigation arrival */
-    body {
-      filter: none;
-      opacity: 1;
+    body { filter: none; opacity: 1; }
+
+    .quest-card {
+      border: 1px solid #cfcfcf;
+      border-bottom: 3px solid #000;
+      border-radius: 16px;
+      background: white;
+      padding: 16px;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quest-card:hover { transform: translateY(-2px); }
+    .quest-card.completed {
+      background: #f0fce0;
+      border-color: #a0d060;
+      border-bottom-color: #5a8a00;
+      opacity: 0.75;
+    }
+
+    .quest-title { font-size: 1rem; font-weight: 600; }
+    .quest-desc  { font-size: 0.8rem; color: #555; line-height: 1.5; }
+
+    .quest-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .resource-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .chip {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid #000;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .chip.cost   { background: #ffe8e8; border-color: #f00; color: #900; }
+    .chip.reward { background: #b2f167; border-color: #5a8a00; color: #2a4a00; }
+    .chip.done   { background: #d0f0a0; border-color: #5a8a00; color: #2a4a00; }
+
+    .complete-btn {
+      background: #b2f167;
+      border: 1px solid #000;
+      border-bottom: 3px solid #000;
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    .complete-btn:hover    { background: #e1fcc1; transform: translateY(-2px); }
+    .complete-btn:active   { transform: translateY(0); border-bottom: 1px solid #000; }
+    .complete-btn:disabled { opacity: 0.4; pointer-events: none; }
+
+    .skeleton {
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 12px;
+      height: 90px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
   </style>
 </head>
 
 <body class="pb-28">
 
-<!-- FLASH — must be first child, outside all layout -->
 <div id="flash"></div>
 
-<!-- FLAG -->
 <a href="https://hackclub.com">
   <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
 </a>
 
-<!-- MAIN -->
-<div id="page" class="flex justify-center px-4 py-10">
+<div class="flex justify-center px-4 py-10 pt-16">
   <div class="w-full max-w-3xl space-y-8">
 
     <!-- TITLE -->
-    <div class="text-center space-y-2">
-      <h1 class="text-4xl font-bold">Dashboard</h1>
-      <p class="text-gray-600">Hardware Playground</p>
+    <div class="text-center space-y-1">
+      <h1 class="text-3xl font-bold">Dashboard</h1>
+      <p class="text-gray-500 text-sm">Hardware Playground</p>
     </div>
 
-    <!-- PROFILE CARD -->
-    <div class="card text-center space-y-4">
-      <img id="pfp" class="pfp mx-auto">
-      <div>
-        <h2 id="name" class="text-xl font-semibold">Loading...</h2>
-        <p id="email" class="text-gray-500 text-sm"></p>
-        <p id="slack" class="text-gray-500 text-sm"></p>
+    <!-- PROFILE + RESOURCES -->
+    <div class="card flex items-center gap-4">
+      <img id="pfp" class="pfp" src="" alt="">
+      <div class="flex-1">
+        <h2 id="name" class="font-semibold text-lg">Loading...</h2>
+        <p id="email" class="text-gray-500 text-xs"></p>
+      </div>
+      <div class="flex gap-4 text-center text-xs">
+        <div><p class="font-bold text-base" id="silicon">–</p><p class="text-gray-500">Silicon</p></div>
+        <div><p class="font-bold text-base" id="conductor">–</p><p class="text-gray-500">Conductor</p></div>
+        <div><p class="font-bold text-base" id="diode">–</p><p class="text-gray-500">Diode</p></div>
       </div>
     </div>
 
-    <!-- CURRENCY CARD -->
-    <div class="card text-center space-y-4">
-      <h2 class="text-lg font-semibold">Your Resources</h2>
-      <div class="flex justify-center gap-6 text-sm">
-        <div>
-          <img src="/src/Silicon.svg" class="stat-icon mx-auto">
-          <p id="silicon">0</p>
-        </div>
-        <div>
-          <img src="/src/conductor.svg" class="stat-icon mx-auto">
-          <p id="conductor">0</p>
-        </div>
-        <div>
-          <img src="/src/diode.svg" class="stat-icon mx-auto">
-          <p id="diode">0</p>
-        </div>
+    <!-- QUESTS -->
+    <div class="space-y-3">
+      <h2 class="text-lg font-semibold">Quests</h2>
+      <div id="quest-list" class="space-y-3">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
       </div>
     </div>
 
@@ -74,60 +133,152 @@
 
 <!-- HUD -->
 <div class="card hud-card">
-
-  <!-- PROFILE -->
   <div class="hud-left" onclick="goWithFlash('/profile')" style="cursor:pointer;">
     <img id="pfpHud" class="pfp">
     <div class="hud-info">
       <p id="nameHud">User</p>
       <div class="stats">
-        <span><img src="/assets/Silicon.svg" class="stat-icon"> <span id="siliconHud">0</span></span>
-        <span><img src="/assets/conductor.svg" class="stat-icon"> <span id="conductorHud">0</span></span>
-        <span><img src="/assets/diode.svg" class="stat-icon"> <span id="diodeHud">0</span></span>
+        <span><span id="siliconHud">0</span> Si</span>
+        <span><span id="conductorHud">0</span> Co</span>
+        <span><span id="diodeHud">0</span> Di</span>
       </div>
     </div>
   </div>
-
-  <!-- NAV -->
   <div class="hud-right">
-
     <button class="nav-btn active" onclick="goWithFlash('/dashboard')">
       <svg viewBox="0 0 24 24"><path d="M3 10L12 3L21 10V21H3Z"/></svg>
     </button>
-
     <button class="nav-btn" onclick="goWithFlash('/submit')">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 16V4"/>
-        <path d="M8 8L12 4L16 8"/>
-        <path d="M4 20H20"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path d="M12 16V4"/><path d="M8 8L12 4L16 8"/><path d="M4 20H20"/></svg>
     </button>
-
     <button class="nav-btn" onclick="goWithFlash('/guide')">
-      <svg viewBox="0 0 24 24">
-        <path d="M4 5H14A2 2 0 0 1 16 7V19H6A2 2 0 0 1 4 17Z"/>
-        <path d="M16 5H20V19H16"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path d="M4 5H14A2 2 0 0 1 16 7V19H6A2 2 0 0 1 4 17Z"/><path d="M16 5H20V19H16"/></svg>
     </button>
-
     <button class="nav-btn" onclick="goWithFlash('/shop')">
-      <svg viewBox="0 0 24 24">
-        <circle cx="9" cy="20" r="1"/>
-        <circle cx="17" cy="20" r="1"/>
-        <path d="M2 2H5L7 14H19L21 6H6"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M2 2H5L7 14H19L21 6H6"/></svg>
     </button>
-
     <button class="nav-btn" onclick="logout()">
-      <svg viewBox="0 0 24 24">
-        <path d="M16 17L21 12L16 7"/>
-        <path d="M21 12H9"/>
-        <path d="M13 21H5V3H13"/>
-      </svg>
+      <svg viewBox="0 0 24 24"><path d="M16 17L21 12L16 7"/><path d="M21 12H9"/><path d="M13 21H5V3H13"/></svg>
     </button>
-
   </div>
 </div>
+
+<script>
+  function getUser() {
+    const match = document.cookie.match(/user=([^;]+)/);
+    if (!match) return null;
+    try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const user = getUser();
+    if (!user) { window.location.href = '/'; return; }
+
+    const slack_id = user.sub || user.slack_id;
+    const name     = user.name || user.display_name || 'User';
+    const avatar   = user.picture || user.avatar_url || '';
+
+    document.getElementById('pfp').src          = avatar;
+    document.getElementById('pfpHud').src       = avatar;
+    document.getElementById('name').innerText   = name;
+    document.getElementById('nameHud').innerText = name;
+    document.getElementById('email').innerText  = user.email || '';
+
+    await Promise.all([loadResources(slack_id), loadQuests(slack_id)]);
+  });
+
+  async function loadResources(slack_id) {
+    try {
+      const res  = await fetch(`/.netlify/functions/user?slack_id=${slack_id}`);
+      const data = await res.json();
+      if (!data) return;
+      document.getElementById('silicon').innerText      = data.silicon   ?? 0;
+      document.getElementById('conductor').innerText    = data.conductor ?? 0;
+      document.getElementById('diode').innerText        = data.diode     ?? 0;
+      document.getElementById('siliconHud').innerText   = data.silicon   ?? 0;
+      document.getElementById('conductorHud').innerText = data.conductor ?? 0;
+      document.getElementById('diodeHud').innerText     = data.diode     ?? 0;
+    } catch (e) { console.error('loadResources:', e); }
+  }
+
+  async function loadQuests(slack_id) {
+    try {
+      const res    = await fetch(`/.netlify/functions/quests?action=list&slack_id=${slack_id}`);
+      const quests = await res.json();
+      renderQuests(quests, slack_id);
+    } catch (e) {
+      document.getElementById('quest-list').innerHTML =
+        '<p class="text-sm text-red-500">Failed to load quests.</p>';
+    }
+  }
+
+  function renderQuests(quests, slack_id) {
+    const list = document.getElementById('quest-list');
+    list.innerHTML = '';
+
+    quests.forEach(q => {
+      const card = document.createElement('div');
+      card.className = `quest-card ${q.completed ? 'completed' : ''}`;
+
+      let costChips = '';
+      if (q.cost_silicon   > 0) costChips += `<span class="chip cost">−${q.cost_silicon} Silicon</span>`;
+      if (q.cost_conductor > 0) costChips += `<span class="chip cost">−${q.cost_conductor} Conductor</span>`;
+
+      let rewardChips = '';
+      if (q.reward_silicon   > 0) rewardChips += `<span class="chip reward">+${q.reward_silicon} Silicon</span>`;
+      if (q.reward_conductor > 0) rewardChips += `<span class="chip reward">+${q.reward_conductor} Conductor</span>`;
+      if (q.reward_diode     > 0) rewardChips += `<span class="chip reward">+${q.reward_diode} Diode</span>`;
+
+      card.innerHTML = `
+        <div>
+          <p class="quest-title">${q.order_index}. ${q.title}</p>
+          <p class="quest-desc">${q.description}</p>
+        </div>
+        <div class="quest-meta">
+          <div class="resource-chips">
+            ${costChips + rewardChips || '<span class="chip reward">Free</span>'}
+          </div>
+          ${q.completed
+            ? `<span class="chip done">✓ Completed</span>`
+            : `<button class="complete-btn" onclick="completeQuest(${q.id}, this, '${slack_id}')">Complete →</button>`
+          }
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  async function completeQuest(quest_id, btn, slack_id) {
+    btn.disabled  = true;
+    btn.innerText = 'Submitting...';
+    try {
+      const res = await fetch('/.netlify/functions/quests?action=complete', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ slack_id, quest_id }),
+      });
+
+      if (res.status === 402) {
+        alert('Not enough resources for this quest!');
+        btn.disabled  = false;
+        btn.innerText = 'Complete →';
+        return;
+      }
+
+      if (!res.ok) throw new Error(await res.text());
+
+      const user  = getUser();
+      const slack = user.sub || user.slack_id;
+      await Promise.all([loadResources(slack), loadQuests(slack)]);
+
+    } catch (e) {
+      console.error(e);
+      alert('Something went wrong. Try again.');
+      btn.disabled  = false;
+      btn.innerText = 'Complete →';
+    }
+  }
+</script>
 
 </body>
 </html>
