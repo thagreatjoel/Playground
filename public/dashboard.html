@@ -145,47 +145,29 @@
   </div>
 </div>
 
-<!-- ALL SCRIPTS DEFERRED TOGETHER AT BOTTOM -->
 <script defer src="src/script.js"></script>
 
 <script>
-  // ── Helpers ──
   function getCookieUser() {
     const match = document.cookie.match(/user=([^;]+)/);
     if (!match) return null;
     try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
   }
 
-  function updateResourceUI(silicon, conductor, diode) {
-    document.getElementById('silicon').innerText      = silicon;
-    document.getElementById('conductor').innerText    = conductor;
-    document.getElementById('diode').innerText        = diode;
-    document.getElementById('siliconHud').innerText   = silicon;
-    document.getElementById('conductorHud').innerText = conductor;
-    document.getElementById('diodeHud').innerText     = diode;
-  }
-
-  // ── Load resources from DB ──
   async function loadResources(slack_id) {
     try {
-      const url  = '/.netlify/functions/quests?action=balance&slack_id=' + encodeURIComponent(slack_id);
-      const res  = await fetch(url);
-      const text = await res.text();
-      const data = JSON.parse(text);
-      if (data.error) { console.error('Resource error:', data.error); return; }
-      console.log('=== Updating UI with:', data);
+      const res  = await fetch('/.netlify/functions/quests?action=balance&slack_id=' + encodeURIComponent(slack_id));
+      const data = await res.json();
+      if (data.error) return;
       document.getElementById('silicon').innerText      = data.silicon   ?? 0;
       document.getElementById('conductor').innerText    = data.conductor ?? 0;
       document.getElementById('diode').innerText        = data.diode     ?? 0;
       document.getElementById('siliconHud').innerText   = data.silicon   ?? 0;
       document.getElementById('conductorHud').innerText = data.conductor ?? 0;
       document.getElementById('diodeHud').innerText     = data.diode     ?? 0;
-    } catch (e) {
-      console.error('loadResources failed:', e);
-    }
+    } catch (e) { console.error('loadResources failed:', e); }
   }
 
-  // ── Load quests ──
   async function loadQuests(slack_id) {
     try {
       const res    = await fetch('/.netlify/functions/quests?action=list&slack_id=' + encodeURIComponent(slack_id));
@@ -221,7 +203,6 @@
     }
   }
 
-  // ── Complete a quest ──
   async function completeQuest(quest_id, btn, slack_id) {
     btn.disabled = true;
     btn.innerText = 'Submitting...';
@@ -241,7 +222,6 @@
     }
   }
 
-  // ── Add currency ──
   async function addCurrency() {
     const user     = getCookieUser();
     const slack_id = user.sub || user.slack_id;
@@ -251,10 +231,14 @@
       body: JSON.stringify({ slack_id }),
     });
     const data = await res.json();
-    updateResourceUI(data.silicon, data.conductor, data.diode);
+    document.getElementById('silicon').innerText      = data.silicon;
+    document.getElementById('conductor').innerText    = data.conductor;
+    document.getElementById('diode').innerText        = data.diode;
+    document.getElementById('siliconHud').innerText   = data.silicon;
+    document.getElementById('conductorHud').innerText = data.conductor;
+    document.getElementById('diodeHud').innerText     = data.diode;
   }
 
-  // ── Init — runs after DOM ready ──
   document.addEventListener('DOMContentLoaded', async () => {
     const user = getCookieUser();
     if (!user) { window.location.href = '/'; return; }
@@ -271,14 +255,12 @@
       return;
     }
 
-    // Set profile from cookie immediately
     document.getElementById('pfp').src           = avatar;
     document.getElementById('pfpHud').src        = avatar;
     document.getElementById('name').innerText    = name;
     document.getElementById('nameHud').innerText = name;
     document.getElementById('email').innerText   = user.email || '';
 
-    // Load resources + quests from DB
     await loadResources(slack_id);
     loadQuests(slack_id);
   });
