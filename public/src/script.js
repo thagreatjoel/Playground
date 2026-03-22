@@ -53,12 +53,12 @@ async function goWithFlash(url) {
 
   // 1. Blur the page — visible before flash covers it
   document.body.style.transition = 'filter 0.3s ease';
-  document.body.style.filter     = 'blur(10px)';
+  document.body.style.filter     = 'blur(6px)';
 
   await delay(300);
 
   // 2. Fade flash in over the blurred page
-  await fadeTo(flash, 1, 350);
+  await fadeTo(flash, 1, 310);
 
   // 3. Navigate while fully covered
   window.location.href = url;
