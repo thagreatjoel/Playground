@@ -8,7 +8,7 @@ exports.handler = async (event) => {
   const CLIENT_SECRET = process.env.CLIENT_SECRET;
   const REDIRECT_URI  = "https://playground.dino.icu/.netlify/functions/oauth/callback";
 
-  // ── STEP 1: Redirect to Hack Club OAuth ──
+  // ── STEP 1: Redirect to Hack Club ──
   if (path.endsWith("/oauth/login")) {
     const url = `https://auth.hackclub.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=openid%20email%20profile`;
     return { statusCode: 302, headers: { Location: url } };
@@ -20,7 +20,6 @@ exports.handler = async (event) => {
       const code = params.code;
       if (!code) return { statusCode: 400, body: "Missing code" };
 
-      // Exchange code for token
       const tokenRes  = await fetch("https://auth.hackclub.com/oauth/token", {
         method:  "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -36,7 +35,6 @@ exports.handler = async (event) => {
       const tokenData = JSON.parse(await tokenRes.text());
       if (!tokenData.access_token) return { statusCode: 500, body: "No access token" };
 
-      // Get user info
       const userRes = await fetch("https://auth.hackclub.com/oauth/userinfo", {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       });
@@ -47,9 +45,25 @@ exports.handler = async (event) => {
       const email    = user.email || "";
       const avatar   = user.picture || user.avatar_url || "";
 
-      // ── Upsert into Neon — preserve existing resources on re-login ──
+      console.log("OAuth login for slack_id:", slack_id);
+
       const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
+      // Ensure table exists
+      await sql`
+        CREATE TABLE IF NOT EXISTS users (
+          slack_id   TEXT PRIMARY KEY,
+          name       TEXT,
+          email      TEXT,
+          avatar     TEXT,
+          silicon    INT DEFAULT 0,
+          conductor  INT DEFAULT 0,
+          diode      INT DEFAULT 0,
+          created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+      `;
+
+      // Insert new user with starter resources, preserve existing on re-login
       await sql`
         INSERT INTO users (slack_id, name, email, avatar, silicon, conductor, diode)
         VALUES (${slack_id}, ${name}, ${email}, ${avatar}, 50, 60, 0)
@@ -57,8 +71,9 @@ exports.handler = async (event) => {
           SET name   = EXCLUDED.name,
               email  = EXCLUDED.email,
               avatar = EXCLUDED.avatar
-        -- silicon/conductor/diode are NOT updated on conflict so existing balances are preserved
       `;
+
+      console.log("User upserted:", slack_id);
 
       return {
         statusCode: 302,
@@ -71,8 +86,8 @@ exports.handler = async (event) => {
       };
 
     } catch (err) {
-      console.error("OAuth error:", err);
-      return { statusCode: 500, body: "OAuth failed" };
+      console.error("OAuth error:", err.message);
+      return { statusCode: 500, body: `OAuth failed: ${err.message}` };
     }
   }
 
