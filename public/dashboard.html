@@ -168,10 +168,20 @@
   // ── Load resources from DB ──
   async function loadResources(slack_id) {
     try {
-      const res  = await fetch('/.netlify/functions/user?slack_id=' + encodeURIComponent(slack_id));
-      const data = await res.json();
+      const url  = '/.netlify/functions/user?slack_id=' + encodeURIComponent(slack_id);
+      console.log('=== Fetching:', url);
+      const res  = await fetch(url);
+      const text = await res.text();
+      console.log('=== Raw response:', text);
+      const data = JSON.parse(text);
       if (data.error) { console.error('Resource error:', data.error); return; }
-      updateResourceUI(data.silicon ?? 0, data.conductor ?? 0, data.diode ?? 0);
+      console.log('=== Updating UI with:', data);
+      document.getElementById('silicon').innerText      = data.silicon   ?? 0;
+      document.getElementById('conductor').innerText    = data.conductor ?? 0;
+      document.getElementById('diode').innerText        = data.diode     ?? 0;
+      document.getElementById('siliconHud').innerText   = data.silicon   ?? 0;
+      document.getElementById('conductorHud').innerText = data.conductor ?? 0;
+      document.getElementById('diodeHud').innerText     = data.diode     ?? 0;
     } catch (e) {
       console.error('loadResources failed:', e);
     }
@@ -263,7 +273,9 @@
     document.getElementById('email').innerText   = user.email || '';
 
     // Load resources + quests from DB
-    loadResources(slack_id);
+    console.log('=== INIT: slack_id is:', slack_id);
+    const resResult = await loadResources(slack_id);
+    console.log('=== loadResources done');
     loadQuests(slack_id);
   });
 </script>
