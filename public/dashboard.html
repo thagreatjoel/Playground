@@ -9,6 +9,8 @@
   <script defer src="src/script.js"></script>
   <style>
     body { filter: none; opacity: 1; }
+    #page-content { opacity: 0; transition: opacity 0.3s ease; }
+    #page-content.ready { opacity: 1; }
 
     .quest-card {
       border: 1px solid #cfcfcf;
@@ -95,7 +97,7 @@
   <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
 </a>
 
-<div class="flex justify-center px-4 py-10 pt-16">
+<div id="page-content" class="flex justify-center px-4 py-10 pt-16">
   <div class="w-full max-w-3xl space-y-8">
 
     <!-- TITLE -->
@@ -188,6 +190,7 @@
     document.getElementById('email').innerText  = user.email || '';
 
     await Promise.all([loadResources(slack_id), loadQuests(slack_id)]);
+    document.getElementById('page-content').classList.add('ready');
   });
 
   async function loadResources(slack_id) {
