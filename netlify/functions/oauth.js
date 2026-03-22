@@ -1,5 +1,10 @@
 const { neon } = require("@netlify/neon");
 
+function generateUserId() {
+  // 4 char random alphanumeric e.g. "a3f9"
+  return Math.random().toString(36).substring(2, 6);
+}
+
 exports.handler = async (event) => {
   const path   = event.path;
   const params = event.queryStringParameters || {};
@@ -20,7 +25,7 @@ exports.handler = async (event) => {
       const code = params.code;
       if (!code) return { statusCode: 400, body: "Missing code" };
 
-      const tokenRes  = await fetch("https://auth.hackclub.com/oauth/token", {
+      const tokenRes = await fetch("https://auth.hackclub.com/oauth/token", {
         method:  "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
@@ -45,14 +50,13 @@ exports.handler = async (event) => {
       const email    = user.email || "";
       const avatar   = user.picture || user.avatar_url || "";
 
-      console.log("OAuth login for slack_id:", slack_id);
-
       const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
-      // Ensure table exists
+      // Ensure table exists with user_id column
       await sql`
         CREATE TABLE IF NOT EXISTS users (
           slack_id   TEXT PRIMARY KEY,
+          user_id    TEXT UNIQUE,
           name       TEXT,
           email      TEXT,
           avatar     TEXT,
@@ -63,25 +67,42 @@ exports.handler = async (event) => {
         )
       `;
 
-      // Insert new user with starter resources, preserve existing on re-login
+      // Add user_id column if it doesn't exist (for existing DBs)
       await sql`
-        INSERT INTO users (slack_id, name, email, avatar, silicon, conductor, diode)
-        VALUES (${slack_id}, ${name}, ${email}, ${avatar}, 50, 60, 0)
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id TEXT UNIQUE
+      `;
+
+      // Generate a unique user_id that doesn't clash
+      let user_id = generateUserId();
+      let attempts = 0;
+      while (attempts < 10) {
+        const [clash] = await sql`SELECT slack_id FROM users WHERE user_id = ${user_id}`;
+        if (!clash) break;
+        user_id = generateUserId();
+        attempts++;
+      }
+
+      // Upsert — on re-login keep existing user_id, resources untouched
+      const [row] = await sql`
+        INSERT INTO users (slack_id, user_id, name, email, avatar, silicon, conductor, diode)
+        VALUES (${slack_id}, ${user_id}, ${name}, ${email}, ${avatar}, 50, 60, 0)
         ON CONFLICT (slack_id) DO UPDATE
           SET name   = EXCLUDED.name,
               email  = EXCLUDED.email,
               avatar = EXCLUDED.avatar
+        RETURNING user_id
       `;
 
-      console.log("User upserted:", slack_id);
+      const finalUserId = row.user_id;
+      console.log("Login:", slack_id, "→ user_id:", finalUserId);
 
       return {
         statusCode: 302,
         headers: {
           "Set-Cookie": `user=${encodeURIComponent(JSON.stringify({
-            ...user, slack_id, name, email, avatar,
+            ...user, slack_id, name, email, avatar, user_id: finalUserId,
           }))}; Path=/; SameSite=Lax`,
-          Location: "/dashboard",
+          Location: `/dashboard/${finalUserId}`,
         },
       };
 
