@@ -11,16 +11,15 @@ function fadeTo(el, opacity, durationMs) {
 // ── ON LOAD ──
 window.addEventListener('DOMContentLoaded', () => {
   const flash = document.getElementById('flash');
-
-  // Only show arrival flash when navigated here, not on refresh
   const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
 
-  if (!isRefresh) {
-    // Start fully white, then fade out — single fade, no blur
+  if (isRefresh) {
+    // Refresh: snap flash away immediately, no animation
     flash.style.transition    = 'none';
-    flash.style.opacity       = '1';
-    flash.style.pointerEvents = 'all';
-
+    flash.style.opacity       = '0';
+    flash.style.pointerEvents = 'none';
+  } else {
+    // Navigation arrival: CSS already has opacity 1, smooth fade out
     requestAnimationFrame(() => requestAnimationFrame(() => {
       fadeTo(flash, 0, 700);
     }));
@@ -58,7 +57,7 @@ async function goWithFlash(url) {
 
   await delay(350);
 
-  // Navigate — destination page starts white and fades in
+  // Navigate — destination page CSS starts white, JS fades it out
   window.location.href = url;
 }
 
