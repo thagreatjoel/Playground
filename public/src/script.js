@@ -1,80 +1,80 @@
-// ── Page arrival: flash out + blur out ──
+// ── Smooth opacity helper ──
+function fadeTo(el, opacity, durationMs) {
+  return new Promise(resolve => {
+    el.style.transition    = `opacity ${durationMs}ms ease`;
+    el.style.opacity       = opacity;
+    el.style.pointerEvents = opacity > 0 ? 'all' : 'none';
+    setTimeout(resolve, durationMs);
+  });
+}
+
+// ── ON LOAD: start white, fade out ──
 window.addEventListener('DOMContentLoaded', () => {
   const flash = document.getElementById('flash');
 
-  // Start fully white
-  flash.style.opacity = '1';
-  flash.style.transition = 'none';
+  // Start fully white instantly
+  flash.style.transition    = 'none';
+  flash.style.opacity       = '1';
+  flash.style.pointerEvents = 'all';
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      // Fade out white flash
-      flash.style.transition = 'opacity 0.6s ease';
-      flash.style.opacity = '0';
+  // Then smooth fade out
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    fadeTo(flash, 0, 700);
+  }));
 
-      // Un-blur the body
-      document.body.style.transition = 'filter 0.65s ease, opacity 0.65s ease';
-      document.body.classList.remove('arrive-blurred');
-    });
-  });
+  // ── Auth ──
+  const user = getUser();
+  console.log("USER:", user);
+
+  if (user) {
+    const name  = user.name || user.display_name || "User";
+    const email = user.email || "";
+    const slack = user.slack_id || "";
+
+    let avatar = user.picture || user.avatar_url || user.image || "";
+    if (!avatar) avatar = "https://api.dicebear.com/7.x/initials/svg?seed=" + name;
+
+    document.getElementById("pfp").src          = avatar;
+    document.getElementById("pfpHud").src       = avatar;
+    document.getElementById("name").innerText   = name;
+    document.getElementById("nameHud").innerText = name;
+    document.getElementById("email").innerText  = email;
+    document.getElementById("slack").innerText  = "Slack: " + slack;
+  }
 });
 
-// ── Single transition function used by ALL buttons ──
+// ── NAVIGATE: blur → fade to white → navigate ──
 async function goWithFlash(url) {
   const flash = document.getElementById('flash');
 
-  // Disable all buttons to prevent double-clicks
-  document.querySelectorAll('.btn, #goBtn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.btn').forEach(b => b.disabled = true);
 
-  // Step 1: blur + dim the whole page
-  document.body.style.transition = 'filter 0.4s ease, opacity 0.4s ease';
-  document.body.style.filter = 'blur(14px)';
-  document.body.style.opacity = '0.4';
+  // 1. Blur the page
+  document.body.style.transition = 'filter 0.35s ease';
+  document.body.style.filter     = 'blur(10px)';
 
-  // Step 2: white flash
-  await delay(350);
-  flash.style.transition = 'opacity 0.22s ease';
-  flash.style.opacity = '1';
-  flash.style.pointerEvents = 'all';
+  await delay(300);
 
-  // Step 3: navigate while screen is white
-  await delay(200);
+  // 2. Smooth fade in to full white
+  await fadeTo(flash, 1, 400);
+
+  // 3. Navigate while fully white
   window.location.href = url;
 }
 
-// Alias so Test button (navigateTo) also works
+// Alias — keeps any old navigateTo() calls working
 const navigateTo = goWithFlash;
 
-const delay = ms => new Promise(r => setTimeout(r, ms));
-
-
-// ── Auth ──
+// ── Auth helpers ──
 function getUser() {
   const match = document.cookie.match(/user=([^;]+)/);
   if (!match) return null;
   return JSON.parse(decodeURIComponent(match[1]));
 }
 
-const user = getUser();
-console.log("USER:", user);
-
-if (user) {
-  const name  = user.name || user.display_name || "User";
-  const email = user.email || "";
-  const slack = user.slack_id || "";
-
-  let avatar = user.picture || user.avatar_url || user.image || "";
-  if (!avatar) avatar = "https://api.dicebear.com/7.x/initials/svg?seed=" + name;
-
-  document.getElementById("pfp").src       = avatar;
-  document.getElementById("pfpHud").src    = avatar;
-  document.getElementById("name").innerText      = name;
-  document.getElementById("nameHud").innerText   = name;
-  document.getElementById("email").innerText     = email;
-  document.getElementById("slack").innerText     = "Slack: " + slack;
-}
-
 function logout() {
   document.cookie = "user=; Path=/; Max-Age=0";
   window.location.href = "/";
 }
+
+const delay = ms => new Promise(r => setTimeout(r, ms));
