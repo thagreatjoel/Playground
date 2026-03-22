@@ -80,31 +80,3 @@ function logout() {
 }
 
 const delay = ms => new Promise(r => setTimeout(r, ms));
-
-
-
-
-
-async function addCurrency() {
-    const user     = getUser();
-    const slack_id = user.sub || user.slack_id;
-
-    const res  = await fetch('/.netlify/functions/addcurrency', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ slack_id }),
-    });
-
-    const data = await res.json();
-
-    // Update UI instantly
-    document.getElementById('silicon').innerText      = data.silicon;
-    document.getElementById('conductor').innerText    = data.conductor;
-    document.getElementById('diode').innerText        = data.diode;
-    document.getElementById('siliconHud').innerText   = data.silicon;
-    document.getElementById('conductorHud').innerText = data.conductor;
-    document.getElementById('diodeHud').innerText     = data.diode;
-  }
-
-
-
