@@ -1,107 +1,101 @@
-const fetch = require("node-fetch");
-
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-const db = (path, options = {}) =>
-  fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      "Content-Type":  "application/json",
-      "apikey":        SUPABASE_KEY,
-      "Authorization": `Bearer ${SUPABASE_KEY}`,
-      ...(options.headers || {}),
-    },
-  });
+const { neon } = require("@netlify/neon");
 
 exports.handler = async (event) => {
   const { action, slack_id } = event.queryStringParameters || {};
 
-  // ── GET: fetch quests + user progress ──
-  if (event.httpMethod === "GET" && action === "list") {
-    if (!slack_id) return { statusCode: 400, body: "Missing slack_id" };
+  try {
+    const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
-    // Fetch all quests
-    const questsRes = await db("quests?order=order_index.asc");
-    const quests    = await questsRes.json();
+    // ── GET: list all quests with user completion status ──
+    if (event.httpMethod === "GET" && action === "list") {
+      if (!slack_id) return { statusCode: 400, body: "Missing slack_id" };
 
-    // Fetch this user's completed quests
-    const progressRes = await db(`user_quests?slack_id=eq.${slack_id}`);
-    const progress    = await progressRes.json();
+      const rows = await sql`
+        SELECT
+          q.*,
+          CASE WHEN uq.quest_id IS NOT NULL THEN true ELSE false END AS completed
+        FROM quests q
+        LEFT JOIN user_quests uq
+          ON uq.quest_id = q.id AND uq.slack_id = ${slack_id}
+        ORDER BY q.order_index ASC
+      `;
 
-    const completedIds = new Set(progress.map(p => p.quest_id));
-
-    const result = quests.map(q => ({
-      ...q,
-      completed: completedIds.has(q.id),
-    }));
-
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(result),
-    };
-  }
-
-  // ── POST: complete a quest ──
-  if (event.httpMethod === "POST" && action === "complete") {
-    const body     = JSON.parse(event.body || "{}");
-    const { quest_id } = body;
-    const sid      = body.slack_id;
-
-    if (!sid || !quest_id) return { statusCode: 400, body: "Missing fields" };
-
-    // Check quest exists
-    const questRes = await db(`quests?id=eq.${quest_id}`);
-    const [quest]  = await questRes.json();
-    if (!quest) return { statusCode: 404, body: "Quest not found" };
-
-    // Check not already completed
-    const checkRes  = await db(`user_quests?slack_id=eq.${sid}&quest_id=eq.${quest_id}`);
-    const existing  = await checkRes.json();
-    if (existing.length > 0) return { statusCode: 409, body: "Already completed" };
-
-    // Check user has enough resources (for Quest 1 — the diffuser)
-    if (quest.cost_silicon > 0 || quest.cost_conductor > 0) {
-      const userRes   = await db(`users?slack_id=eq.${sid}`);
-      const [user]    = await userRes.json();
-      if (!user) return { statusCode: 404, body: "User not found" };
-
-      if (user.silicon < quest.cost_silicon || user.conductor < quest.cost_conductor) {
-        return { statusCode: 402, body: "Not enough resources" };
-      }
-
-      // Deduct costs
-      await db(`users?slack_id=eq.${sid}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          silicon:   user.silicon   - quest.cost_silicon,
-          conductor: user.conductor - quest.cost_conductor,
-          diode:     user.diode     + (quest.reward_diode || 0),
-        }),
-      });
-    } else {
-      // Just add rewards
-      const userRes = await db(`users?slack_id=eq.${sid}`);
-      const [user]  = await userRes.json();
-      await db(`users?slack_id=eq.${sid}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          silicon:   user.silicon   + (quest.reward_silicon   || 0),
-          conductor: user.conductor + (quest.reward_conductor || 0),
-          diode:     user.diode     + (quest.reward_diode     || 0),
-        }),
-      });
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rows),
+      };
     }
 
-    // Mark quest complete
-    await db("user_quests", {
-      method: "POST",
-      body: JSON.stringify({ slack_id: sid, quest_id }),
-    });
+    // ── POST: complete a quest ──
+    if (event.httpMethod === "POST" && action === "complete") {
+      const body     = JSON.parse(event.body || "{}");
+      const { quest_id } = body;
+      const sid      = body.slack_id;
 
-    return { statusCode: 200, body: JSON.stringify({ success: true }) };
+      if (!sid || !quest_id) return { statusCode: 400, body: "Missing fields" };
+
+      // Fetch quest
+      const [quest] = await sql`SELECT * FROM quests WHERE id = ${quest_id}`;
+      if (!quest) return { statusCode: 404, body: "Quest not found" };
+
+      // Check already completed
+      const [existing] = await sql`
+        SELECT id FROM user_quests
+        WHERE slack_id = ${sid} AND quest_id = ${quest_id}
+      `;
+      if (existing) return { statusCode: 409, body: "Already completed" };
+
+      // Fetch user
+      const [user] = await sql`SELECT * FROM users WHERE slack_id = ${sid}`;
+      if (!user) return { statusCode: 404, body: "User not found" };
+
+      // Check resources if quest has a cost
+      if (quest.cost_silicon > 0 || quest.cost_conductor > 0 || quest.cost_diode > 0) {
+        if (
+          user.silicon   < quest.cost_silicon   ||
+          user.conductor < quest.cost_conductor ||
+          user.diode     < quest.cost_diode
+        ) {
+          return { statusCode: 402, body: "Not enough resources" };
+        }
+
+        // Deduct costs and add rewards atomically
+        await sql`
+          UPDATE users SET
+            silicon   = silicon   - ${quest.cost_silicon}   + ${quest.reward_silicon},
+            conductor = conductor - ${quest.cost_conductor} + ${quest.reward_conductor},
+            diode     = diode     - ${quest.cost_diode}     + ${quest.reward_diode}
+          WHERE slack_id = ${sid}
+        `;
+      } else {
+        // Free quest — just add rewards
+        await sql`
+          UPDATE users SET
+            silicon   = silicon   + ${quest.reward_silicon},
+            conductor = conductor + ${quest.reward_conductor},
+            diode     = diode     + ${quest.reward_diode}
+          WHERE slack_id = ${sid}
+        `;
+      }
+
+      // Record completion
+      await sql`
+        INSERT INTO user_quests (slack_id, quest_id)
+        VALUES (${sid}, ${quest_id})
+      `;
+
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ success: true }),
+      };
+    }
+
+    return { statusCode: 404, body: "Not found" };
+
+  } catch (err) {
+    console.error("quests.js error:", err);
+    return { statusCode: 500, body: "Database error" };
   }
-
-  return { statusCode: 404, body: "Not found" };
 };
