@@ -137,7 +137,7 @@
 </div>
 
 <!-- HUD -->
-<div class="card hud-card">
+<div class="card hud-card" id="hud-card" style="opacity:0;transition:opacity 0.3s ease;">
   <div class="hud-left" onclick="goWithFlash('/profile')" style="cursor:pointer;">
     <img id="pfpHud" class="pfp">
     <div class="hud-info">
@@ -191,6 +191,7 @@
 
     await Promise.all([loadResources(slack_id), loadQuests(slack_id)]);
     document.getElementById('page-content').classList.add('ready');
+    document.getElementById('hud-card').style.opacity = '1';
   });
 
   async function loadResources(slack_id) {
