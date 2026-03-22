@@ -46,21 +46,20 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── NAVIGATE: blur → flash → navigate ──
+// ── NAVIGATE: blur (100ms) → flash fade in (110ms) → navigate ──
 async function goWithFlash(url) {
   const flash = document.getElementById('flash');
   document.querySelectorAll('.btn').forEach(b => b.disabled = true);
 
-  // 1. Blur the page — visible before flash covers it
-  document.body.style.transition = 'filter 0.3s ease';
-  document.body.style.filter     = 'blur(6px)';
+  // 1. Blur over 100ms
+  document.body.style.transition = 'filter 0.1s ease';
+  document.body.style.filter     = 'blur(10px)';
+  await delay(100);
 
-  await delay(300);
+  // 2. Flash fade in over 110ms
+  await fadeTo(flash, 1, 110);
 
-  // 2. Fade flash in over the blurred page
-  await fadeTo(flash, 1, 310);
-
-  // 3. Navigate while fully covered
+  // 3. Navigate
   window.location.href = url;
 }
 
