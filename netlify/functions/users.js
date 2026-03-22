@@ -22,6 +22,10 @@ exports.handler = async (event) => {
     };
   } catch (err) {
     console.error("user.js error:", err);
-    return { statusCode: 500, body: "Database error" };
+    return {
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: err.message }),
+    };
   }
 };
