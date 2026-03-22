@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
     flash.style.opacity       = '0';
     flash.style.pointerEvents = 'none';
   } else {
-    // Navigation arrival: CSS starts white, smooth fade out
+    // Navigation arrival: CSS starts at opacity 1, smooth fade out
     requestAnimationFrame(() => requestAnimationFrame(() => {
       fadeTo(flash, 0, 700);
     }));
@@ -46,15 +46,21 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── NAVIGATE: flash white over everything → navigate ──
+// ── NAVIGATE: blur → flash → navigate ──
 async function goWithFlash(url) {
   const flash = document.getElementById('flash');
   document.querySelectorAll('.btn').forEach(b => b.disabled = true);
 
-  // Fade to full white — covers everything, no body bleed-through
-  await fadeTo(flash, 1, 400);
+  // 1. Blur the page — visible before flash covers it
+  document.body.style.transition = 'filter 0.3s ease';
+  document.body.style.filter     = 'blur(10px)';
 
-  // Navigate while fully white
+  await delay(300);
+
+  // 2. Fade flash in over the blurred page
+  await fadeTo(flash, 1, 350);
+
+  // 3. Navigate while fully covered
   window.location.href = url;
 }
 
