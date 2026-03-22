@@ -168,9 +168,16 @@ body {
   background: white;
   border-radius: 16px;
   border: 1px solid #ddd;
+  border-top: 1px solid #ddd;
   border-bottom: 3px solid black;
-  box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
   z-index: 9999;
+}
+
+/* Remove the dashed divider that .card adds to children */
+.hud-card > div + div {
+  border-top: none;
+  padding-top: 0;
 }
 
 .hud-left {
