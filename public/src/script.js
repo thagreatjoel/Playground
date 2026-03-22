@@ -8,8 +8,23 @@ function fadeTo(el, opacity, durationMs) {
   });
 }
 
-// ── ON LOAD: auth only, no flash on refresh ──
+// ── ON LOAD ──
 window.addEventListener('DOMContentLoaded', () => {
+  const flash = document.getElementById('flash');
+
+  // Only do the fade-in arrival if we navigated here (not a refresh)
+  const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+
+  if (!isRefresh) {
+    flash.style.transition    = 'none';
+    flash.style.opacity       = '1';
+    flash.style.pointerEvents = 'all';
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fadeTo(flash, 0, 700);
+    }));
+  }
+
   // ── Auth ──
   const user = getUser();
   console.log("USER:", user);
