@@ -51,12 +51,12 @@ async function goWithFlash(url) {
 
   // 1. Blur the page
   document.body.style.transition = 'filter 0.35s ease';
-  document.body.style.filter     = 'blur(10px)';
+  document.body.style.filter     = 'blur(6px)';
 
   await delay(300);
 
   // 2. Smooth fade in to full white
-  await fadeTo(flash, 1, 400);
+  await fadeTo(flash, 1, 350);
 
   // 3. Navigate while fully white
   window.location.href = url;
