@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Space Grotesk', sans-serif; background: #f3eef2; padding: 20px; }
+    .log { background: #1a1a1a; color: #b2f167; border-radius: 12px; padding: 16px; font-size: 12px; font-family: monospace; white-space: pre-wrap; word-break: break-all; min-height: 200px; margin-top: 12px; }
+    .log .error { color: #ff6b6b; }
+    .log .ok    { color: #b2f167; }
+    .log .info  { color: #87ceeb; }
+    .btn { background: #b2f167; border: 1px solid #000; border-bottom: 3px solid #000; border-radius: 10px; padding: 10px 20px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; cursor: pointer; margin: 4px; }
+  </style>
+</head>
+<body>
+
+<h1 style="font-size:1.5rem;font-weight:700;">🔍 Debug Panel</h1>
+<p style="color:#555;font-size:0.85rem;">Tap each button to test</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+  <button class="btn" onclick="testCookie()">1. Read Cookie</button>
+  <button class="btn" onclick="testUserFn()">2. Fetch /user</button>
+  <button class="btn" onclick="testQuestsFn()">3. Fetch /quests</button>
+  <button class="btn" onclick="testAddCurrency()">4. Add Currency</button>
+  <button class="btn" onclick="clearLog()" style="background:#ffe8e8;">Clear</button>
+</div>
+
+<div class="log" id="log">Tap a button above...\n</div>
+
+<script>
+  const logEl = document.getElementById('log');
+
+  function log(msg, type = 'ok') {
+    const line = document.createElement('div');
+    line.className = type;
+    line.textContent = msg;
+    logEl.appendChild(line);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function clearLog() {
+    logEl.innerHTML = '';
+  }
+
+  function getCookieUser() {
+    const match = document.cookie.match(/user=([^;]+)/);
+    if (!match) return null;
+    try { return JSON.parse(decodeURIComponent(match[1])); } catch(e) { return null; }
+  }
+
+  // ── 1. Read cookie ──
+  function testCookie() {
+    log('--- Reading cookie ---', 'info');
+    const user = getCookieUser();
+    if (!user) {
+      log('❌ No user cookie found! Are you logged in?', 'error');
+      return;
+    }
+    log('✅ Cookie found!', 'ok');
+    log('name:     ' + (user.name || user.display_name || 'N/A'));
+    log('email:    ' + (user.email || 'N/A'));
+    log('sub:      ' + (user.sub || 'N/A'));
+    log('slack_id: ' + (user.slack_id || 'N/A'));
+    log('avatar:   ' + (user.picture || user.avatar_url || 'N/A'));
+    const slack_id = user.sub || user.slack_id;
+    log('→ Using slack_id: ' + slack_id, 'info');
+  }
+
+  // ── 2. Fetch /user ──
+  async function testUserFn() {
+    log('--- Fetching /.netlify/functions/user ---', 'info');
+    const user = getCookieUser();
+    if (!user) { log('❌ No cookie', 'error'); return; }
+
+    const slack_id = user.sub || user.slack_id;
+    log('Using slack_id: ' + slack_id, 'info');
+
+    try {
+      const url = '/.netlify/functions/user?slack_id=' + encodeURIComponent(slack_id);
+      log('GET ' + url, 'info');
+      const res  = await fetch(url);
+      log('Status: ' + res.status);
+      const text = await res.text();
+      log('Response: ' + text);
+      if (res.ok) {
+        const data = JSON.parse(text);
+        log('✅ silicon:   ' + data.silicon);
+        log('✅ conductor: ' + data.conductor);
+        log('✅ diode:     ' + data.diode);
+      } else {
+        log('❌ Non-OK status: ' + res.status, 'error');
+      }
+    } catch(e) {
+      log('❌ Fetch error: ' + e.message, 'error');
+    }
+  }
+
+  // ── 3. Fetch /quests ──
+  async function testQuestsFn() {
+    log('--- Fetching /.netlify/functions/quests ---', 'info');
+    const user = getCookieUser();
+    if (!user) { log('❌ No cookie', 'error'); return; }
+
+    const slack_id = user.sub || user.slack_id;
+    try {
+      const url = '/.netlify/functions/quests?action=list&slack_id=' + encodeURIComponent(slack_id);
+      log('GET ' + url, 'info');
+      const res  = await fetch(url);
+      log('Status: ' + res.status);
+      const text = await res.text();
+      log('Response (first 300 chars): ' + text.substring(0, 300));
+      if (res.ok) {
+        const data = JSON.parse(text);
+        log('✅ Got ' + data.length + ' quests');
+      } else {
+        log('❌ Error: ' + res.status, 'error');
+      }
+    } catch(e) {
+      log('❌ Fetch error: ' + e.message, 'error');
+    }
+  }
+
+  // ── 4. Add currency ──
+  async function testAddCurrency() {
+    log('--- POST /.netlify/functions/addcurrency ---', 'info');
+    const user = getCookieUser();
+    if (!user) { log('❌ No cookie', 'error'); return; }
+
+    const slack_id = user.sub || user.slack_id;
+    log('Using slack_id: ' + slack_id, 'info');
+    try {
+      const res  = await fetch('/.netlify/functions/addcurrency', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ slack_id }),
+      });
+      log('Status: ' + res.status);
+      const text = await res.text();
+      log('Response: ' + text);
+      if (res.ok) {
+        const data = JSON.parse(text);
+        log('✅ New silicon:   ' + data.silicon);
+        log('✅ New conductor: ' + data.conductor);
+        log('✅ New diode:     ' + data.diode);
+      } else {
+        log('❌ Error: ' + res.status, 'error');
+      }
+    } catch(e) {
+      log('❌ Fetch error: ' + e.message, 'error');
+    }
+  }
+</script>
+</body>
+</html>
