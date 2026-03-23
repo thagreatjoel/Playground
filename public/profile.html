@@ -6,7 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
-  <script src="/src/script.js" onerror="document.getElementById('debug-log').textContent='script.js FAILED TO LOAD - path wrong?'"></script>
+  <script src="/src/script.js"></script>
   <style>
     body { filter: none; opacity: 1; }
 
@@ -108,15 +108,7 @@
 </head>
 
 <body>
-<script>
-  // This runs before anything else — if you see "BODY LOADED" the page HTML is working
-  window.addEventListener('DOMContentLoaded', function() {
-    var el = document.getElementById('debug-log');
-    if (el) el.textContent = 'BODY LOADED - waiting for main script...';
-  });
-</script>
 <div id="flash"></div>
-<div id="debug-log" style="position:fixed;top:0;left:0;right:0;background:#1a1a1a;color:#b2f167;padding:10px;font-size:11px;font-family:monospace;white-space:pre-wrap;z-index:99998;max-height:50vh;overflow-y:auto;">Loading...</div>
 
 <a href="https://hackclub.com">
   <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
@@ -227,24 +219,15 @@
     reader.readAsDataURL(file);
   }
 
-  document.getElementById('debug-log').textContent = 'JS parsed ✓';
-
-  function dlog(msg) {
-    const el = document.getElementById('debug-log');
-    if (el) el.textContent += msg + '\n';
-  }
 
   // Use setTimeout to run after all scripts including script.js
   setTimeout(async () => {
-    dlog('init running ✓');
     const me = getCookieUser();
-    dlog('cookie: ' + (me ? me.user_id : 'NULL'));
     if (!me) { window.location.href = '/'; return; }
 
     const pathParts      = window.location.pathname.split('/').filter(Boolean);
     const rawId          = pathParts[1] || me.user_id;
     const target_user_id = rawId ? rawId.toUpperCase() : null;
-    dlog('target_user_id: ' + target_user_id);
 
     if (!target_user_id || target_user_id === 'NULL') {
       showNotFound('No user ID found. Try logging out and back in.');
@@ -253,11 +236,8 @@
 
     try {
       const url  = '/.netlify/functions/profile?user_id=' + encodeURIComponent(target_user_id);
-      dlog('fetching: ' + url);
       const res  = await fetch(url);
-      dlog('status: ' + res.status);
       const text = await res.text();
-      dlog('response: ' + text.substring(0, 200));
       const data = JSON.parse(text);
 
       if (!data.success) { showNotFound('User not found.'); return; }
@@ -269,12 +249,10 @@
       });
       const adminData = await adminRes.json();
       const isAdmin   = adminData.is_admin === true;
-      dlog('isAdmin: ' + isAdmin);
 
       renderProfile(data.user, me, isAdmin);
 
-    } catch(e) { 
-      dlog('ERROR: ' + e.message);
+    } catch(e) {
       showNotFound('Failed to load profile: ' + e.message); 
     }
   }, 100);
