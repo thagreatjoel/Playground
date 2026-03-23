@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────
 //  ADMINS — Hardware Playground
-//  user_id codes here to grant admin access
+//  Add user_id codes here to grant admin access
 // ─────────────────────────────────────────
 
 const ADMINS = [
-    "9buo",
+  "9buo",  // Joel
 ];
 
 module.exports = { ADMINS };
