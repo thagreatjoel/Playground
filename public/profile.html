@@ -234,8 +234,9 @@
     if (el) el.textContent += msg + '\n';
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    dlog('DOM ready ✓');
+  // Use setTimeout to run after all scripts including script.js
+  setTimeout(async () => {
+    dlog('init running ✓');
     const me = getCookieUser();
     dlog('cookie: ' + (me ? me.user_id : 'NULL'));
     if (!me) { window.location.href = '/'; return; }
@@ -276,7 +277,7 @@
       dlog('ERROR: ' + e.message);
       showNotFound('Failed to load profile: ' + e.message); 
     }
-  });
+  }, 100);
 
   function renderProfile(user, me, isAdmin) {
     const isMe   = me.user_id === user.user_id;
