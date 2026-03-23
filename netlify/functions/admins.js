@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────
 
 const ADMINS = [
-  "LJI5K",  // Joel
+  "ident!Xkfkxn",  // Joel
 ];
 
 module.exports = { ADMINS };
