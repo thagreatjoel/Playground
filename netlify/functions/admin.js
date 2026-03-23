@@ -8,7 +8,24 @@ exports.handler = async (event) => {
   const body = JSON.parse(event.body || "{}");
   const { action, slack_id, silicon, conductor, diode, requester_user_id } = body;
 
-  // ── Check admin access ──
+  // ── Public actions (no admin needed) ──
+  if (action === "profile") {
+    try {
+      const sql = neon(process.env.NETLIFY_DATABASE_URL);
+      const { target_user_id } = body;
+      if (!target_user_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing target_user_id" }) };
+      const [profile] = await sql`
+        SELECT user_id, name, email, avatar, slack_id, created_at
+        FROM users WHERE user_id = ${target_user_id}
+      `;
+      if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: profile }) };
+    } catch (err) {
+      return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    }
+  }
+
+  // ── Check admin access for all other actions ──
   if (!requester_user_id || !ADMINS.includes(requester_user_id)) {
     return {
       statusCode: 403,
@@ -60,6 +77,18 @@ exports.handler = async (event) => {
 
     if (action === "lookup") {
       return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user }) };
+    }
+
+    // ── PUBLIC PROFILE: lookup by user_id (no admin needed) ──
+    if (action === "profile") {
+      const { target_user_id } = body;
+      if (!target_user_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing target_user_id" }) };
+      const [profile] = await sql`
+        SELECT user_id, name, email, avatar, slack_id, created_at
+        FROM users WHERE user_id = ${target_user_id}
+      `;
+      if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: profile }) };
     }
 
     // ── LIST: all users ──
