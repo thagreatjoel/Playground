@@ -1,5 +1,9 @@
 const { neon } = require("@netlify/neon");
-const { ADMINS } = require("./admins");
+
+// ── Add user_ids here to grant admin access ──
+const ADMINS = [
+  "LJI5K",  // Joel
+];
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST")
