@@ -1,6 +1,7 @@
 const { neon } = require("@netlify/neon");
 
 function generateUserId() {
+  // 4 char random alphanumeric e.g. "a3f9"
   return Math.random().toString(36).substring(2, 7).toUpperCase();
 }
 
@@ -24,7 +25,6 @@ exports.handler = async (event) => {
       const code = params.code;
       if (!code) return { statusCode: 400, body: "Missing code" };
 
-      // Exchange code for token
       const tokenRes = await fetch("https://auth.hackclub.com/oauth/token", {
         method:  "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -40,20 +40,21 @@ exports.handler = async (event) => {
       const tokenData = JSON.parse(await tokenRes.text());
       if (!tokenData.access_token) return { statusCode: 500, body: "No access token" };
 
-      // Get user info
       const userRes = await fetch("https://auth.hackclub.com/oauth/userinfo", {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       });
       const user = JSON.parse(await userRes.text());
-      console.log("FULL USER OBJECT:", JSON.stringify(user));
 
-      const slack_id = user.sub || user.slack_id || null;
+      // Log full user object to see all available fields
+      console.log("FULL USER OBJECT:", JSON.stringify(user));
+      const slack_id = user.slack_id || user.sub || null;
       const name     = user.name || user.display_name || "User";
       const email    = user.email || "";
+      const avatar   = user.picture || user.avatar_url || user.image_192 || user.image_72 || user.image_48 || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
 
       const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
-      // Ensure tables exist
+      // Ensure table exists with user_id column
       await sql`
         CREATE TABLE IF NOT EXISTS users (
           slack_id   TEXT PRIMARY KEY,
@@ -68,49 +69,49 @@ exports.handler = async (event) => {
         )
       `;
 
-      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id TEXT UNIQUE`;
+      // Add user_id column if it doesn't exist (for existing DBs)
+      await sql`
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id TEXT UNIQUE
+      `;
 
-      // Generate unique user_id
-      let user_id  = generateUserId();
+      // Generate a unique user_id that doesn't clash
+      let user_id = generateUserId();
       let attempts = 0;
       while (attempts < 10) {
-        const clash = await sql`SELECT slack_id FROM users WHERE user_id = ${user_id}`;
-        if (!clash[0]) break;
+        const [clash] = await sql`SELECT slack_id FROM users WHERE user_id = ${user_id}`;
+        if (!clash) break;
         user_id = generateUserId();
         attempts++;
       }
 
-      // Upsert — only update name and email, preserve avatar and resources
-      const rows = await sql`
+      // Upsert — on re-login keep existing user_id, resources untouched
+      const [row] = await sql`
         INSERT INTO users (slack_id, user_id, name, email, avatar, silicon, conductor, diode)
-        VALUES (${slack_id}, ${user_id}, ${name}, ${email}, ${""}, 50, 60, 0)
+        VALUES (${slack_id}, ${user_id}, ${name}, ${email}, ${avatar}, 50, 60, 0)
         ON CONFLICT (slack_id) DO UPDATE
           SET name    = EXCLUDED.name,
               email   = EXCLUDED.email,
+              avatar  = EXCLUDED.avatar,
               user_id = COALESCE(users.user_id, EXCLUDED.user_id)
-        RETURNING user_id, avatar
+        RETURNING user_id
       `;
 
-      const finalUserId = rows[0].user_id;
-      const finalAvatar = rows[0].avatar || "";
-      console.log("Login:", slack_id, "user_id:", finalUserId, "avatar length:", finalAvatar.length);
+      const finalUserId = row.user_id;
+      console.log("Login:", slack_id, "→ user_id:", finalUserId);
 
       return {
         statusCode: 302,
         headers: {
           "Set-Cookie": `user=${encodeURIComponent(JSON.stringify({
-            ...user, slack_id, name, email,
-            avatar:   finalAvatar,
-            picture:  finalAvatar,
-            user_id:  finalUserId,
+            ...user, slack_id, name, email, avatar, user_id: finalUserId,
           }))}; Path=/; SameSite=Lax`,
-          Location: "/home",
+          Location: `/home`,
         },
       };
 
     } catch (err) {
-      console.error("OAuth error:", err.message, err.stack);
-      return { statusCode: 500, body: "OAuth failed: " + err.message };
+      console.error("OAuth error:", err.message);
+      return { statusCode: 500, body: `OAuth failed: ${err.message}` };
     }
   }
 
