@@ -45,10 +45,12 @@ exports.handler = async (event) => {
       });
       const user = JSON.parse(await userRes.text());
 
-      const slack_id = user.sub || user.slack_id || null;
+      // Log full user object to see all available fields
+      console.log("FULL USER OBJECT:", JSON.stringify(user));
+      const slack_id = user.slack_id || user.sub || null;
       const name     = user.name || user.display_name || "User";
       const email    = user.email || "";
-      const avatar   = user.picture || user.avatar_url || "";
+      const avatar   = user.picture || user.avatar_url || user.image_192 || user.image_72 || user.image_48 || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
 
       const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
