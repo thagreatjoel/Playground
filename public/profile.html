@@ -262,11 +262,11 @@
 
     const avatarHTML = isMe
       ? '<div class="avatar-wrap" onclick="triggerAvatarUpload()">' +
-          '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" onerror="this.src=\'https://api.dicebear.com/7.x/initials/svg?seed=user\'">' +
+          '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" onerror="this.src=\'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'">' +
           '<div class="avatar-edit-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>' +
         '</div>' +
         '<input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(event)">'
-      : '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" style="margin:0 auto 12px;" onerror="this.src=\'https://api.dicebear.com/7.x/initials/svg?seed=user\'">';
+      : '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" style="margin:0 auto 12px;" onerror="this.src=\'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'">';
 
     let slackRow = '';
     if (isAdmin) {
