@@ -6,151 +6,307 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Space Grotesk', sans-serif; background: #f3eef2; padding: 20px; }
-    .log { background: #1a1a1a; color: #b2f167; border-radius: 12px; padding: 16px; font-size: 12px; font-family: monospace; white-space: pre-wrap; word-break: break-all; min-height: 200px; margin-top: 12px; }
-    .log .error { color: #ff6b6b; }
-    .log .ok    { color: #b2f167; }
-    .log .info  { color: #87ceeb; }
-    .btn { background: #b2f167; border: 1px solid #000; border-bottom: 3px solid #000; border-radius: 10px; padding: 10px 20px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; cursor: pointer; margin: 4px; }
+    body { font-family: 'Space Grotesk', sans-serif; background: #f3eef2; padding: 20px; padding-bottom: 40px; }
+    h1   { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+    h2   { font-size: 1rem; font-weight: 600; margin-bottom: 8px; color: #333; }
+
+    .section {
+      background: white;
+      border: 1px solid #cfcfcf;
+      border-bottom: 3px solid #000;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+
+    label { font-size: 0.75rem; color: #555; display: block; margin-bottom: 2px; }
+
+    .row { display: flex; gap: 8px; }
+    .row input { flex: 1; }
+
+    .btn {
+      background: #b2f167;
+      border: 1px solid #000;
+      border-bottom: 3px solid #000;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin: 3px;
+      transition: 0.15s;
+    }
+    .btn:hover   { background: #e1fcc1; transform: translateY(-1px); }
+    .btn:active  { transform: translateY(0); border-bottom: 1px solid #000; }
+    .btn.red     { background: #ffe8e8; border-color: #f00; color: #900; }
+    .btn.red:hover { background: #ffd0d0; }
+    .btn.blue    { background: #e8f0ff; border-color: #006; color: #003; }
+
+    .log {
+      background: #1a1a1a;
+      color: #b2f167;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 11px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 120px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 8px;
+    }
+    .err  { color: #ff6b6b; }
+    .info { color: #87ceeb; }
+    .warn { color: #ffd700; }
+
+    .user-badge {
+      background: #f0fce0;
+      border: 1px solid #a0d060;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      display: none;
+    }
+    .user-badge.show { display: block; }
   </style>
 </head>
 <body>
 
-<h1 style="font-size:1.5rem;font-weight:700;">🔍 Debug Panel</h1>
-<p style="color:#555;font-size:0.85rem;">Tap each button to test</p>
+<div id="uid-bar" style="display:none;background:#1a1a1a;color:#b2f167;padding:8px 14px;border-radius:10px;font-size:0.8rem;font-family:monospace;margin-bottom:12px;">
+  Your user_id: <strong id="my-uid"></strong> — add this to admins.js to get access
+</div>
+<h1>🔧 Admin Debug Panel</h1>
+<p style="color:#555;font-size:0.8rem;margin-bottom:16px;">playground.dino.icu — internal use only</p>
 
-<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
-  <button class="btn" onclick="testCookie()">1. Read Cookie</button>
-  <button class="btn" onclick="testUserFn()">2. Fetch /user</button>
-  <button class="btn" onclick="testQuestsFn()">3. Fetch /quests</button>
-  <button class="btn" onclick="testAddCurrency()">4. Add Currency</button>
-  <button class="btn" onclick="clearLog()" style="background:#ffe8e8;">Clear</button>
+<!-- ── MY INFO ── -->
+<div class="section">
+  <h2>👤 My Info (from cookie)</h2>
+  <button class="btn" onclick="readMyCookie()">Read My Cookie</button>
+  <button class="btn blue" onclick="testMyBalance()">Fetch My Balance</button>
+  <div class="log" id="log-cookie">Tap a button...\n</div>
 </div>
 
-<div class="log" id="log">Tap a button above...\n</div>
+<!-- ── LOOKUP USER ── -->
+<div class="section">
+  <h2>🔍 Lookup User</h2>
+  <label>Slack ID</label>
+  <input type="text" id="lookup-id" placeholder="ident!Xkfkxn or sub value">
+  <button class="btn" onclick="lookupUser()">Lookup →</button>
+  <div class="user-badge" id="lookup-result"></div>
+</div>
+
+<!-- ── GIVE CURRENCY ── -->
+<div class="section">
+  <h2>🪙 Give Currency to User</h2>
+  <label>Slack ID</label>
+  <input type="text" id="give-id" placeholder="ident!Xkfkxn">
+  <div class="row">
+    <div><label>Silicon</label><input type="number" id="give-si" placeholder="0" value="0"></div>
+    <div><label>Conductor</label><input type="number" id="give-co" placeholder="0" value="0"></div>
+    <div><label>Diode</label><input type="number" id="give-di" placeholder="0" value="0"></div>
+  </div>
+  <button class="btn" onclick="giveCurrency()">Give →</button>
+  <button class="btn blue" onclick="fillMyId('give-id')">Use My ID</button>
+  <div class="log" id="log-give">Result will show here...\n</div>
+</div>
+
+<!-- ── SET CURRENCY ── -->
+<div class="section">
+  <h2>✏️ Set Exact Amount</h2>
+  <label>Slack ID</label>
+  <input type="text" id="set-id" placeholder="ident!Xkfkxn">
+  <div class="row">
+    <div><label>Silicon</label><input type="number" id="set-si" placeholder="50" value="50"></div>
+    <div><label>Conductor</label><input type="number" id="set-co" placeholder="60" value="60"></div>
+    <div><label>Diode</label><input type="number" id="set-di" placeholder="0" value="0"></div>
+  </div>
+  <button class="btn blue" onclick="setCurrency()">Set →</button>
+  <button class="btn blue" onclick="fillMyId('set-id')">Use My ID</button>
+  <div class="log" id="log-set">Result will show here...\n</div>
+</div>
+
+<!-- ── RESET ── -->
+<div class="section">
+  <h2>🔄 Reset User Currency</h2>
+  <label>Slack ID</label>
+  <input type="text" id="reset-id" placeholder="ident!Xkfkxn">
+  <br>
+  <button class="btn red" onclick="resetUser()">Reset to 0 →</button>
+  <button class="btn blue" onclick="fillMyId('reset-id')">Use My ID</button>
+  <div class="log" id="log-reset">Result will show here...\n</div>
+</div>
 
 <script>
-  const logEl = document.getElementById('log');
+  // ── Admin gate ──
+  let MY_USER_ID = null;
 
-  function log(msg, type = 'ok') {
-    const line = document.createElement('div');
-    line.className = type;
-    line.textContent = msg;
-    logEl.appendChild(line);
-    logEl.scrollTop = logEl.scrollHeight;
-  }
+  window.addEventListener('DOMContentLoaded', () => {
+    const user = getCookieUser();
+    if (!user) {
+      document.body.innerHTML = '<div style="text-align:center;padding:60px;font-family:monospace;"><h2>🔒 Not logged in</h2><p>Please <a href="/">login</a> first.</p></div>';
+      return;
+    }
+    MY_USER_ID = user.user_id;
+    if (!MY_USER_ID) {
+      document.body.innerHTML = '<div style="text-align:center;padding:60px;font-family:monospace;"><h2>⚠️ No user_id</h2><p>Log out and log back in to get your ID assigned.</p></div>';
+      return;
+    }
+    // Show user_id so admin can add themselves
+    document.getElementById('my-uid').textContent = MY_USER_ID;
+    document.getElementById('uid-bar').style.display = 'block';
+  });
 
-  function clearLog() {
-    logEl.innerHTML = '';
-  }
-
+  // ── Helpers ──
   function getCookieUser() {
     const match = document.cookie.match(/user=([^;]+)/);
     if (!match) return null;
-    try { return JSON.parse(decodeURIComponent(match[1])); } catch(e) { return null; }
+    try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
   }
 
-  // ── 1. Read cookie ──
-  function testCookie() {
-    log('--- Reading cookie ---', 'info');
-    const user = getCookieUser();
-    if (!user) {
-      log('❌ No user cookie found! Are you logged in?', 'error');
-      return;
-    }
-    log('✅ Cookie found!', 'ok');
-    log('name:     ' + (user.name || user.display_name || 'N/A'));
-    log('email:    ' + (user.email || 'N/A'));
-    log('sub:      ' + (user.sub || 'N/A'));
-    log('slack_id: ' + (user.slack_id || 'N/A'));
-    log('avatar:   ' + (user.picture || user.avatar_url || 'N/A'));
-    const slack_id = user.sub || user.slack_id;
-    log('→ Using slack_id: ' + slack_id, 'info');
+  function appendLog(logId, msg, type = '') {
+    const el   = document.getElementById(logId);
+    const line = document.createElement('div');
+    line.className = type;
+    line.textContent = msg;
+    el.appendChild(line);
+    el.scrollTop = el.scrollHeight;
   }
 
-  // ── 2. Fetch /user ──
-  async function testUserFn() {
-    log('--- Fetching /.netlify/functions/user ---', 'info');
+  function clearLog(logId) {
+    document.getElementById(logId).innerHTML = '';
+  }
+
+  function fillMyId(inputId) {
     const user = getCookieUser();
-    if (!user) { log('❌ No cookie', 'error'); return; }
+    if (!user) { alert('No cookie found — are you logged in?'); return; }
+    document.getElementById(inputId).value = user.sub || user.slack_id;
+  }
 
+  async function adminCall(payload) {
+    const res  = await fetch('/.netlify/functions/admin', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ ...payload, requester_user_id: MY_USER_ID }),
+    });
+    const text = await res.text();
+    return { status: res.status, data: JSON.parse(text) };
+  }
+
+  // ── Read my cookie ──
+  function readMyCookie() {
+    clearLog('log-cookie');
+    const user = getCookieUser();
+    if (!user) { appendLog('log-cookie', '❌ No cookie — not logged in', 'err'); return; }
+    appendLog('log-cookie', '✅ Cookie found!');
+    appendLog('log-cookie', 'name:     ' + (user.name || 'N/A'));
+    appendLog('log-cookie', 'email:    ' + (user.email || 'N/A'));
+    appendLog('log-cookie', 'slack_id: ' + (user.sub || user.slack_id || 'N/A'));
+    appendLog('log-cookie', 'user_id:  ' + (user.user_id || 'N/A'));
+  }
+
+  // ── Fetch my balance ──
+  async function testMyBalance() {
+    clearLog('log-cookie');
+    const user = getCookieUser();
+    if (!user) { appendLog('log-cookie', '❌ No cookie', 'err'); return; }
     const slack_id = user.sub || user.slack_id;
-    log('Using slack_id: ' + slack_id, 'info');
-
+    appendLog('log-cookie', 'Fetching balance for: ' + slack_id, 'info');
     try {
-      const url = '/.netlify/functions/user?slack_id=' + encodeURIComponent(slack_id);
-      log('GET ' + url, 'info');
-      const res  = await fetch(url);
-      log('Status: ' + res.status);
-      const text = await res.text();
-      log('Response: ' + text);
-      if (res.ok) {
-        const data = JSON.parse(text);
-        log('✅ silicon:   ' + data.silicon);
-        log('✅ conductor: ' + data.conductor);
-        log('✅ diode:     ' + data.diode);
-      } else {
-        log('❌ Non-OK status: ' + res.status, 'error');
-      }
-    } catch(e) {
-      log('❌ Fetch error: ' + e.message, 'error');
-    }
+      const res  = await fetch('/.netlify/functions/quests?action=balance&slack_id=' + encodeURIComponent(slack_id));
+      const data = await res.json();
+      appendLog('log-cookie', '✅ Silicon:   ' + data.silicon);
+      appendLog('log-cookie', '✅ Conductor: ' + data.conductor);
+      appendLog('log-cookie', '✅ Diode:     ' + data.diode);
+    } catch(e) { appendLog('log-cookie', '❌ ' + e.message, 'err'); }
   }
 
-  // ── 3. Fetch /quests ──
-  async function testQuestsFn() {
-    log('--- Fetching /.netlify/functions/quests ---', 'info');
-    const user = getCookieUser();
-    if (!user) { log('❌ No cookie', 'error'); return; }
-
-    const slack_id = user.sub || user.slack_id;
+  // ── Lookup user ──
+  async function lookupUser() {
+    const slack_id = document.getElementById('lookup-id').value.trim();
+    if (!slack_id) { alert('Enter a Slack ID'); return; }
+    const badge = document.getElementById('lookup-result');
+    badge.className = 'user-badge';
+    badge.textContent = 'Loading...';
+    badge.classList.add('show');
     try {
-      const url = '/.netlify/functions/quests?action=list&slack_id=' + encodeURIComponent(slack_id);
-      log('GET ' + url, 'info');
-      const res  = await fetch(url);
-      log('Status: ' + res.status);
-      const text = await res.text();
-      log('Response (first 300 chars): ' + text.substring(0, 300));
-      if (res.ok) {
-        const data = JSON.parse(text);
-        log('✅ Got ' + data.length + ' quests');
-      } else {
-        log('❌ Error: ' + res.status, 'error');
-      }
-    } catch(e) {
-      log('❌ Fetch error: ' + e.message, 'error');
-    }
+      const { status, data } = await adminCall({ action: 'lookup', slack_id });
+      if (!data.success) { badge.textContent = '❌ ' + (data.error || 'Not found'); return; }
+      const u = data.user;
+      badge.innerHTML = `
+        <strong>${u.name || 'Unknown'}</strong> (${u.email || 'no email'})<br>
+        slack_id: <code>${u.slack_id}</code><br>
+        user_id: <code>${u.user_id || 'N/A'}</code><br>
+        Silicon: <b>${u.silicon}</b> · Conductor: <b>${u.conductor}</b> · Diode: <b>${u.diode}</b>
+      `;
+    } catch(e) { badge.textContent = '❌ ' + e.message; }
   }
 
-  // ── 4. Add currency ──
-  async function testAddCurrency() {
-    log('--- POST /.netlify/functions/addcurrency ---', 'info');
-    const user = getCookieUser();
-    if (!user) { log('❌ No cookie', 'error'); return; }
-
-    const slack_id = user.sub || user.slack_id;
-    log('Using slack_id: ' + slack_id, 'info');
+  // ── Give currency ──
+  async function giveCurrency() {
+    clearLog('log-give');
+    const slack_id  = document.getElementById('give-id').value.trim();
+    const silicon   = parseInt(document.getElementById('give-si').value) || 0;
+    const conductor = parseInt(document.getElementById('give-co').value) || 0;
+    const diode     = parseInt(document.getElementById('give-di').value) || 0;
+    if (!slack_id) { alert('Enter a Slack ID'); return; }
+    appendLog('log-give', `Giving Si:${silicon} Co:${conductor} Di:${diode} to ${slack_id}`, 'info');
     try {
-      const res  = await fetch('/.netlify/functions/addcurrency', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ slack_id }),
-      });
-      log('Status: ' + res.status);
-      const text = await res.text();
-      log('Response: ' + text);
-      if (res.ok) {
-        const data = JSON.parse(text);
-        log('✅ New silicon:   ' + data.silicon);
-        log('✅ New conductor: ' + data.conductor);
-        log('✅ New diode:     ' + data.diode);
-      } else {
-        log('❌ Error: ' + res.status, 'error');
-      }
-    } catch(e) {
-      log('❌ Fetch error: ' + e.message, 'error');
-    }
+      const { status, data } = await adminCall({ action: 'give', slack_id, silicon, conductor, diode });
+      if (!data.success) { appendLog('log-give', '❌ ' + (data.error || 'Failed'), 'err'); return; }
+      const u = data.user;
+      appendLog('log-give', '✅ Done!');
+      appendLog('log-give', `New balance → Si: ${u.silicon}  Co: ${u.conductor}  Di: ${u.diode}`);
+    } catch(e) { appendLog('log-give', '❌ ' + e.message, 'err'); }
+  }
+
+  // ── Set currency ──
+  async function setCurrency() {
+    clearLog('log-set');
+    const slack_id  = document.getElementById('set-id').value.trim();
+    const silicon   = parseInt(document.getElementById('set-si').value);
+    const conductor = parseInt(document.getElementById('set-co').value);
+    const diode     = parseInt(document.getElementById('set-di').value);
+    if (!slack_id) { alert('Enter a Slack ID'); return; }
+    appendLog('log-set', `Setting Si:${silicon} Co:${conductor} Di:${diode} for ${slack_id}`, 'info');
+    try {
+      const { status, data } = await adminCall({ action: 'set', slack_id, silicon, conductor, diode });
+      if (!data.success) { appendLog('log-set', '❌ ' + (data.error || 'Failed'), 'err'); return; }
+      const u = data.user;
+      appendLog('log-set', '✅ Done!');
+      appendLog('log-set', `New balance → Si: ${u.silicon}  Co: ${u.conductor}  Di: ${u.diode}`);
+    } catch(e) { appendLog('log-set', '❌ ' + e.message, 'err'); }
+  }
+
+  // ── Reset currency ──
+  async function resetUser() {
+    const slack_id = document.getElementById('reset-id').value.trim();
+    if (!slack_id) { alert('Enter a Slack ID'); return; }
+    if (!confirm(`Reset ALL currency for ${slack_id} to 0?`)) return;
+    clearLog('log-reset');
+    appendLog('log-reset', 'Resetting ' + slack_id + '...', 'warn');
+    try {
+      const { status, data } = await adminCall({ action: 'reset', slack_id });
+      if (!data.success) { appendLog('log-reset', '❌ ' + (data.error || 'Failed'), 'err'); return; }
+      const u = data.user;
+      appendLog('log-reset', '✅ Reset done!');
+      appendLog('log-reset', `Balance → Si: ${u.silicon}  Co: ${u.conductor}  Di: ${u.diode}`);
+    } catch(e) { appendLog('log-reset', '❌ ' + e.message, 'err'); }
   }
 </script>
+
 </body>
 </html>
