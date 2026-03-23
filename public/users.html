@@ -222,44 +222,26 @@
     <div class="hud-info"><p id="nameHud">User</p></div>
   </div>
   <div class="hud-right">
-    <button class="nav-btn" onclick="goWithFlash('/home')">
+    <button class="nav-btn active" onclick="goWithFlash('/home')">
       <svg viewBox="0 0 24 24"><path d="M3 10L12 3L21 10V21H3Z"/></svg>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" onclick="goWithFlash('/submit')">
+      <svg viewBox="0 0 24 24"><path d="M12 16V4"/><path d="M8 8L12 4L16 8"/><path d="M4 20H20"/></svg>
+      <span class="nav-label">Submit</span>
     </button>
     <button class="nav-btn" onclick="goWithFlash('/guide')">
       <svg viewBox="0 0 24 24"><path d="M4 5H14A2 2 0 0 1 16 7V19H6A2 2 0 0 1 4 17Z"/><path d="M16 5H20V19H16"/></svg>
+      <span class="nav-label">Guide</span>
+    </button>
+    <button class="nav-btn" onclick="goWithFlash('/shop')">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M2 2H5L7 14H19L21 6H6"/></svg>
+      <span class="nav-label">Shop</span>
     </button>
     <button class="nav-btn" onclick="logout()">
       <svg viewBox="0 0 24 24"><path d="M16 17L21 12L16 7"/><path d="M21 12H9"/><path d="M13 21H5V3H13"/></svg>
+      <span class="nav-label">Logout</span>
     </button>
-  </div>
-</div>
-
-<!-- USER MODAL -->
-<div class="modal-bg" id="modal" onclick="closeModal(event)">
-  <div class="modal" id="modal-inner">
-    <div style="text-align:center;margin-bottom:16px;">
-      <img class="modal-avatar" id="modal-avatar" src="">
-      <h2 id="modal-name" style="font-size:1.2rem;font-weight:700;"></h2>
-      <p id="modal-email" style="color:#888;font-size:0.8rem;"></p>
-    </div>
-
-    <div id="modal-info"></div>
-
-    <!-- Admin edit section -->
-    <div class="edit-section" id="edit-section">
-      <p style="font-size:0.75rem;font-weight:600;color:#555;margin-bottom:8px;">✏️ Edit Currency</p>
-      <div class="edit-row">
-        <div><label>Silicon</label><input type="number" id="edit-si"></div>
-        <div><label>Conductor</label><input type="number" id="edit-co"></div>
-        <div><label>Diode</label><input type="number" id="edit-di"></div>
-      </div>
-      <button class="btn" onclick="saveCurrency()">💾 Save</button>
-      <button class="btn red" onclick="confirmReset()">🔄 Reset to 0</button>
-      <button class="btn red" onclick="confirmDelete()">☠️ Delete User</button>
-    </div>
-
-    <div style="margin-top:12px;text-align:center;">
-      <button class="btn gray" onclick="closeModalDirect()">Close</button>
     </div>
   </div>
 </div>
