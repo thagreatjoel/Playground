@@ -193,8 +193,9 @@
     document.getElementById('nameHud').innerText = me.name || me.display_name || 'User';
 
     // Get target user_id from URL — /profile/xxxxx or my own if no param
-    const pathParts  = window.location.pathname.split('/').filter(Boolean);
-    const target_user_id = pathParts[1] || me.user_id;
+    const pathParts      = window.location.pathname.split('/').filter(Boolean);
+    const rawId          = pathParts[1] || me.user_id;
+    const target_user_id = rawId ? rawId.toUpperCase() : null;
 
     if (!target_user_id || target_user_id === 'null') {
       showNotFound('No user ID found. Try logging out and back in.');
