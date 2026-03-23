@@ -254,8 +254,8 @@
     const avatar   = user.picture || user.avatar_url || '';
 
     // Fetch latest avatar from DB (non-blocking — don't await before quests)
-    document.getElementById('pfp').src    = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
-    document.getElementById('pfpHud').src = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+    document.getElementById('pfp').src    = avatar || `https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png)}`;
+    document.getElementById('pfpHud').src = avatar || `https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png)}`;
 
     if (user_id && user_id !== 'null') {
       fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(user_id))
