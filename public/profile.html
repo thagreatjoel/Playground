@@ -202,24 +202,21 @@
       return;
     }
 
-    // Fetch profile
+    // Fetch profile — simple GET, no admin needed
     try {
-      const res  = await fetch('/.netlify/functions/admin', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ action: 'profile', target_user_id }),
-      });
+      const res  = await fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(target_user_id));
       const data = await res.json();
 
       if (!data.success) {
-        showNotFound('User not found.');
+        console.log('Profile error:', data);
+        showNotFound('User not found. (looked for: ' + target_user_id + ')');
         return;
       }
 
       renderProfile(data.user, me);
 
     } catch (e) {
-      showNotFound('Failed to load profile.');
+      showNotFound('Failed to load profile: ' + e.message);
     }
   });
 
