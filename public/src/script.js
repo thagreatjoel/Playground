@@ -8,118 +8,15 @@ function fadeTo(el, opacity, durationMs) {
   });
 }
 
-// ── ON LOAD ──
-// ── Fix white screen on browser back (bFCache restore) ──
-window.addEventListener('pageshow', (e) => {
-  if (e.persisted) {
-    // Page restored from bFCache — snap flash away instantly
-    const flash = document.getElementById('flash');
-    if (flash) {
-      flash.style.transition  = 'none';
-      flash.style.opacity     = '0';
-      flash.style.pointerEvents = 'none';
-    }
-    // Also reset body blur
-    document.body.style.transition = 'none';
-    document.body.style.filter     = 'none';
-    document.body.style.opacity    = '1';
-  }
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-  // Strip any ?code= from URL (leftover from OAuth)
-  if (window.location.search.includes('code=')) {
-    window.history.replaceState({}, '', window.location.pathname);
-  }
-
-  const flash = document.getElementById('flash');
-  const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
-
-  if (isRefresh) {
-    // Refresh: snap flash away instantly
-    flash.style.transition    = 'none';
-    flash.style.opacity       = '0';
-    flash.style.pointerEvents = 'none';
-  } else {
-    // Navigation arrival: CSS starts at opacity 1, smooth fade out
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      fadeTo(flash, 0, 700);
-    }));
-  }
-
-  // ── Auth ──
-  const user = getUser();
-  console.log("USER:", user);
-
-  if (user) {
-    const name  = user.name || user.display_name || "User";
-    const email = user.email || "";
-    const slack = user.slack_id || "";
-
-    let avatar = user.picture || user.avatar_url || user.image || "";
-    if (!avatar) avatar = "https://api.dicebear.com/7.x/initials/svg?seed=" + name;
-
-    // Set from cookie immediately — use null checks since not all pages have all elements
-    const pfpEl     = document.getElementById("pfp");
-    const pfpHudEl  = document.getElementById("pfpHud");
-    const nameEl    = document.getElementById("name");
-    const nameHudEl = document.getElementById("nameHud");
-    const emailEl   = document.getElementById("email");
-    const slackEl   = document.getElementById("slack");
-
-    if (pfpEl)     pfpEl.src             = avatar;
-    if (pfpHudEl)  pfpHudEl.src          = avatar;
-    if (nameEl)    nameEl.innerText      = name;
-    if (nameHudEl) nameHudEl.innerText   = name;
-    if (emailEl)   emailEl.innerText     = email;
-    if (slackEl)   slackEl.innerText     = "Slack: " + slack;
-
-    // Fetch latest avatar from DB in background
-    const userId = user.user_id;
-    if (userId && userId !== 'null') {
-      fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(userId))
-        .then(r => r.json())
-        .then(d => {
-          if (d.success && d.user.avatar) {
-            if (pfpEl)    pfpEl.src    = d.user.avatar;
-            if (pfpHudEl) pfpHudEl.src = d.user.avatar;
-          }
-        })
-        .catch(() => {});
-    }
-  }
-});
-
-// ── NAVIGATE: blur (100ms) → flash fade in (110ms) → navigate ──
-async function goWithFlash(url) {
-  const flash = document.getElementById('flash');
-  const hud   = document.querySelector('.hud-card');
-  document.querySelectorAll('.btn').forEach(b => b.disabled = true);
-
-  // 1. Blur page but NOT the HUD
-  document.body.style.transition = 'filter 0.1s ease';
-  document.body.style.filter     = 'blur(10px)';
-  if (hud) {
-    hud.style.transition = 'none';
-    hud.style.filter     = 'blur(0)';
-  }
-  await delay(100);
-
-  // 2. Flash fade in over 110ms
-  await fadeTo(flash, 1, 110);
-
-  // 3. Navigate
-  window.location.href = url;
-}
-
-// Alias
-const navigateTo = goWithFlash;
+const delay = ms => new Promise(r => setTimeout(r, ms));
 
 // ── Auth helpers ──
 function getUser() {
-  const match = document.cookie.match(/user=([^;]+)/);
-  if (!match) return null;
-  return JSON.parse(decodeURIComponent(match[1]));
+  try {
+    const match = document.cookie.match(/user=([^;]+)/);
+    if (!match) return null;
+    return JSON.parse(decodeURIComponent(match[1]));
+  } catch { return null; }
 }
 
 function logout() {
@@ -127,4 +24,101 @@ function logout() {
   window.location.href = "/";
 }
 
-const delay = ms => new Promise(r => setTimeout(r, ms));
+// ── Fix white screen on browser back (bFCache) ──
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) {
+    try {
+      const flash = document.getElementById('flash');
+      if (flash) { flash.style.transition = 'none'; flash.style.opacity = '0'; flash.style.pointerEvents = 'none'; }
+      document.body.style.transition = 'none';
+      document.body.style.filter     = 'none';
+      document.body.style.opacity    = '1';
+    } catch {}
+  }
+});
+
+// ── ON LOAD ──
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    // Strip ?code= from URL
+    if (window.location.search.includes('code=')) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    const flash = document.getElementById('flash');
+    if (flash) {
+      const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+      if (isRefresh) {
+        flash.style.transition    = 'none';
+        flash.style.opacity       = '0';
+        flash.style.pointerEvents = 'none';
+      } else {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          fadeTo(flash, 0, 700);
+        }));
+      }
+    }
+  } catch(e) { console.error('flash error:', e); }
+
+  // ── Auth ──
+  try {
+    const user = getUser();
+    if (user) {
+      const name   = user.name || user.display_name || "User";
+      const email  = user.email || "";
+      const slack  = user.slack_id || "";
+      const userId = user.user_id || "";
+
+      let avatar = user.picture || user.avatar_url || user.image || user.avatar || "";
+      if (!avatar) avatar = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+
+      const pfpEl     = document.getElementById("pfp");
+      const pfpHudEl  = document.getElementById("pfpHud");
+      const nameEl    = document.getElementById("name");
+      const nameHudEl = document.getElementById("nameHud");
+      const emailEl   = document.getElementById("email");
+      const slackEl   = document.getElementById("slack");
+
+      if (pfpEl)     pfpEl.src           = avatar;
+      if (pfpHudEl)  pfpHudEl.src        = avatar;
+      if (nameEl)    nameEl.innerText     = name;
+      if (nameHudEl) nameHudEl.innerText  = name;
+      if (emailEl)   emailEl.innerText    = email;
+      if (slackEl)   slackEl.innerText    = "Slack: " + slack;
+
+      // Fetch latest avatar from DB in background
+      if (userId && userId !== 'null') {
+        fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(userId))
+          .then(r => r.json())
+          .then(d => {
+            if (d.success && d.user.avatar) {
+              if (pfpEl)    pfpEl.src    = d.user.avatar;
+              if (pfpHudEl) pfpHudEl.src = d.user.avatar;
+            }
+          })
+          .catch(() => {});
+      }
+    }
+  } catch(e) { console.error('auth error:', e); }
+});
+
+// ── NAVIGATE ──
+async function goWithFlash(url) {
+  try {
+    const flash = document.getElementById('flash');
+    const hud   = document.querySelector('.hud-card');
+    document.querySelectorAll('.btn').forEach(b => b.disabled = true);
+
+    document.body.style.transition = 'filter 0.1s ease';
+    document.body.style.filter     = 'blur(10px)';
+    if (hud) { hud.style.transition = 'none'; hud.style.filter = 'blur(0)'; }
+    await delay(100);
+
+    if (flash) await fadeTo(flash, 1, 110);
+    window.location.href = url;
+  } catch(e) {
+    window.location.href = url;
+  }
+}
+
+const navigateTo = goWithFlash;
