@@ -19,29 +19,37 @@
       text-align: center;
     }
 
-    .avatar {
+    /* Avatar edit */
+    .avatar-wrap {
+      position: relative;
       width: 80px;
-      height: 80px;
+      margin: 0 auto 12px;
+      cursor: pointer;
+    }
+    .avatar, .avatar-fallback {
+      width: 80px; height: 80px;
       border-radius: 50%;
       border: 3px solid #000;
       object-fit: cover;
-      margin: 0 auto 12px;
       display: block;
       background: #b2f167;
+      transition: filter 0.2s;
     }
-
-    .avatar-fallback {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid #000;
-      background: #b2f167;
+    .avatar-wrap:hover .avatar { filter: brightness(0.65); }
+    .avatar-edit-icon {
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
-      font-weight: 700;
-      margin: 0 auto 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .avatar-wrap:hover .avatar-edit-icon { opacity: 1; }
+    .avatar-edit-icon svg {
+      width: 28px; height: 28px;
+      stroke: #fff; fill: none; stroke-width: 2;
     }
 
     .info-row {
@@ -54,7 +62,7 @@
     }
     .info-row:last-child { border-bottom: none; }
     .info-label { color: #888; font-size: 0.75rem; }
-    .info-value { font-weight: 600; font-family: monospace; font-size: 0.85rem; word-break: break-all; text-align: right; max-width: 60%; }
+    .info-value { font-weight: 600; font-family: monospace; font-size: 0.82rem; text-align: right; max-width: 60%; word-break: break-all; }
 
     .copy-btn {
       background: #f0f0f0;
@@ -81,52 +89,8 @@
       margin-top: 4px;
     }
 
-    /* Avatar edit */
-    .avatar-wrap {
-      position: relative;
-      width: 80px;
-      margin: 0 auto 12px;
-      cursor: pointer;
-    }
-    .avatar-wrap .avatar,
-    .avatar-wrap .avatar-fallback {
-      margin: 0;
-      transition: filter 0.2s;
-    }
-    .avatar-wrap:hover .avatar,
-    .avatar-wrap:hover .avatar-fallback {
-      filter: brightness(0.65);
-    }
-    .avatar-edit-icon {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-    .avatar-wrap:hover .avatar-edit-icon {
-      opacity: 1;
-    }
-    .avatar-edit-icon svg {
-      width: 28px;
-      height: 28px;
-      stroke: #fff;
-      fill: none;
-      stroke-width: 2;
-      drop-shadow: 0 1px 4px rgba(0,0,0,0.5);
-    }
-
-    .not-found {
-      text-align: center;
-      padding: 60px 20px;
-    }
-
     .skeleton-circle {
-      width: 80px; height: 80px;
-      border-radius: 50%;
+      width: 80px; height: 80px; border-radius: 50%;
       background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
       background-size: 200% 100%;
       animation: shimmer 1.2s infinite;
@@ -139,10 +103,7 @@
       animation: shimmer 1.2s infinite;
       margin: 8px auto;
     }
-    @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   </style>
 </head>
 
@@ -156,15 +117,12 @@
 <div class="flex justify-center px-4 py-10 pt-20">
   <div class="w-full max-w-lg space-y-6">
 
-    <!-- TITLE -->
     <div class="text-center space-y-1">
       <h1 class="text-2xl font-bold">Profile</h1>
       <p class="text-gray-500 text-sm">Hardware Playground</p>
     </div>
 
-    <!-- PROFILE CONTENT -->
     <div id="profile-content">
-      <!-- Skeleton loader -->
       <div class="profile-card" id="skeleton">
         <div class="skeleton-circle"></div>
         <div class="skeleton-line" style="width:60%;"></div>
@@ -172,7 +130,6 @@
       </div>
     </div>
 
-    <!-- BACK BUTTON -->
     <div class="text-center">
       <button class="btn" onclick="goWithFlash('/home')">← Back to Dashboard</button>
     </div>
@@ -184,12 +141,10 @@
 <div class="card hud-card">
   <div class="hud-left" style="cursor:pointer;" onclick="goWithFlash('/profile')">
     <img id="pfpHud" class="pfp">
-    <div class="hud-info">
-      <p id="nameHud">User</p>
-    </div>
+    <div class="hud-info"><p id="nameHud">User</p></div>
   </div>
   <div class="hud-right">
-    <button class="nav-btn active" onclick="goWithFlash('/home')">
+    <button class="nav-btn" onclick="goWithFlash('/home')">
       <svg viewBox="0 0 24 24"><path d="M3 10L12 3L21 10V21H3Z"/></svg>
       <span class="nav-label">Home</span>
     </button>
@@ -209,10 +164,21 @@
       <svg viewBox="0 0 24 24"><path d="M16 17L21 12L16 7"/><path d="M21 12H9"/><path d="M13 21H5V3H13"/></svg>
       <span class="nav-label">Logout</span>
     </button>
-    </div>
   </div>
 </div>
-    `;
+
+<script>
+  function getCookieUser() {
+    const match = document.cookie.match(/user=([^;]+)/);
+    if (!match) return null;
+    try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
+  }
+
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = 'copy', 1200);
+    });
   }
 
   function triggerAvatarUpload() {
@@ -222,19 +188,12 @@
   async function uploadAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('Image too large. Max 2MB.'); return; }
 
-    // Validate size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      alert('Image too large. Max 2MB.');
-      return;
-    }
-
-    // Convert to base64
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const base64 = e.target.result; // data:image/...;base64,...
-
-      const me      = getCookieUser();
+      const base64   = e.target.result;
+      const me       = getCookieUser();
       const slack_id = me.sub || me.slack_id;
 
       try {
@@ -246,32 +205,116 @@
         const data = await res.json();
 
         if (data.success) {
-          // Update UI instantly
           document.getElementById('profile-avatar').src = base64;
-
           // Update cookie
-          const user     = getCookieUser();
-          user.avatar    = base64;
-          user.picture   = base64;
-          document.cookie = `user=${encodeURIComponent(JSON.stringify(user))}; Path=/; SameSite=Lax`;
+          const user   = getCookieUser();
+          user.avatar  = base64;
+          user.picture = base64;
+          document.cookie = 'user=' + encodeURIComponent(JSON.stringify(user)) + '; Path=/; SameSite=Lax';
         } else {
-          alert('Failed to update avatar: ' + (data.error || 'Unknown error'));
+          alert('Failed: ' + (data.error || 'Unknown error'));
         }
-      } catch(e) {
-        alert('Upload failed: ' + e.message);
-      }
+      } catch(e) { alert('Upload failed: ' + e.message); }
     };
     reader.readAsDataURL(file);
   }
 
+  document.addEventListener('DOMContentLoaded', async () => {
+    const me = getCookieUser();
+    if (!me) { window.location.href = '/'; return; }
+
+    const pathParts      = window.location.pathname.split('/').filter(Boolean);
+    const rawId          = pathParts[1] || me.user_id;
+    const target_user_id = rawId ? rawId.toUpperCase() : null;
+
+    if (!target_user_id || target_user_id === 'NULL') {
+      showNotFound('No user ID found. Try logging out and back in.');
+      return;
+    }
+
+    try {
+      const res  = await fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(target_user_id));
+      const data = await res.json();
+
+      if (!data.success) { showNotFound('User not found.'); return; }
+
+      // Check admin
+      const adminRes  = await fetch('/.netlify/functions/admin', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ action: 'checkadmin', requester_user_id: me.user_id, slack_id: 'check' }),
+      });
+      const adminData = await adminRes.json();
+      const isAdmin   = adminData.is_admin === true;
+
+      renderProfile(data.user, me, isAdmin);
+
+    } catch(e) { showNotFound('Failed to load profile: ' + e.message); }
+  });
+
+  function renderProfile(user, me, isAdmin) {
+    const isMe   = me.user_id === user.user_id;
+    const joined = user.created_at
+      ? new Date(user.created_at).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
+      : 'Unknown';
+
+    const avatarSrc = user.avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name || '?'));
+
+    const avatarHTML = isMe
+      ? '<div class="avatar-wrap" onclick="triggerAvatarUpload()">' +
+          '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" onerror="this.src=\'https://api.dicebear.com/7.x/initials/svg?seed=user\'">' +
+          '<div class="avatar-edit-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>' +
+        '</div>' +
+        '<input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(event)">'
+      : '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" style="margin:0 auto 12px;" onerror="this.src=\'https://api.dicebear.com/7.x/initials/svg?seed=user\'">';
+
+    let slackRow = '';
+    if (isAdmin) {
+      slackRow = '<div class="info-row">' +
+        '<span class="info-label">Slack ID <span style="background:#ffe8e8;border:1px solid #f00;color:#900;font-size:0.62rem;padding:1px 5px;border-radius:8px;margin-left:3px;">admin</span></span>' +
+        '<span style="display:flex;align-items:center;">' +
+          '<span class="info-value">' + (user.slack_id || 'N/A') + '</span>' +
+          '<button class="copy-btn" onclick="copyText(\'' + (user.slack_id || '') + '\', this)">copy</button>' +
+        '</span></div>';
+    }
+
+    document.getElementById('profile-content').innerHTML =
+      '<div class="profile-card">' +
+        avatarHTML +
+        '<h2 style="font-size:1.3rem;font-weight:700;">' + (user.name || 'Unknown') + '</h2>' +
+        (isMe ? '<span class="badge">✦ You</span>' : '') +
+        '<p style="color:#888;font-size:0.8rem;margin-top:4px;">' + (user.email || 'No email') + '</p>' +
+        '<div style="margin-top:20px;">' +
+          '<div class="info-row">' +
+            '<span class="info-label">User ID</span>' +
+            '<span style="display:flex;align-items:center;">' +
+              '<span class="info-value">' + (user.user_id || 'N/A') + '</span>' +
+              '<button class="copy-btn" onclick="copyText(\'' + (user.user_id || '') + '\', this)">copy</button>' +
+            '</span>' +
+          '</div>' +
+          '<div class="info-row">' +
+            '<span class="info-label">Email</span>' +
+            '<span style="display:flex;align-items:center;">' +
+              '<span class="info-value">' + (user.email || 'N/A') + '</span>' +
+              '<button class="copy-btn" onclick="copyText(\'' + (user.email || '') + '\', this)">copy</button>' +
+            '</span>' +
+          '</div>' +
+          '<div class="info-row">' +
+            '<span class="info-label">Joined</span>' +
+            '<span class="info-value">' + joined + '</span>' +
+          '</div>' +
+          slackRow +
+        '</div>' +
+      '</div>';
+  }
+
   function showNotFound(msg) {
-    document.getElementById('profile-content').innerHTML = `
-      <div class="not-found card">
-        <p style="font-size:2rem;">😕</p>
-        <h2 style="font-weight:700;margin-top:8px;">Not Found</h2>
-        <p style="color:#888;font-size:0.85rem;margin-top:4px;">${msg}</p>
-      </div>
-    `;
+    document.getElementById('profile-content').innerHTML =
+      '<div class="profile-card">' +
+        '<p style="font-size:2rem;">😕</p>' +
+        '<h2 style="font-weight:700;margin-top:8px;">Not Found</h2>' +
+        '<p style="color:#888;font-size:0.85rem;margin-top:4px;">' + msg + '</p>' +
+      '</div>';
   }
 </script>
 
