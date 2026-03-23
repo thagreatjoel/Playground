@@ -99,11 +99,15 @@ exports.handler = async (event) => {
       const finalUserId = row.user_id;
       console.log("Login:", slack_id, "→ user_id:", finalUserId);
 
+      // Fetch existing avatar from DB — use uploaded one if exists, else Hack Club's
+      const existingRows = await sql`SELECT avatar FROM users WHERE slack_id = ${slack_id}`;
+      const finalAvatar  = (existingRows[0] && existingRows[0].avatar) ? existingRows[0].avatar : avatar;
+
       return {
         statusCode: 302,
         headers: {
           "Set-Cookie": `user=${encodeURIComponent(JSON.stringify({
-            ...user, slack_id, name, email, avatar, user_id: finalUserId,
+            ...user, slack_id, name, email, avatar: finalAvatar, picture: finalAvatar, user_id: finalUserId,
           }))}; Path=/; SameSite=Lax`,
           Location: `/home`,
         },
