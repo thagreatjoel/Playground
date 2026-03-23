@@ -108,6 +108,13 @@
 </head>
 
 <body>
+<script>
+  // This runs before anything else — if you see "BODY LOADED" the page HTML is working
+  window.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('debug-log');
+    if (el) el.textContent = 'BODY LOADED - waiting for main script...';
+  });
+</script>
 <div id="flash"></div>
 <div id="debug-log" style="position:fixed;top:0;left:0;right:0;background:#1a1a1a;color:#b2f167;padding:10px;font-size:11px;font-family:monospace;white-space:pre-wrap;z-index:99998;max-height:50vh;overflow-y:auto;">Loading...</div>
 
@@ -220,15 +227,15 @@
     reader.readAsDataURL(file);
   }
 
-  // Runs immediately when script tag is parsed
-  document.getElementById('debug-log').textContent = 'JS running...';
+  document.getElementById('debug-log').textContent = 'JS parsed ✓';
 
   function dlog(msg) {
     const el = document.getElementById('debug-log');
     if (el) el.textContent += msg + '\n';
   }
 
-  window.addEventListener('load', async () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    dlog('DOM ready ✓');
     const me = getCookieUser();
     dlog('cookie: ' + (me ? me.user_id : 'NULL'));
     if (!me) { window.location.href = '/'; return; }
