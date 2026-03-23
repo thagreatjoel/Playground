@@ -92,7 +92,6 @@ exports.handler = async (event) => {
           SET name    = EXCLUDED.name,
               email   = EXCLUDED.email,
               user_id = COALESCE(users.user_id, EXCLUDED.user_id)
-              -- avatar is NOT updated on re-login to preserve uploaded pfp
         RETURNING user_id
       `;
 
