@@ -9,45 +9,34 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "POST")
     return { statusCode: 405, body: "Method not allowed" };
 
-  const body = JSON.parse(event.body || "{}");
-  const { action, slack_id, silicon, conductor, diode, requester_user_id } = body;
+  let body = {};
+  try { body = JSON.parse(event.body || "{}"); } catch { return { statusCode: 400, body: "Invalid JSON" }; }
 
-  // ── Public actions (no admin needed) ──
+  const { action, slack_id, silicon, conductor, diode, requester_user_id, target_user_id } = body;
+
+  // ── Public: check if admin ──
+  if (action === "checkadmin") {
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_admin: !!(requester_user_id && ADMINS.includes(requester_user_id)) }),
+    };
+  }
+
+  // ── Public: profile lookup by user_id ──
   if (action === "profile") {
     try {
       const sql = neon(process.env.NETLIFY_DATABASE_URL);
-      const { target_user_id } = body;
-      console.log("Profile lookup for:", target_user_id);
       if (!target_user_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing target_user_id" }) };
-
-      // List all users to debug
-      const all = await sql\`SELECT user_id, name FROM users\`;
-      console.log("All users in DB:", JSON.stringify(all));
-
-      const [profile] = await sql\`
-        SELECT user_id, name, email, avatar, slack_id, created_at
-        FROM users WHERE UPPER(user_id) = UPPER(\${target_user_id})
-      \`;
-      console.log("Found profile:", JSON.stringify(profile));
-      if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found", looked_for: target_user_id, all_users: all }) };
-      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: profile }) };
+      const rows = await sql`SELECT user_id, name, email, avatar, slack_id, created_at FROM users WHERE UPPER(user_id) = UPPER(${target_user_id})`;
+      if (!rows[0]) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: rows[0] }) };
     } catch (err) {
-      console.error("Profile error:", err.message);
       return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
     }
   }
 
-  // ── Check if requester is admin (public check) ──
-  if (action === "checkadmin") {
-    const isAdmin = requester_user_id && ADMINS.includes(requester_user_id);
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ is_admin: isAdmin }),
-    };
-  }
-
-  // ── Check admin access for all other actions ──
+  // ── Admin check ──
   if (!requester_user_id || !ADMINS.includes(requester_user_id)) {
     return {
       statusCode: 403,
@@ -56,82 +45,49 @@ exports.handler = async (event) => {
     };
   }
 
-  if (!slack_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing slack_id" }) };
+  if (!slack_id && action !== "list") return { statusCode: 400, body: JSON.stringify({ error: "Missing slack_id" }) };
 
   try {
     const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
-    const [user] = await sql`SELECT * FROM users WHERE slack_id = ${slack_id}`;
-    if (!user) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
-
-    if (action === "give") {
-      const [updated] = await sql`
-        UPDATE users SET
-          silicon   = silicon   + ${silicon   || 0},
-          conductor = conductor + ${conductor || 0},
-          diode     = diode     + ${diode     || 0}
-        WHERE slack_id = ${slack_id}
-        RETURNING slack_id, name, silicon, conductor, diode
-      `;
-      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: updated }) };
+    // ── List all users ──
+    if (action === "list") {
+      const users = await sql`SELECT slack_id, user_id, name, email, avatar, silicon, conductor, diode, created_at FROM users ORDER BY created_at DESC`;
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, users }) };
     }
 
-    if (action === "set") {
-      const [updated] = await sql`
-        UPDATE users SET
-          silicon   = ${silicon   ?? user.silicon},
-          conductor = ${conductor ?? user.conductor},
-          diode     = ${diode     ?? user.diode}
-        WHERE slack_id = ${slack_id}
-        RETURNING slack_id, name, silicon, conductor, diode
-      `;
-      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: updated }) };
-    }
+    const userRows = await sql`SELECT * FROM users WHERE slack_id = ${slack_id}`;
+    const user = userRows[0];
+    if (!user && action !== "delete") return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
 
-    if (action === "reset") {
-      const [updated] = await sql`
-        UPDATE users SET silicon = 0, conductor = 0, diode = 0
-        WHERE slack_id = ${slack_id}
-        RETURNING slack_id, name, silicon, conductor, diode
-      `;
-      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: updated }) };
-    }
-
+    // ── Lookup ──
     if (action === "lookup") {
       return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user }) };
     }
 
-    // ── PUBLIC PROFILE: lookup by user_id (no admin needed) ──
-    if (action === "profile") {
-      const { target_user_id } = body;
-      if (!target_user_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing target_user_id" }) };
-      const [profile] = await sql`
-        SELECT user_id, name, email, avatar, slack_id, created_at
-        FROM users WHERE UPPER(user_id) = UPPER(${target_user_id})
-      `;
-      if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
-      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: profile }) };
+    // ── Give ──
+    if (action === "give") {
+      const rows = await sql`UPDATE users SET silicon = silicon + ${silicon || 0}, conductor = conductor + ${conductor || 0}, diode = diode + ${diode || 0} WHERE slack_id = ${slack_id} RETURNING slack_id, name, silicon, conductor, diode`;
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: rows[0] }) };
     }
 
-    // ── LIST: all users ──
-    if (action === "list") {
-      const users = await sql\`
-        SELECT slack_id, user_id, name, email, avatar, silicon, conductor, diode, created_at
-        FROM users
-        ORDER BY created_at DESC
-      \`;
-      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, users }) };
+    // ── Set ──
+    if (action === "set") {
+      const rows = await sql`UPDATE users SET silicon = ${silicon ?? user.silicon}, conductor = ${conductor ?? user.conductor}, diode = ${diode ?? user.diode} WHERE slack_id = ${slack_id} RETURNING slack_id, name, silicon, conductor, diode`;
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: rows[0] }) };
     }
 
-    // ── DELETE: wipe entire user row ──
+    // ── Reset ──
+    if (action === "reset") {
+      const rows = await sql`UPDATE users SET silicon = 0, conductor = 0, diode = 0 WHERE slack_id = ${slack_id} RETURNING slack_id, name, silicon, conductor, diode`;
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: rows[0] }) };
+    }
+
+    // ── Delete ──
     if (action === "delete") {
       await sql`DELETE FROM user_quests WHERE slack_id = ${slack_id}`;
       await sql`DELETE FROM users WHERE slack_id = ${slack_id}`;
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ success: true, message: `User ${slack_id} fully deleted` }),
-      };
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, message: "User " + slack_id + " fully deleted" }) };
     }
 
     return { statusCode: 400, body: JSON.stringify({ error: "Unknown action" }) };
