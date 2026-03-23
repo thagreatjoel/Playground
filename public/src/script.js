@@ -57,7 +57,7 @@ async function goWithFlash(url) {
   await delay(100);
 
   // 2. Flash fade in over 110ms
-  await fadeTo(flash, 1, 110);
+  await fadeTo(flash, 1, 130);
 
   // 3. Navigate
   window.location.href = url;
