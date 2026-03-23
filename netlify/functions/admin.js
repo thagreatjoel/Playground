@@ -13,16 +13,34 @@ exports.handler = async (event) => {
     try {
       const sql = neon(process.env.NETLIFY_DATABASE_URL);
       const { target_user_id } = body;
+      console.log("Profile lookup for:", target_user_id);
       if (!target_user_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing target_user_id" }) };
-      const [profile] = await sql`
+
+      // List all users to debug
+      const all = await sql\`SELECT user_id, name FROM users\`;
+      console.log("All users in DB:", JSON.stringify(all));
+
+      const [profile] = await sql\`
         SELECT user_id, name, email, avatar, slack_id, created_at
-        FROM users WHERE UPPER(user_id) = UPPER(${target_user_id})
-      `;
-      if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
+        FROM users WHERE UPPER(user_id) = UPPER(\${target_user_id})
+      \`;
+      console.log("Found profile:", JSON.stringify(profile));
+      if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found", looked_for: target_user_id, all_users: all }) };
       return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: profile }) };
     } catch (err) {
+      console.error("Profile error:", err.message);
       return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
     }
+  }
+
+  // ── Check if requester is admin (public check) ──
+  if (action === "checkadmin") {
+    const isAdmin = requester_user_id && ADMINS.includes(requester_user_id);
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_admin: isAdmin }),
+    };
   }
 
   // ── Check admin access for all other actions ──
