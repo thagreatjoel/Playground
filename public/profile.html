@@ -219,13 +219,20 @@
     reader.readAsDataURL(file);
   }
 
+  function dlog(msg) {
+    const el = document.getElementById('debug-log');
+    if (el) el.textContent += msg + '\n';
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     const me = getCookieUser();
+    dlog('cookie: ' + (me ? me.user_id : 'NULL'));
     if (!me) { window.location.href = '/'; return; }
 
     const pathParts      = window.location.pathname.split('/').filter(Boolean);
     const rawId          = pathParts[1] || me.user_id;
     const target_user_id = rawId ? rawId.toUpperCase() : null;
+    dlog('target_user_id: ' + target_user_id);
 
     if (!target_user_id || target_user_id === 'NULL') {
       showNotFound('No user ID found. Try logging out and back in.');
@@ -233,12 +240,16 @@
     }
 
     try {
-      const res  = await fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(target_user_id));
-      const data = await res.json();
+      const url  = '/.netlify/functions/profile?user_id=' + encodeURIComponent(target_user_id);
+      dlog('fetching: ' + url);
+      const res  = await fetch(url);
+      dlog('status: ' + res.status);
+      const text = await res.text();
+      dlog('response: ' + text.substring(0, 200));
+      const data = JSON.parse(text);
 
       if (!data.success) { showNotFound('User not found.'); return; }
 
-      // Check admin
       const adminRes  = await fetch('/.netlify/functions/admin', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -246,10 +257,14 @@
       });
       const adminData = await adminRes.json();
       const isAdmin   = adminData.is_admin === true;
+      dlog('isAdmin: ' + isAdmin);
 
       renderProfile(data.user, me, isAdmin);
 
-    } catch(e) { showNotFound('Failed to load profile: ' + e.message); }
+    } catch(e) { 
+      dlog('ERROR: ' + e.message);
+      showNotFound('Failed to load profile: ' + e.message); 
+    }
   });
 
   function renderProfile(user, me, isAdmin) {
