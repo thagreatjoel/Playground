@@ -10,6 +10,11 @@ function fadeTo(el, opacity, durationMs) {
 
 // ── ON LOAD ──
 window.addEventListener('DOMContentLoaded', () => {
+  // Strip any ?code= from URL (leftover from OAuth)
+  if (window.location.search.includes('code=')) {
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   const flash = document.getElementById('flash');
   const isRefresh = performance.getEntriesByType('navigation')[0]?.type === 'reload';
 
