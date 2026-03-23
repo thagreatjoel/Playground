@@ -91,17 +91,19 @@ exports.handler = async (event) => {
         ON CONFLICT (slack_id) DO UPDATE
           SET name    = EXCLUDED.name,
               email   = EXCLUDED.email,
-              avatar  = EXCLUDED.avatar,
               user_id = COALESCE(users.user_id, EXCLUDED.user_id)
+              -- avatar is NOT updated on re-login to preserve uploaded pfp
         RETURNING user_id
       `;
 
       const finalUserId = row.user_id;
       console.log("Login:", slack_id, "→ user_id:", finalUserId);
 
-      // Fetch existing avatar from DB — use uploaded one if exists, else Hack Club's
+      // Fetch existing avatar from DB — use uploaded one if exists, else default
       const existingRows = await sql`SELECT avatar FROM users WHERE slack_id = ${slack_id}`;
-      const finalAvatar  = (existingRows[0] && existingRows[0].avatar) ? existingRows[0].avatar : avatar;
+      const dbAvatar     = existingRows[0] && existingRows[0].avatar;
+      const finalAvatar  = dbAvatar || "";
+      console.log("DB avatar length:", finalAvatar ? finalAvatar.length : 0);
 
       return {
         statusCode: 302,
