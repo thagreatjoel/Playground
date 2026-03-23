@@ -6,7 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/style.css">
-  <script defer src="src/script.js"></script>
+  <script src="src/script.js"></script>
   <style>
     body { filter: none; opacity: 1; }
 
@@ -220,12 +220,15 @@
     reader.readAsDataURL(file);
   }
 
+  // Runs immediately when script tag is parsed
+  document.getElementById('debug-log').textContent = 'JS running...';
+
   function dlog(msg) {
     const el = document.getElementById('debug-log');
     if (el) el.textContent += msg + '\n';
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
+  window.addEventListener('load', async () => {
     const me = getCookieUser();
     dlog('cookie: ' + (me ? me.user_id : 'NULL'));
     if (!me) { window.location.href = '/'; return; }
