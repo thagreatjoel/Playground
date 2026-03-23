@@ -62,6 +62,17 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user }) };
     }
 
+    // ── DELETE: wipe entire user row ──
+    if (action === "delete") {
+      await sql`DELETE FROM user_quests WHERE slack_id = ${slack_id}`;
+      await sql`DELETE FROM users WHERE slack_id = ${slack_id}`;
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ success: true, message: `User ${slack_id} fully deleted` }),
+      };
+    }
+
     return { statusCode: 400, body: JSON.stringify({ error: "Unknown action" }) };
 
   } catch (err) {
