@@ -62,6 +62,16 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user }) };
     }
 
+    // ── LIST: all users ──
+    if (action === "list") {
+      const users = await sql\`
+        SELECT slack_id, user_id, name, email, avatar, silicon, conductor, diode, created_at
+        FROM users
+        ORDER BY created_at DESC
+      \`;
+      return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, users }) };
+    }
+
     // ── DELETE: wipe entire user row ──
     if (action === "delete") {
       await sql`DELETE FROM user_quests WHERE slack_id = ${slack_id}`;
