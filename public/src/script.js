@@ -9,6 +9,23 @@ function fadeTo(el, opacity, durationMs) {
 }
 
 // ── ON LOAD ──
+// ── Fix white screen on browser back (bFCache restore) ──
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) {
+    // Page restored from bFCache — snap flash away instantly
+    const flash = document.getElementById('flash');
+    if (flash) {
+      flash.style.transition  = 'none';
+      flash.style.opacity     = '0';
+      flash.style.pointerEvents = 'none';
+    }
+    // Also reset body blur
+    document.body.style.transition = 'none';
+    document.body.style.filter     = 'none';
+    document.body.style.opacity    = '1';
+  }
+});
+
 window.addEventListener('DOMContentLoaded', () => {
   // Strip any ?code= from URL (leftover from OAuth)
   if (window.location.search.includes('code=')) {
@@ -54,15 +71,20 @@ window.addEventListener('DOMContentLoaded', () => {
 // ── NAVIGATE: blur (100ms) → flash fade in (110ms) → navigate ──
 async function goWithFlash(url) {
   const flash = document.getElementById('flash');
+  const hud   = document.querySelector('.hud-card');
   document.querySelectorAll('.btn').forEach(b => b.disabled = true);
 
-  // 1. Blur over 100ms
+  // 1. Blur page but NOT the HUD
   document.body.style.transition = 'filter 0.1s ease';
   document.body.style.filter     = 'blur(10px)';
+  if (hud) {
+    hud.style.transition = 'none';
+    hud.style.filter     = 'blur(0)';
+  }
   await delay(100);
 
   // 2. Flash fade in over 110ms
-  await fadeTo(flash, 1, 130);
+  await fadeTo(flash, 1, 110);
 
   // 3. Navigate
   window.location.href = url;
