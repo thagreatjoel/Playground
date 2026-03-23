@@ -16,7 +16,7 @@ exports.handler = async (event) => {
       if (!target_user_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing target_user_id" }) };
       const [profile] = await sql`
         SELECT user_id, name, email, avatar, slack_id, created_at
-        FROM users WHERE user_id = ${target_user_id}
+        FROM users WHERE UPPER(user_id) = UPPER(${target_user_id})
       `;
       if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
       return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: profile }) };
@@ -85,7 +85,7 @@ exports.handler = async (event) => {
       if (!target_user_id) return { statusCode: 400, body: JSON.stringify({ error: "Missing target_user_id" }) };
       const [profile] = await sql`
         SELECT user_id, name, email, avatar, slack_id, created_at
-        FROM users WHERE user_id = ${target_user_id}
+        FROM users WHERE UPPER(user_id) = UPPER(${target_user_id})
       `;
       if (!profile) return { statusCode: 404, body: JSON.stringify({ error: "User not found" }) };
       return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ success: true, user: profile }) };
