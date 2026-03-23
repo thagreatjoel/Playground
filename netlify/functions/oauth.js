@@ -2,7 +2,7 @@ const { neon } = require("@netlify/neon");
 
 function generateUserId() {
   // 4 char random alphanumeric e.g. "a3f9"
-  return Math.random().toString(36).substring(2, 7);
+  return Math.random().toString(36).substring(2, 7).toUpperCase();
 }
 
 exports.handler = async (event) => {
