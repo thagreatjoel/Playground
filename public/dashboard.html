@@ -84,18 +84,16 @@
     </div>
 
     <!-- PROFILE + RESOURCES -->
-    <div class="card">
-      <div class="flex items-center gap-3 mb-4">
-        <img id="pfp" class="pfp" src="" alt="">
-        <div>
-          <h2 id="name" class="font-semibold text-lg leading-tight">Loading...</h2>
-          <p id="email" class="text-gray-500 text-xs"></p>
-        </div>
+    <div class="card flex items-center gap-4">
+      <img id="pfp" class="pfp" src="" alt="">
+      <div class="flex-1">
+        <h2 id="name" class="font-semibold text-lg">Loading...</h2>
+        <p id="email" class="text-gray-500 text-xs"></p>
       </div>
-      <div class="flex justify-around text-center text-xs border-t border-dashed border-gray-200 pt-3">
-        <div><p class="font-bold text-xl" id="silicon">–</p><p class="text-gray-500">Silicon</p></div>
-        <div><p class="font-bold text-xl" id="conductor">–</p><p class="text-gray-500">Conductor</p></div>
-        <div><p class="font-bold text-xl" id="diode">–</p><p class="text-gray-500">Diode</p></div>
+      <div class="flex gap-4 text-center text-xs">
+        <div><p class="font-bold text-base" id="silicon">–</p><p class="text-gray-500">Silicon</p></div>
+        <div><p class="font-bold text-base" id="conductor">–</p><p class="text-gray-500">Conductor</p></div>
+        <div><p class="font-bold text-base" id="diode">–</p><p class="text-gray-500">Diode</p></div>
       </div>
     </div>
 
@@ -147,47 +145,29 @@
   </div>
 </div>
 
-<!-- ALL SCRIPTS DEFERRED TOGETHER AT BOTTOM -->
 <script defer src="src/script.js"></script>
 
 <script>
-  // ── Helpers ──
   function getCookieUser() {
     const match = document.cookie.match(/user=([^;]+)/);
     if (!match) return null;
     try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
   }
 
-  function updateResourceUI(silicon, conductor, diode) {
-    document.getElementById('silicon').innerText      = silicon;
-    document.getElementById('conductor').innerText    = conductor;
-    document.getElementById('diode').innerText        = diode;
-    document.getElementById('siliconHud').innerText   = silicon;
-    document.getElementById('conductorHud').innerText = conductor;
-    document.getElementById('diodeHud').innerText     = diode;
-  }
-
-  // ── Load resources from DB ──
   async function loadResources(slack_id) {
     try {
-      const url  = '/.netlify/functions/quests?action=balance&slack_id=' + encodeURIComponent(slack_id);
-      const res  = await fetch(url);
-      const text = await res.text();
-      const data = JSON.parse(text);
-      if (data.error) { console.error('Resource error:', data.error); return; }
-      console.log('=== Updating UI with:', data);
+      const res  = await fetch('/.netlify/functions/quests?action=balance&slack_id=' + encodeURIComponent(slack_id));
+      const data = await res.json();
+      if (data.error) return;
       document.getElementById('silicon').innerText      = data.silicon   ?? 0;
       document.getElementById('conductor').innerText    = data.conductor ?? 0;
       document.getElementById('diode').innerText        = data.diode     ?? 0;
       document.getElementById('siliconHud').innerText   = data.silicon   ?? 0;
       document.getElementById('conductorHud').innerText = data.conductor ?? 0;
       document.getElementById('diodeHud').innerText     = data.diode     ?? 0;
-    } catch (e) {
-      console.error('loadResources failed:', e);
-    }
+    } catch (e) { console.error('loadResources failed:', e); }
   }
 
-  // ── Load quests ──
   async function loadQuests(slack_id) {
     try {
       const res    = await fetch('/.netlify/functions/quests?action=list&slack_id=' + encodeURIComponent(slack_id));
@@ -223,7 +203,6 @@
     }
   }
 
-  // ── Complete a quest ──
   async function completeQuest(quest_id, btn, slack_id) {
     btn.disabled = true;
     btn.innerText = 'Submitting...';
@@ -243,7 +222,6 @@
     }
   }
 
-  // ── Add currency ──
   async function addCurrency() {
     const user     = getCookieUser();
     const slack_id = user.sub || user.slack_id;
@@ -253,10 +231,14 @@
       body: JSON.stringify({ slack_id }),
     });
     const data = await res.json();
-    updateResourceUI(data.silicon, data.conductor, data.diode);
+    document.getElementById('silicon').innerText      = data.silicon;
+    document.getElementById('conductor').innerText    = data.conductor;
+    document.getElementById('diode').innerText        = data.diode;
+    document.getElementById('siliconHud').innerText   = data.silicon;
+    document.getElementById('conductorHud').innerText = data.conductor;
+    document.getElementById('diodeHud').innerText     = data.diode;
   }
 
-  // ── Init — runs after DOM ready ──
   document.addEventListener('DOMContentLoaded', async () => {
     const user = getCookieUser();
     if (!user) { window.location.href = '/'; return; }
@@ -266,21 +248,21 @@
     const name     = user.name || user.display_name || 'User';
     const avatar   = user.picture || user.avatar_url || '';
 
-    // Redirect /dashboard → /dashboard/xxxx only if user_id exists
-    const path = window.location.pathname;
-    if (user_id && user_id !== 'null' && path === '/dashboard') {
-      window.location.replace('/dashboard/' + user_id);
-      return;
+    // Use avatar from DB if available, fallback to cookie, then DiceBear
+    const dbRes = await fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(user_id || ''));
+    if (dbRes.ok) {
+      const dbData = await dbRes.json();
+      if (dbData.success && dbData.user.avatar) {
+        avatar = dbData.user.avatar;
+      }
     }
 
-    // Set profile from cookie immediately
-    document.getElementById('pfp').src           = avatar;
-    document.getElementById('pfpHud').src        = avatar;
+    document.getElementById('pfp').src           = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+    document.getElementById('pfpHud').src        = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
     document.getElementById('name').innerText    = name;
     document.getElementById('nameHud').innerText = name;
     document.getElementById('email').innerText   = user.email || '';
 
-    // Load resources + quests from DB
     await loadResources(slack_id);
     loadQuests(slack_id);
   });
