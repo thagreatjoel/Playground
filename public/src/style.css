@@ -1,335 +1,322 @@
-/* ================= BASE ================= */
-html {
-  font-size: 14px;
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — Hardware Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/style.css">
+  <script defer src="src/script.js"></script>
+  <style>
+    body { filter: none; opacity: 1; }
 
-.green {
-  background: #b2f167;
-}
+    .profile-card {
+      background: white;
+      border: 1px solid #cfcfcf;
+      border-bottom: 3px solid #000;
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+    }
 
-details.green[open] {
-  background: #e1fcc1;
-}
+    /* Avatar edit */
+    .avatar-wrap {
+      position: relative;
+      width: 80px;
+      margin: 0 auto 12px;
+      cursor: pointer;
+    }
+    .avatar, .avatar-fallback {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 3px solid #000;
+      object-fit: cover;
+      display: block;
+      background: #b2f167;
+      transition: filter 0.2s;
+    }
+    .avatar-wrap:hover .avatar { filter: brightness(0.65); }
+    .avatar-edit-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .avatar-wrap:hover .avatar-edit-icon { opacity: 1; }
+    .avatar-edit-icon svg {
+      width: 28px; height: 28px;
+      stroke: #fff; fill: none; stroke-width: 2;
+    }
 
-.emoji {
-  width: 1em;
-  height: 1em;
-  vertical-align: -0.15em;
-  display: inline-block;
-}
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed #e0e0e0;
+      font-size: 0.85rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #888; font-size: 0.75rem; }
+    .info-value { font-weight: 600; font-family: monospace; font-size: 0.82rem; text-align: right; max-width: 60%; word-break: break-all; }
 
-body {
-  font-family: 'Space Grotesk', sans-serif;
-  background-color: #f3eef2;
-  background-image:
-    linear-gradient(to right, rgba(0,0,0,0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px);
-  background-size: 40px 40px;
-  animation: moveGrid 6s linear infinite;
-}
+    .copy-btn {
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      margin-left: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      transition: 0.15s;
+    }
+    .copy-btn:hover { background: #b2f167; border-color: #000; }
 
-@keyframes moveGrid {
-  from { background-position: 0 0, 0 0; }
-  to   { background-position: 40px -40px, 40px -40px; }
-}
+    .badge {
+      display: inline-block;
+      background: #b2f167;
+      border: 1px solid #5a8a00;
+      color: #2a4a00;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+      margin-top: 4px;
+    }
 
-/* ================= FLAG ================= */
-.flag {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 96px;
-  z-index: 9999;
-}
+    .skeleton-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      margin: 0 auto 12px;
+    }
+    .skeleton-line {
+      height: 14px; border-radius: 8px;
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      margin: 8px auto;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
 
-/* ================= CARD ================= */
-.card {
-  border: 1px solid #cfcfcf;
-  border-bottom: 3px solid #000;
-  border-radius: 16px;
-  background: white;
-  padding: 20px;
-  transition: 0.2s;
-}
+<body>
+<div id="flash"></div>
 
-.card:hover {
-  transform: translateY(-2px);
-}
+<a href="https://hackclub.com">
+  <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
+</a>
 
-.card > div + div {
-  border-top: 1px dashed #ddd;
-  padding-top: 12px;
-}
+<div class="flex justify-center px-4 py-10 pt-20">
+  <div class="w-full max-w-lg space-y-6">
 
-/* ================= BUTTON ================= */
-.btn {
-  background: #b2f167;
-  border: 1px solid #000;
-  border-bottom: 3px solid #000;
-  border-radius: 10px;
-  padding: 8px 20px;
-  font-weight: 500;
-  transition: 0.2s;
-}
+    <div class="text-center space-y-1">
+      <h1 class="text-2xl font-bold">Profile</h1>
+      <p class="text-gray-500 text-sm">Hardware Playground</p>
+    </div>
 
-.btn:hover {
-  background: #e1fcc1;
-  transform: translateY(-2px);
-}
+    <div id="profile-content">
+      <div class="profile-card" id="skeleton">
+        <div class="skeleton-circle"></div>
+        <div class="skeleton-line" style="width:60%;"></div>
+        <div class="skeleton-line" style="width:40%;"></div>
+      </div>
+    </div>
 
-.btn:active {
-  transform: translateY(0);
-  border-bottom: 1px solid #000;
-}
+    <div class="text-center">
+      <button class="btn" onclick="goWithFlash('/home')">← Back to Dashboard</button>
+    </div>
 
-/* ================= FLASH ================= */
-#flash {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  background: #f3eef2;
-  opacity: 1;
-  pointer-events: none;
-  z-index: 2147483647;
-  transform: translateZ(0);
-}
+  </div>
+</div>
 
-/* ================= TIMELINE ================= */
-.overlay {
-  position: relative;
-}
+<!-- HUD -->
+<div class="card hud-card">
+  <div class="hud-left" style="cursor:pointer;" onclick="goWithFlash('/profile')">
+    <img id="pfpHud" class="pfp">
+    <div class="hud-info"><p id="nameHud">User</p></div>
+  </div>
+  <div class="hud-right">
+    <button class="nav-btn" onclick="goWithFlash('/home')">
+      <svg viewBox="0 0 24 24"><path d="M3 10L12 3L21 10V21H3Z"/></svg>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" onclick="goWithFlash('/submit')">
+      <svg viewBox="0 0 24 24"><path d="M12 16V4"/><path d="M8 8L12 4L16 8"/><path d="M4 20H20"/></svg>
+      <span class="nav-label">Submit</span>
+    </button>
+    <button class="nav-btn" onclick="goWithFlash('/guide')">
+      <svg viewBox="0 0 24 24"><path d="M4 5H14A2 2 0 0 1 16 7V19H6A2 2 0 0 1 4 17Z"/><path d="M16 5H20V19H16"/></svg>
+      <span class="nav-label">Guide</span>
+    </button>
+    <button class="nav-btn" onclick="goWithFlash('/shop')">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M2 2H5L7 14H19L21 6H6"/></svg>
+      <span class="nav-label">Shop</span>
+    </button>
+    <button class="nav-btn" onclick="logout()">
+      <svg viewBox="0 0 24 24"><path d="M16 17L21 12L16 7"/><path d="M21 12H9"/><path d="M13 21H5V3H13"/></svg>
+      <span class="nav-label">Logout</span>
+    </button>
+  </div>
+</div>
 
-.overlay::before {
-  content: "";
-  position: absolute;
-  left: 26px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: rgba(0,0,0,0.2);
-}
-
-.connector {
-  position: absolute;
-  left: 27px;
-  top: 30px;
-  transform: translateX(-55%);
-  width: 16px;
-  height: 16px;
-  background: #b2f167;
-  border-radius: 50%;
-  z-index: 2;
-  box-shadow: 0 0 0 4px #f3eef2;
-}
-
-.node {
-  width: 40px;
-  height: 40px;
-  background: #b2f167;
-  border: 2px solid black;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-/* ================= PROFILE ================= */
-.pfp {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 2px solid black;
-  object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-/* ================= ICON ================= */
-.stat-icon {
-  width: 18px;
-  height: 18px;
-}
-
-/* ================= HUD (MOBILE) ================= */
-.hud-card {
-  position: fixed;
-  bottom: 12px;
-  left: 10px;
-  right: 10px;
-  max-width: 520px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  background: white;
-  border-radius: 16px;
-  border: 1px solid #ddd;
-  border-top: 1px solid #ddd;
-  border-bottom: 3px solid black;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-  z-index: 9999;
-  will-change: transform;
-  transform: translateZ(0);
-}
-
-/* Remove the dashed divider that .card adds to children */
-.hud-card > div + div {
-  border-top: none;
-  padding-top: 0;
-}
-
-.hud-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.hud-info {
-  display: flex;
-  flex-direction: column;
-}
-
-#nameHud {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.stats {
-  display: flex;
-  gap: 6px;
-  font-size: 11px;
-  color: #555;
-}
-
-.stats span {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.hud-right {
-  display: flex;
-  gap: 8px;
-}
-
-/* ================= NAV BUTTON ================= */
-.nav-btn {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  background: #f5f5f5;
-  transition: all 0.15s ease;
-}
-
-.nav-btn svg {
-  width: 18px;
-  height: 18px;
-  stroke: #333;
-  fill: none;
-  stroke-width: 2;
-}
-
-.nav-btn:hover {
-  background: #eaeaea;
-  transform: translateY(-2px);
-}
-
-.nav-btn:active {
-  transform: scale(0.95);
-}
-
-.nav-btn.active {
-  background: #b2f167;
-  border-color: black;
-}
-
-/* ── Nav label — hidden on mobile, shown on desktop ── */
-.nav-label {
-  display: none;
-  font-size: 0.72rem;
-  font-weight: 600;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-/* ================= DESKTOP SIDEBAR ================= */
-@media (min-width: 768px) {
-  .hud-card {
-    top: 80px;
-    bottom: 80px;
-    left: 16px;
-    right: auto;
-    width: 110px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-    padding: 16px 10px;
-    overflow: hidden;
+<script>
+  function getCookieUser() {
+    const match = document.cookie.match(/user=([^;]+)/);
+    if (!match) return null;
+    try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
   }
 
-  .hud-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓';
+      setTimeout(() => btn.textContent = 'copy', 1200);
+    });
   }
 
-  #nameHud {
-    font-size: 10px;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 90px;
+  function triggerAvatarUpload() {
+    document.getElementById('avatar-input').click();
   }
 
-  .stats { display: none; }
+  async function uploadAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('Image too large. Max 2MB.'); return; }
 
-  .hud-left {
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64   = e.target.result;
+      const me       = getCookieUser();
+      const slack_id = me.sub || me.slack_id;
+
+      try {
+        const res  = await fetch('/.netlify/functions/updateavatar', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ slack_id, avatar: base64 }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('profile-avatar').src = base64;
+          // Update cookie
+          const user   = getCookieUser();
+          user.avatar  = base64;
+          user.picture = base64;
+          document.cookie = 'user=' + encodeURIComponent(JSON.stringify(user)) + '; Path=/; SameSite=Lax';
+        } else {
+          alert('Failed: ' + (data.error || 'Unknown error'));
+        }
+      } catch(e) { alert('Upload failed: ' + e.message); }
+    };
+    reader.readAsDataURL(file);
   }
 
-  .hud-right {
-    flex-direction: column;
-    gap: 6px;
-    width: 100%;
-    flex: 1;
-    justify-content: flex-start;
-    margin-top: 4px;
+  document.addEventListener('DOMContentLoaded', async () => {
+    const me = getCookieUser();
+    if (!me) { window.location.href = '/'; return; }
+
+    const pathParts      = window.location.pathname.split('/').filter(Boolean);
+    const rawId          = pathParts[1] || me.user_id;
+    const target_user_id = rawId ? rawId.toUpperCase() : null;
+
+    if (!target_user_id || target_user_id === 'NULL') {
+      showNotFound('No user ID found. Try logging out and back in.');
+      return;
+    }
+
+    try {
+      const res  = await fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(target_user_id));
+      const data = await res.json();
+
+      if (!data.success) { showNotFound('User not found.'); return; }
+
+      // Check admin
+      const adminRes  = await fetch('/.netlify/functions/admin', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ action: 'checkadmin', requester_user_id: me.user_id, slack_id: 'check' }),
+      });
+      const adminData = await adminRes.json();
+      const isAdmin   = adminData.is_admin === true;
+
+      renderProfile(data.user, me, isAdmin);
+
+    } catch(e) { showNotFound('Failed to load profile: ' + e.message); }
+  });
+
+  function renderProfile(user, me, isAdmin) {
+    const isMe   = me.user_id === user.user_id;
+    const joined = user.created_at
+      ? new Date(user.created_at).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
+      : 'Unknown';
+
+    const avatarSrc = user.avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name || '?'));
+
+    const avatarHTML = isMe
+      ? '<div class="avatar-wrap" onclick="triggerAvatarUpload()">' +
+          '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" onerror="this.src=\'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'">' +
+          '<div class="avatar-edit-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>' +
+        '</div>' +
+        '<input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(event)">'
+      : '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" style="margin:0 auto 12px;" onerror="this.src=\'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'">';
+
+    let slackRow = '';
+    if (isAdmin) {
+      slackRow = '<div class="info-row">' +
+        '<span class="info-label">Slack ID <span style="background:#ffe8e8;border:1px solid #f00;color:#900;font-size:0.62rem;padding:1px 5px;border-radius:8px;margin-left:3px;">admin</span></span>' +
+        '<span style="display:flex;align-items:center;">' +
+          '<span class="info-value">' + (user.slack_id || 'N/A') + '</span>' +
+          '<button class="copy-btn" onclick="copyText(\'' + (user.slack_id || '') + '\', this)">copy</button>' +
+        '</span></div>';
+    }
+
+    document.getElementById('profile-content').innerHTML =
+      '<div class="profile-card">' +
+        avatarHTML +
+        '<h2 style="font-size:1.3rem;font-weight:700;">' + (user.name || 'Unknown') + '</h2>' +
+        (isMe ? '<span class="badge">✦ You</span>' : '') +
+        '<p style="color:#888;font-size:0.8rem;margin-top:4px;">' + (user.email || 'No email') + '</p>' +
+        '<div style="margin-top:20px;">' +
+          '<div class="info-row">' +
+            '<span class="info-label">User ID</span>' +
+            '<span style="display:flex;align-items:center;">' +
+              '<span class="info-value">' + (user.user_id || 'N/A') + '</span>' +
+              '<button class="copy-btn" onclick="copyText(\'' + (user.user_id || '') + '\', this)">copy</button>' +
+            '</span>' +
+          '</div>' +
+          '<div class="info-row">' +
+            '<span class="info-label">Email</span>' +
+            '<span style="display:flex;align-items:center;">' +
+              '<span class="info-value">' + (user.email || 'N/A') + '</span>' +
+              '<button class="copy-btn" onclick="copyText(\'' + (user.email || '') + '\', this)">copy</button>' +
+            '</span>' +
+          '</div>' +
+          '<div class="info-row">' +
+            '<span class="info-label">Joined</span>' +
+            '<span class="info-value">' + joined + '</span>' +
+          '</div>' +
+          slackRow +
+        '</div>' +
+      '</div>';
   }
 
-  .nav-btn {
-    width: 100%;
-    height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-    padding: 0 10px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 600;
+  function showNotFound(msg) {
+    document.getElementById('profile-content').innerHTML =
+      '<div class="profile-card">' +
+        '<p style="font-size:2rem;">😕</p>' +
+        '<h2 style="font-weight:700;margin-top:8px;">Not Found</h2>' +
+        '<p style="color:#888;font-size:0.85rem;margin-top:4px;">' + msg + '</p>' +
+      '</div>';
   }
+</script>
 
-  .nav-btn svg {
-    flex-shrink: 0;
-  }
-
-  .nav-btn .nav-label {
-    display: inline;
-  }
-}
+</body>
+</html>
