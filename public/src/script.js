@@ -59,12 +59,34 @@ window.addEventListener('DOMContentLoaded', () => {
     let avatar = user.picture || user.avatar_url || user.image || "";
     if (!avatar) avatar = "https://api.dicebear.com/7.x/initials/svg?seed=" + name;
 
-    document.getElementById("pfp").src           = avatar;
-    document.getElementById("pfpHud").src        = avatar;
-    document.getElementById("name").innerText    = name;
-    document.getElementById("nameHud").innerText = name;
-    document.getElementById("email").innerText   = email;
-    document.getElementById("slack").innerText   = "Slack: " + slack;
+    // Set from cookie immediately — use null checks since not all pages have all elements
+    const pfpEl     = document.getElementById("pfp");
+    const pfpHudEl  = document.getElementById("pfpHud");
+    const nameEl    = document.getElementById("name");
+    const nameHudEl = document.getElementById("nameHud");
+    const emailEl   = document.getElementById("email");
+    const slackEl   = document.getElementById("slack");
+
+    if (pfpEl)     pfpEl.src             = avatar;
+    if (pfpHudEl)  pfpHudEl.src          = avatar;
+    if (nameEl)    nameEl.innerText      = name;
+    if (nameHudEl) nameHudEl.innerText   = name;
+    if (emailEl)   emailEl.innerText     = email;
+    if (slackEl)   slackEl.innerText     = "Slack: " + slack;
+
+    // Fetch latest avatar from DB in background
+    const userId = user.user_id;
+    if (userId && userId !== 'null') {
+      fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(userId))
+        .then(r => r.json())
+        .then(d => {
+          if (d.success && d.user.avatar) {
+            if (pfpEl)    pfpEl.src    = d.user.avatar;
+            if (pfpHudEl) pfpHudEl.src = d.user.avatar;
+          }
+        })
+        .catch(() => {});
+    }
   }
 });
 
