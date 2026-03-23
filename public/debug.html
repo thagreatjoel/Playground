@@ -308,5 +308,42 @@
   }
 </script>
 
+
+<!-- ── DELETE USER ── -->
+<div class="section" style="border-color: #f00; border-bottom-color: #900;">
+  <h2 style="color:#900;">☠️ Delete User — DANGER ZONE</h2>
+  <p style="font-size:0.75rem;color:#900;margin-bottom:8px;">This will permanently delete the user's entire account, currency, and quest progress. Cannot be undone.</p>
+  <label>Slack ID</label>
+  <input type="text" id="delete-id" placeholder="ident!Xkfkxn">
+  <br>
+  <button class="btn red" onclick="deleteUser()">☠️ Delete User Permanently</button>
+  <button class="btn blue" onclick="fillMyId('delete-id')">Use My ID</button>
+  <div class="log" id="log-delete">Result will show here...
+</div>
+</div>
+
+<script>
+  async function deleteUser() {
+    const slack_id = document.getElementById('delete-id').value.trim();
+    if (!slack_id) { alert('Enter a Slack ID'); return; }
+
+    // First confirmation
+    if (!confirm(`⚠️ Are you sure you want to DELETE all data for:\n\n${slack_id}\n\nThis cannot be undone.`)) return;
+
+    // Second confirmation
+    if (!confirm(`🚨 FINAL WARNING\n\nYou are about to permanently delete:\n- User account\n- All currency\n- All quest progress\n\nFor: ${slack_id}\n\nType OK to confirm.`)) return;
+
+    clearLog('log-delete');
+    appendLog('log-delete', '⚠️ Deleting ' + slack_id + '...', 'warn');
+
+    try {
+      const { status, data } = await adminCall({ action: 'delete', slack_id });
+      if (!data.success) { appendLog('log-delete', '❌ ' + (data.error || 'Failed'), 'err'); return; }
+      appendLog('log-delete', '✅ ' + data.message);
+      appendLog('log-delete', 'User fully removed from database.');
+    } catch(e) { appendLog('log-delete', '❌ ' + e.message, 'err'); }
+  }
+</script>
+
 </body>
 </html>
