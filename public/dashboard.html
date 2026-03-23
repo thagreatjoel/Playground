@@ -248,17 +248,21 @@
     const name     = user.name || user.display_name || 'User';
     const avatar   = user.picture || user.avatar_url || '';
 
-    // Use avatar from DB if available, fallback to cookie, then DiceBear
-    const dbRes = await fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(user_id || ''));
-    if (dbRes.ok) {
-      const dbData = await dbRes.json();
-      if (dbData.success && dbData.user.avatar) {
-        avatar = dbData.user.avatar;
-      }
-    }
+    // Fetch latest avatar from DB (non-blocking — don't await before quests)
+    document.getElementById('pfp').src    = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+    document.getElementById('pfpHud').src = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
 
-    document.getElementById('pfp').src           = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
-    document.getElementById('pfpHud').src        = avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}`;
+    if (user_id && user_id !== 'null') {
+      fetch('/.netlify/functions/profile?user_id=' + encodeURIComponent(user_id))
+        .then(r => r.json())
+        .then(d => {
+          if (d.success && d.user.avatar) {
+            document.getElementById('pfp').src    = d.user.avatar;
+            document.getElementById('pfpHud').src = d.user.avatar;
+          }
+        })
+        .catch(() => {});
+    }
     document.getElementById('name').innerText    = name;
     document.getElementById('nameHud').innerText = name;
     document.getElementById('email').innerText   = user.email || '';
