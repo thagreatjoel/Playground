@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Hardware Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <script defer src="/src/script.js"></script>
+  <style>
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #f3eef2;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: moveGrid 6s linear infinite;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    @keyframes moveGrid {
+      from { background-position: 0 0, 0 0; }
+      to   { background-position: 40px -40px, 40px -40px; }
+    }
+
+    .card-404 {
+      background: white;
+      border: 1px solid #cfcfcf;
+      border-bottom: 3px solid #000;
+      border-radius: 20px;
+      padding: 28px 24px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .cat-img {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 14px;
+      border: 2px solid #000;
+      margin: 0 auto 20px;
+      display: block;
+      object-fit: cover;
+      max-height: 260px;
+    }
+
+    .code {
+      font-size: 4rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .desc {
+      font-size: 0.82rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="flash"></div>
+
+<a href="https://hackclub.com">
+  <img src="https://assets.hackclub.com/flag-orpheus-top.svg" class="flag">
+</a>
+
+<div class="card-404">
+  <img class="cat-img" src="/assets/404-cat.jpg" alt="Kittens exploring a PC">
+  <div class="code">404</div>
+  <div class="title">Page Not Found</div>
+  <p class="desc">
+    Looks like these kittens chewed through the wrong wire.<br>
+    The page you're looking for doesn't exist.
+  </p>
+  <button class="btn" onclick="goWithFlash('/')">← Go Home</button>
+</div>
+
+</body>
+</html>
