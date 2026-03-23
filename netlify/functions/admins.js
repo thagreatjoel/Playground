@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────
 
 const ADMINS = [
-    
+    "9buo",
 ];
 
 module.exports = { ADMINS };
