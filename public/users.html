@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users — Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Space Grotesk', sans-serif; background: #f3eef2; padding: 20px; padding-bottom: 60px; }
+
+    h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+
+    .section {
+      background: white;
+      border: 1px solid #cfcfcf;
+      border-bottom: 3px solid #000;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .btn {
+      background: #b2f167;
+      border: 1px solid #000;
+      border-bottom: 3px solid #000;
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover  { background: #e1fcc1; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); border-bottom: 1px solid #000; }
+    .btn.red    { background: #ffe8e8; border-color: #f00; color: #900; }
+    .btn.red:hover { background: #ffd0d0; }
+    .btn.blue   { background: #e8f0ff; border-color: #336; color: #003; }
+    .btn.sm     { padding: 4px 10px; font-size: 0.72rem; }
+
+    /* User card */
+    .user-card {
+      border: 1px solid #e0e0e0;
+      border-bottom: 2px solid #ccc;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      background: #fafafa;
+      transition: 0.15s;
+    }
+    .user-card:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    .user-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .user-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      object-fit: cover;
+      background: #b2f167;
+      flex-shrink: 0;
+    }
+    .user-name  { font-weight: 600; font-size: 0.9rem; }
+    .user-email { font-size: 0.72rem; color: #888; }
+    .user-id    { font-size: 0.7rem; color: #aaa; font-family: monospace; }
+
+    .currency-row {
+      display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .chip {
+      font-size: 0.7rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 20px;
+      border: 1px solid #000;
+    }
+    .chip.si { background: #fff8e1; border-color: #f0a000; color: #7a5000; }
+    .chip.co { background: #e8f5e9; border-color: #388e3c; color: #1b5e20; }
+    .chip.di { background: #e8eaf6; border-color: #3949ab; color: #1a237e; }
+
+    .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Inline edit */
+    .edit-row {
+      display: none;
+      gap: 6px;
+      margin-top: 8px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .edit-row.show { display: flex; }
+    .edit-row input {
+      width: 70px;
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+    }
+    .edit-row label { font-size: 0.68rem; color: #555; display: block; }
+
+    /* Search */
+    #search {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .count { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+
+    .log {
+      background: #1a1a1a; color: #b2f167;
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 11px; font-family: monospace;
+      white-space: pre-wrap; min-height: 40px;
+      margin-top: 8px; display: none;
+    }
+    .log.show { display: block; }
+    .err  { color: #ff6b6b; }
+    .warn { color: #ffd700; }
+
+    #access-denied {
+      text-align: center; padding: 60px 20px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+<div id="access-denied" style="display:none;">
+  <h2>🔒 Access Denied</h2>
+  <p id="access-msg">Checking access...</p>
+  <a href="/debug" style="color:#5a8a00;">→ Go to Debug Panel</a>
+</div>
+
+<div id="app" style="display:none;">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+    <div>
+      <h1>👥 Users</h1>
+      <p style="color:#555;font-size:0.8rem;">Hardware Playground — Admin</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn blue" onclick="loadUsers()">🔄 Refresh</button>
+      <a href="/debug"><button class="btn">← Debug</button></a>
+    </div>
+  </div>
+
+  <input type="text" id="search" placeholder="Search by name, email or user_id..." oninput="filterUsers()">
+
+  <div class="count" id="count"></div>
+
+  <div id="user-list"></div>
+
+</div>
+
+<script>
+  let ALL_USERS = [];
+  let MY_USER_ID = null;
+
+  // ── Helpers ──
+  function getCookieUser() {
+    const match = document.cookie.match(/user=([^;]+)/);
+    if (!match) return null;
+    try { return JSON.parse(decodeURIComponent(match[1])); } catch { return null; }
+  }
+
+  async function adminCall(payload) {
+    const res  = await fetch('/.netlify/functions/admin', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ ...payload, requester_user_id: MY_USER_ID }),
+    });
+    return await res.json();
+  }
+
+  // ── Init ──
+  window.addEventListener('DOMContentLoaded', async () => {
+    const user = getCookieUser();
+
+    if (!user) {
+      document.getElementById('access-denied').style.display = 'block';
+      document.getElementById('access-msg').textContent = 'Not logged in. Please login first.';
+      return;
+    }
+
+    MY_USER_ID = user.user_id;
+
+    if (!MY_USER_ID) {
+      document.getElementById('access-denied').style.display = 'block';
+      document.getElementById('access-msg').textContent = 'No user_id found. Log out and back in first.';
+      return;
+    }
+
+    // Test admin access by doing a list call
+    document.getElementById('app').style.display = 'block';
+    await loadUsers();
+  });
+
+  // ── Load all users ──
+  async function loadUsers() {
+    document.getElementById('user-list').innerHTML = '<p style="color:#888;font-size:0.85rem;">Loading...</p>';
+    document.getElementById('count').textContent = '';
+
+    const data = await adminCall({ action: 'list', slack_id: 'N/A' });
+
+    if (!data.success) {
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('access-denied').style.display = 'block';
+      document.getElementById('access-msg').textContent = data.error || 'Access denied';
+      return;
+    }
+
+    ALL_USERS = data.users;
+    renderUsers(ALL_USERS);
+  }
+
+  // ── Filter ──
+  function filterUsers() {
+    const q = document.getElementById('search').value.toLowerCase();
+    const filtered = ALL_USERS.filter(u =>
+      (u.name  || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q) ||
+      (u.user_id || '').toLowerCase().includes(q) ||
+      (u.slack_id || '').toLowerCase().includes(q)
+    );
+    renderUsers(filtered);
+  }
+
+  // ── Render ──
+  function renderUsers(users) {
+    document.getElementById('count').textContent = users.length + ' user' + (users.length !== 1 ? 's' : '');
+    const list = document.getElementById('user-list');
+    list.innerHTML = '';
+
+    if (users.length === 0) {
+      list.innerHTML = '<p style="color:#888;font-size:0.85rem;">No users found.</p>';
+      return;
+    }
+
+    users.forEach(u => {
+      const card = document.createElement('div');
+      card.className = 'user-card';
+      card.id = 'card-' + u.slack_id.replace(/[^a-zA-Z0-9]/g, '_');
+
+      const avatar = u.avatar
+        ? `<img class="user-avatar" src="${u.avatar}" onerror="this.style.display='none'">`
+        : `<div class="user-avatar" style="display:flex;align-items:center;justify-content:center;font-weight:700;color:#333;font-size:0.8rem;">${(u.name||'?')[0]}</div>`;
+
+      card.innerHTML = `
+        <div class="user-header">
+          ${avatar}
+          <div style="flex:1;min-width:0;">
+            <div class="user-name">${u.name || 'Unknown'}</div>
+            <div class="user-email">${u.email || 'no email'}</div>
+            <div class="user-id">uid: ${u.user_id || 'N/A'} · sid: ${u.slack_id}</div>
+          </div>
+        </div>
+        <div class="currency-row">
+          <span class="chip si">⚡ ${u.silicon} Silicon</span>
+          <span class="chip co">🔌 ${u.conductor} Conductor</span>
+          <span class="chip di">💡 ${u.diode} Diode</span>
+        </div>
+        <div class="actions">
+          <button class="btn sm" onclick="toggleEdit('${u.slack_id}')">✏️ Edit</button>
+          <button class="btn sm red" onclick="resetCurrency('${u.slack_id}', '${u.name}')">🔄 Reset Currency</button>
+          <button class="btn sm red" onclick="deleteUser('${u.slack_id}', '${u.name}')">☠️ Delete</button>
+        </div>
+        <div class="edit-row" id="edit-${u.slack_id.replace(/[^a-zA-Z0-9]/g, '_')}">
+          <div><label>Silicon</label><input type="number" id="si-${u.slack_id.replace(/[^a-zA-Z0-9]/g, '_')}" value="${u.silicon}"></div>
+          <div><label>Conductor</label><input type="number" id="co-${u.slack_id.replace(/[^a-zA-Z0-9]/g, '_')}" value="${u.conductor}"></div>
+          <div><label>Diode</label><input type="number" id="di-${u.slack_id.replace(/[^a-zA-Z0-9]/g, '_')}" value="${u.diode}"></div>
+          <button class="btn sm blue" onclick="saveCurrency('${u.slack_id}')">💾 Save</button>
+          <button class="btn sm" onclick="toggleEdit('${u.slack_id}')">Cancel</button>
+        </div>
+        <div class="log" id="log-${u.slack_id.replace(/[^a-zA-Z0-9]/g, '_')}"></div>
+      `;
+
+      list.appendChild(card);
+    });
+  }
+
+  function safeId(slack_id) {
+    return slack_id.replace(/[^a-zA-Z0-9]/g, '_');
+  }
+
+  function toggleEdit(slack_id) {
+    const row = document.getElementById('edit-' + safeId(slack_id));
+    row.classList.toggle('show');
+  }
+
+  function showLog(slack_id, msg, type = '') {
+    const el = document.getElementById('log-' + safeId(slack_id));
+    el.classList.add('show');
+    const line = document.createElement('div');
+    line.className = type;
+    line.textContent = msg;
+    el.appendChild(line);
+  }
+
+  function clearLog(slack_id) {
+    const el = document.getElementById('log-' + safeId(slack_id));
+    el.innerHTML = '';
+    el.classList.remove('show');
+  }
+
+  // ── Save currency ──
+  async function saveCurrency(slack_id) {
+    const id = safeId(slack_id);
+    const silicon   = parseInt(document.getElementById('si-' + id).value);
+    const conductor = parseInt(document.getElementById('co-' + id).value);
+    const diode     = parseInt(document.getElementById('di-' + id).value);
+
+    clearLog(slack_id);
+    showLog(slack_id, 'Saving...', 'warn');
+
+    const data = await adminCall({ action: 'set', slack_id, silicon, conductor, diode });
+
+    if (!data.success) { showLog(slack_id, '❌ ' + (data.error || 'Failed'), 'err'); return; }
+
+    showLog(slack_id, `✅ Saved → Si:${data.user.silicon} Co:${data.user.conductor} Di:${data.user.diode}`);
+
+    // Update chips
+    const card = document.getElementById('card-' + id);
+    const chips = card.querySelectorAll('.chip');
+    chips[0].textContent = `⚡ ${data.user.silicon} Silicon`;
+    chips[1].textContent = `🔌 ${data.user.conductor} Conductor`;
+    chips[2].textContent = `💡 ${data.user.diode} Diode`;
+
+    // Update ALL_USERS
+    const u = ALL_USERS.find(u => u.slack_id === slack_id);
+    if (u) { u.silicon = data.user.silicon; u.conductor = data.user.conductor; u.diode = data.user.diode; }
+
+    toggleEdit(slack_id);
+  }
+
+  // ── Reset currency ──
+  async function resetCurrency(slack_id, name) {
+    if (!confirm(`Reset ALL currency for ${name} to 0?`)) return;
+    clearLog(slack_id);
+    showLog(slack_id, 'Resetting...', 'warn');
+
+    const data = await adminCall({ action: 'reset', slack_id });
+    if (!data.success) { showLog(slack_id, '❌ ' + (data.error || 'Failed'), 'err'); return; }
+
+    showLog(slack_id, '✅ Currency reset to 0');
+
+    const card = document.getElementById('card-' + safeId(slack_id));
+    const chips = card.querySelectorAll('.chip');
+    chips[0].textContent = '⚡ 0 Silicon';
+    chips[1].textContent = '🔌 0 Conductor';
+    chips[2].textContent = '💡 0 Diode';
+
+    const u = ALL_USERS.find(u => u.slack_id === slack_id);
+    if (u) { u.silicon = 0; u.conductor = 0; u.diode = 0; }
+  }
+
+  // ── Delete user ──
+  async function deleteUser(slack_id, name) {
+    if (!confirm(`⚠️ Delete ALL data for:\n\n${name} (${slack_id})\n\nThis cannot be undone.`)) return;
+    if (!confirm(`🚨 FINAL WARNING\n\nPermanently delete ${name}?\n\nAll currency and quest progress will be lost.`)) return;
+
+    clearLog(slack_id);
+    showLog(slack_id, 'Deleting...', 'warn');
+
+    const data = await adminCall({ action: 'delete', slack_id });
+    if (!data.success) { showLog(slack_id, '❌ ' + (data.error || 'Failed'), 'err'); return; }
+
+    // Remove card from UI
+    const card = document.getElementById('card-' + safeId(slack_id));
+    card.style.opacity = '0.4';
+    card.style.pointerEvents = 'none';
+    showLog(slack_id, '✅ User deleted');
+
+    ALL_USERS = ALL_USERS.filter(u => u.slack_id !== slack_id);
+    document.getElementById('count').textContent = ALL_USERS.length + ' user' + (ALL_USERS.length !== 1 ? 's' : '');
+  }
+</script>
+
+</body>
+</html>
