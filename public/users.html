@@ -328,9 +328,9 @@
       const card = document.createElement('div');
       card.className = 'user-card';
       card.onclick = () => openModal(u);
-      const avatarSrc = u.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.name || '?')}`;
+      const avatarSrc = u.avatar || `https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'?')}`;
       card.innerHTML = `
-        <img class="user-avatar" src="${avatarSrc}" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.name||'?')}'">
+        <img class="user-avatar" src="${avatarSrc}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'?')}'">
         <div style="flex:1;min-width:0;">
           <div class="user-name">${u.name || 'Unknown'}</div>
           <div class="user-sub">${u.email || 'no email'} · ${u.user_id || 'N/A'}</div>
@@ -347,7 +347,7 @@
 
   function openModal(u) {
     CURRENT_USER = u;
-    const avatarSrc = u.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.name || '?')}`;
+    const avatarSrc = u.avatar || `https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'?')}`;
     document.getElementById('modal-avatar').src          = avatarSrc;
     document.getElementById('modal-name').textContent    = u.name || 'Unknown';
     document.getElementById('modal-email').textContent   = u.email || 'no email';
