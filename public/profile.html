@@ -285,54 +285,119 @@
       ? new Date(user.created_at).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
       : 'Unknown';
 
-    const avatarSrc = user.avatar || ('https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(user.name || '?'));
+    const DEFAULT_AVATAR = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
+    const avatarSrc = user.avatar || DEFAULT_AVATAR;
 
-    const avatarHTML = isMe
-      ? '<div class="avatar-wrap" onclick="triggerAvatarUpload()">' +
-          '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" onerror="this.src=\'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'">' +
-          '<div class="avatar-edit-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>' +
-        '</div>' +
-        '<input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(event)">'
-      : '<img class="avatar" id="profile-avatar" src="' + avatarSrc + '" style="margin:0 auto 12px;" onerror="this.src=\'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'">';
+    const container = document.getElementById('profile-content');
+    container.innerHTML = '';
 
-    let slackRow = '';
-    if (isAdmin) {
-      slackRow = '<div class="info-row">' +
-        '<span class="info-label">Slack ID <span style="background:#ffe8e8;border:1px solid #f00;color:#900;font-size:0.62rem;padding:1px 5px;border-radius:8px;margin-left:3px;">admin</span></span>' +
-        '<span style="display:flex;align-items:center;">' +
-          '<span class="info-value">' + (user.slack_id || 'N/A') + '</span>' +
-          '<button class="copy-btn" onclick="copyText(\'' + (user.slack_id || '') + '\', this)">copy</button>' +
-        '</span></div>';
+    const card = document.createElement('div');
+    card.className = 'profile-card';
+
+    // Avatar
+    if (isMe) {
+      const wrap = document.createElement('div');
+      wrap.className = 'avatar-wrap';
+      wrap.onclick = triggerAvatarUpload;
+
+      const img = document.createElement('img');
+      img.className = 'avatar';
+      img.id = 'profile-avatar';
+      img.src = avatarSrc;
+      img.onerror = function() { this.src = DEFAULT_AVATAR; };
+
+      const editIcon = document.createElement('div');
+      editIcon.className = 'avatar-edit-icon';
+      editIcon.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.id = 'avatar-input';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      fileInput.onchange = uploadAvatar;
+
+      wrap.appendChild(img);
+      wrap.appendChild(editIcon);
+      card.appendChild(wrap);
+      card.appendChild(fileInput);
+    } else {
+      const img = document.createElement('img');
+      img.className = 'avatar';
+      img.id = 'profile-avatar';
+      img.src = avatarSrc;
+      img.style.margin = '0 auto 12px';
+      img.onerror = function() { this.src = DEFAULT_AVATAR; };
+      card.appendChild(img);
     }
 
-    document.getElementById('profile-content').innerHTML =
-      '<div class="profile-card">' +
-        avatarHTML +
-        '<h2 style="font-size:1.3rem;font-weight:700;">' + (user.name || 'Unknown') + '</h2>' +
-        (isMe ? '<span class="badge">✦ You</span>' : '') +
-        '<p style="color:#888;font-size:0.8rem;margin-top:4px;">' + (user.email || 'No email') + '</p>' +
-        '<div style="margin-top:20px;">' +
-          '<div class="info-row">' +
-            '<span class="info-label">User ID</span>' +
-            '<span style="display:flex;align-items:center;">' +
-              '<span class="info-value">' + (user.user_id || 'N/A') + '</span>' +
-              '<button class="copy-btn" onclick="copyText(\'' + (user.user_id || '') + '\', this)">copy</button>' +
-            '</span>' +
-          '</div>' +
-          '<div class="info-row">' +
-            '<span class="info-label">Email</span>' +
-            '<span style="display:flex;align-items:center;">' +
-              '<span class="info-value">' + (user.email || 'N/A') + '</span>' +
-              '<button class="copy-btn" onclick="copyText(\'' + (user.email || '') + '\', this)">copy</button>' +
-            '</span>' +
-          '</div>' +
-          '<div class="info-row">' +
-            '<span class="info-label">Joined</span>' +
-            '<span class="info-value">' + joined + '</span>' +
-          '</div>' +
-          slackRow +
-        '</div>' +
-      '</div>';
+    // Name
+    const nameEl = document.createElement('h2');
+    nameEl.style.cssText = 'font-size:1.3rem;font-weight:700;';
+    nameEl.textContent = user.name || 'Unknown';
+    card.appendChild(nameEl);
+
+    // You badge
+    if (isMe) {
+      const badge = document.createElement('span');
+      badge.className = 'badge';
+      badge.textContent = '✦ You';
+      card.appendChild(badge);
+    }
+
+    // Email
+    const emailEl = document.createElement('p');
+    emailEl.style.cssText = 'color:#888;font-size:0.8rem;margin-top:4px;';
+    emailEl.textContent = user.email || 'No email';
+    card.appendChild(emailEl);
+
+    // Info rows
+    const infoDiv = document.createElement('div');
+    infoDiv.style.marginTop = '20px';
+
+    function addRow(label, value, showCopy, isAdmin_badge) {
+      const row = document.createElement('div');
+      row.className = 'info-row';
+
+      const labelEl = document.createElement('span');
+      labelEl.className = 'info-label';
+      labelEl.textContent = label;
+      if (isAdmin_badge) {
+        const badge = document.createElement('span');
+        badge.style.cssText = 'background:#ffe8e8;border:1px solid #f00;color:#900;font-size:0.62rem;padding:1px 5px;border-radius:8px;margin-left:3px;';
+        badge.textContent = 'admin';
+        labelEl.appendChild(badge);
+      }
+
+      const right = document.createElement('span');
+      right.style.display = 'flex';
+      right.style.alignItems = 'center';
+
+      const valueEl = document.createElement('span');
+      valueEl.className = 'info-value';
+      valueEl.textContent = value || 'N/A';
+      right.appendChild(valueEl);
+
+      if (showCopy && value) {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'copy';
+        btn.onclick = function() { copyText(value, btn); };
+        right.appendChild(btn);
+      }
+
+      row.appendChild(labelEl);
+      row.appendChild(right);
+      infoDiv.appendChild(row);
+    }
+
+    addRow('User ID', user.user_id, true);
+    addRow('Email', user.email, true);
+    addRow('Joined', joined, false);
+    if (isAdmin) addRow('Slack ID', user.slack_id, true, true);
+
+    card.appendChild(infoDiv);
+    container.appendChild(card);
   }
 
   function showNotFound(msg) {
